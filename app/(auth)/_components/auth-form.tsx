@@ -46,7 +46,7 @@ export function AuthForm({ flow }: { flow: "signIn" | "signUp" }) {
     const formData = new FormData();
     formData.append("email", data.email);
     formData.append("password", data.password);
-    formData.set("flow", flow);
+    formData.set("flow", "signUp");
 
     async function promise(): Promise<TResponseOverload<{ success: true }>> {
       setLoading(true);
