@@ -7,6 +7,7 @@ const applicationTables = {
     name: v.string(),
     description: v.optional(v.string()),
     createdBy: v.id("users"),
+    avatarId: v.optional(v.id("_storage")),
     type: v.optional(v.union(v.literal("channel"), v.literal("dm"))),
     participants: v.optional(v.array(v.id("users"))),
   })

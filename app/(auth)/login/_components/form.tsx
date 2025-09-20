@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useAuthActions } from "@convex-dev/auth/react";
-import Link from "next/link";
+import { Link } from "next-view-transitions";
 import { toast } from "sonner";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
