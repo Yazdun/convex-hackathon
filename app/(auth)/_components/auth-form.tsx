@@ -77,33 +77,33 @@ export function AuthForm({ flow }: { flow: "signIn" | "signUp" }) {
     });
   }
 
-  // function anonLogin() {
-  //   const promise = async () => {
-  //     setLoading(true);
-  //     try {
-  //       await signIn("anonymous");
-  //       setLoading(false);
-  //       return { data: { success: true }, error: null };
-  //     } catch (error: unknown) {
-  //       setLoading(false);
-  //       console.log(error);
-  //       const errorMessage =
-  //         error instanceof Error ? error.message : "An unknown error occurred";
-  //       throw new Error(errorMessage);
-  //     }
-  //   };
+  function anonLogin() {
+    const promise = async () => {
+      setLoading(true);
+      try {
+        await signIn("anonymous");
+        setLoading(false);
+        return { data: { success: true }, error: null };
+      } catch (error: unknown) {
+        setLoading(false);
+        console.log(error);
+        const errorMessage =
+          error instanceof Error ? error.message : "An unknown error occurred";
+        throw new Error(errorMessage);
+      }
+    };
 
-  //   toast.promise(promise, {
-  //     loading: "Creating your account...",
-  //     success: () => {
-  //       startTransition(() => router.push("/chats"));
-  //       return "Success!";
-  //     },
-  //     error: () => {
-  //       return <div>Anon login failed!</div>;
-  //     },
-  //   });
-  // }
+    toast.promise(promise, {
+      loading: "Creating your account...",
+      success: () => {
+        startTransition(() => router.push("/chats"));
+        return "Success!";
+      },
+      error: () => {
+        return <div>Anon login failed!</div>;
+      },
+    });
+  }
 
   const label = (text: string) => {
     if (isPending) return "Redirecting you...";
@@ -159,6 +159,15 @@ export function AuthForm({ flow }: { flow: "signIn" | "signUp" }) {
           type="submit"
         >
           {label("Continue")}
+        </Button>
+        <Button
+          disabled={loading || isPending}
+          className="w-full"
+          type="button"
+          variant="secondary"
+          onClick={anonLogin}
+        >
+          Anonymous Login
         </Button>
       </form>
     </Form>
