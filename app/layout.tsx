@@ -6,6 +6,7 @@ import ConvexClientProvider from "@/components/convex-client-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { ViewTransitions } from "next-view-transitions";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,7 +45,7 @@ export default function RootLayout({
                 enableSystem
                 disableTransitionOnChange
               >
-                {children}
+                <NuqsAdapter>{children}</NuqsAdapter>
               </ThemeProvider>
             </ViewTransitions>
             <Toaster />
