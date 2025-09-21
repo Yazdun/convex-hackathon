@@ -164,7 +164,7 @@ export function AuthForm({ flow }: { flow: "signIn" | "signUp" }) {
           disabled={loading || isPending}
           className="w-full"
           type="button"
-          variant="secondary"
+          variant="ghost"
           onClick={anonLogin}
         >
           Anonymous Login
