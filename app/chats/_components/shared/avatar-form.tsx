@@ -35,6 +35,7 @@ export function AvatarForm({ profile }: { profile: IProfile }) {
 
       await updateProfile({
         displayName: profile.displayName,
+        username: profile.username ?? "",
         avatarId: storageId,
       });
     } catch (error) {

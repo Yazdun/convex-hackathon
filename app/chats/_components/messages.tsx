@@ -31,7 +31,7 @@ function Message({ data }: { data: IMessage }) {
   return (
     <div className="flex gap-3 py-2.5 px-2.5 w-full hover:bg-secondary/20 group">
       <Avatar className="w-10 h-10">
-        <AvatarImage src={data.avatarUrl ?? ""} />
+        <AvatarImage src={data.avatarUrl ?? undefined} />
         <AvatarFallback>{data.displayName.charAt(0)}</AvatarFallback>
       </Avatar>
       <div className="flex-1">

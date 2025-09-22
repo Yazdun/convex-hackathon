@@ -40,7 +40,7 @@ export function ProfileForm({ profile }: { profile: IProfile }) {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       displayName: profile.displayName,
-      userName: profile?.username,
+      userName: profile?.username ?? "",
     },
   });
   const [loading, setLoading] = useState(false);

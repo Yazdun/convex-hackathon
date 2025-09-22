@@ -30,7 +30,7 @@ export function Profile() {
         <Button variant="ghost" size="icon">
           <div className="h-7 overflow-hidden w-7">
             <Avatar className="w-7 h-7">
-              <AvatarImage src={profile?.avatarUrl ?? ""} />
+              <AvatarImage src={profile?.avatarUrl ?? undefined} />
               <AvatarFallback className="rounded-none min-w-7 min-h-7">
                 {profile?.displayName.charAt(0).toUpperCase()}
               </AvatarFallback>

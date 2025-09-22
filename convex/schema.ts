@@ -10,6 +10,7 @@ const applicationTables = {
     avatarId: v.optional(v.id("_storage")),
     type: v.optional(v.union(v.literal("channel"), v.literal("dm"))),
     participants: v.optional(v.array(v.id("users"))),
+    tags: v.optional(v.array(v.string())),
   })
     .index("by_name", ["name"])
     .index("by_type", ["type"])
