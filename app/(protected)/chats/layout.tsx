@@ -1,5 +1,5 @@
 import React from "react";
-import { Navbar } from "./_components/desktop/navbar/navbar";
+import { Navbar } from "./_components/desktop/navbar";
 import { ChatProvider } from "./_components/provider";
 
 export default async function Layout({

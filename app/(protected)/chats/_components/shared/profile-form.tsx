@@ -57,6 +57,7 @@ export function ProfileForm({ profile }: { profile: IProfile }) {
       await updateProfile({
         displayName: data.displayName.trim(),
         username: data.userName.trim(),
+        avatarId: profile.avatarId,
       });
       setLoading(false);
       toast.dismiss("profile-loading-toast");

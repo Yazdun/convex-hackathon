@@ -52,7 +52,7 @@ export function AvatarForm({ profile }: { profile: IProfile }) {
     <div className="text-center">
       <div className="relative inline-block">
         <Avatar className="w-[100px] h-[100px]">
-          <AvatarImage src={profile.avatarUrl ?? ""} />
+          <AvatarImage src={profile.avatarUrl ?? undefined} />
           <AvatarFallback>{profile.displayName.charAt(0)}</AvatarFallback>
         </Avatar>
 

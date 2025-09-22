@@ -2,6 +2,7 @@
 
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { Dot } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 interface MarkdownFormatterProps {
@@ -33,7 +34,7 @@ export function MarkdownFormatter({
             <pre className="text-foreground rounded-md border my-2 font-mono text-sm overflow-hidden">
               <div className="flex">
                 <ScrollArea type="always" className="w-1 flex-1">
-                  <div className="flex">{children}</div>
+                  <div className="flex p-2.5 bg-muted/10">{children}</div>
                   <ScrollBar orientation="horizontal" className="w-full" />
                 </ScrollArea>
               </div>
@@ -52,10 +53,10 @@ export function MarkdownFormatter({
           // Italic text
           em: ({ children }) => <em className="italic">{children}</em>,
           // Bullet points
-          ul: ({ children }) => <ul className="my-2">{children}</ul>,
+          ul: ({ children }) => <ul className="my-2 list-disc">{children}</ul>,
           li: ({ children }) => (
-            <li className="flex items-start gap-2 my-1">
-              <span className="text-foreground mt-1">•</span>
+            <li className="flex items-center my-1">
+              <Dot />
               <span>{children}</span>
             </li>
           ),

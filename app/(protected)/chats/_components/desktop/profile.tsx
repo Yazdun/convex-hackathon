@@ -3,8 +3,6 @@ import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { ProfileForm } from "../../shared/profile-form";
-import { AvatarForm } from "../../shared/avatar-form";
 import {
   Popover,
   PopoverContent,
@@ -17,6 +15,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { AvatarForm } from "../shared/avatar-form";
+import { ProfileForm } from "../shared/profile-form";
 
 export function Profile() {
   const profile = useQuery(api.profiles.get);
