@@ -1,10 +1,10 @@
 import { useState, useRef } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { IProfile } from "../types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Loader2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { IProfile } from "./types";
 
 export function AvatarForm({ profile }: { profile: IProfile }) {
   const [isUploading, setIsUploading] = useState(false);

@@ -10,8 +10,8 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import { useChat } from "../provider";
 import { CreateChannel } from "./create-channel";
+import { useChat } from "../shared/provider";
 
 export function Navbar() {
   const { channelId } = useChat();
@@ -21,22 +21,40 @@ export function Navbar() {
     channelId ? { channelId } : "skip",
   );
 
-  const { setChannelId } = useChat();
+  const { setChannelId, mode, setMode } = useChat();
 
   const renderName = () => {
+    if (mode === "create") {
+      return (
+        <motion.div
+          initial={{ opacity: 0, x: 0 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: channelId ? 10 : -10 }}
+          transition={{ duration: 0.2 }}
+          className="flex items-center gap-1.5"
+          key="Create"
+        >
+          <Button onClick={() => setMode(null)} variant="outline" size="icon">
+            <ArrowLeft size={14} />
+          </Button>
+          Create New Channel
+        </motion.div>
+      );
+    }
+
     if (channel) {
       return (
         <motion.div
           initial={{ opacity: 0, x: 0 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -10 }}
-          transition={{ duration: 0.3 }}
-          className="flex items-center gap-1"
+          transition={{ duration: 0.2 }}
+          className="flex items-center gap-1.5"
           key="Channel"
         >
           <Button
             onClick={() => setChannelId(null)}
-            variant="ghost"
+            variant="outline"
             size="icon"
           >
             <ArrowLeft size={14} />
@@ -52,7 +70,7 @@ export function Navbar() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.2 }}
           key="Loading"
         >
           <Loader2
@@ -69,7 +87,7 @@ export function Navbar() {
           initial={{ opacity: 0, x: 0 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
           exit={{ opacity: 0, x: 10 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.2 }}
           key="Homepage"
         >
           Homepage

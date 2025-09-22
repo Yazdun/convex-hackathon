@@ -1,11 +1,6 @@
 import React from "react";
-import { Chats } from "./_components/chats";
-import * as FadeIn from "@/components/motion/staggers/fade";
+import { Chats } from "./_components/shared/chats";
 
 export default function Page() {
-  return (
-    <FadeIn.Container>
-      <Chats />
-    </FadeIn.Container>
-  );
+  return <Chats />;
 }
