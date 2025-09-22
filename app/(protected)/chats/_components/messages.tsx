@@ -8,6 +8,8 @@ import React from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { type IMessage } from "./types";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 dayjs.extend(relativeTime);
 
@@ -50,7 +52,8 @@ function Message({ data }: { data: IMessage }) {
             ) : null}
           </div>
         </div>
-        <p className="text-sm">{data.content}</p>
+
+        <Markdown remarkPlugins={[remarkGfm]}>{data.content}</Markdown>
       </div>
     </div>
   );

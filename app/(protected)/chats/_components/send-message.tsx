@@ -12,12 +12,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useChat } from "./provider";
 import { toast } from "sonner";
 import { Send } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 
 const FormSchema = z.object({
   message: z.string(),
@@ -71,7 +71,7 @@ export function SendMessage() {
             <FormItem className="w-full">
               <FormLabel className="sr-only">Message</FormLabel>
               <FormControl>
-                <Input placeholder="Start typing..." {...field} />
+                <Textarea placeholder="Start typing..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
