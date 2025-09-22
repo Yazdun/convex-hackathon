@@ -7,6 +7,7 @@ import { useChat } from "../../provider";
 import { Profile } from "./profile";
 import { Alerts } from "./alerts";
 import { Directs } from "./directs";
+import { CreateChannel } from "./create-channel";
 
 export function Navbar() {
   const { channelId } = useChat();
@@ -36,6 +37,7 @@ export function Navbar() {
         <div>{renderName()}</div>
         <div className="flex items-center gap-1">
           <div className="flex gap-0.5">
+            <CreateChannel />
             <Directs />
             <Alerts />
             <div className="ml-0.5 flex justify-center items-center">

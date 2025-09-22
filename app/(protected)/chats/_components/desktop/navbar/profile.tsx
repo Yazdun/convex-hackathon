@@ -12,6 +12,11 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function Profile() {
   const profile = useQuery(api.profiles.get);
@@ -26,18 +31,26 @@ export function Profile() {
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <div className="h-7 overflow-hidden w-7">
-            <Avatar className="w-7 h-7">
-              <AvatarImage src={profile?.avatarUrl ?? undefined} />
-              <AvatarFallback className="rounded-none min-w-7 min-h-7">
-                {profile?.displayName.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-          </div>
-        </Button>
-      </PopoverTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <div className="h-7 overflow-hidden w-7">
+                <Avatar className="w-7 h-7">
+                  <AvatarImage src={profile?.avatarUrl ?? undefined} />
+                  <AvatarFallback className="rounded-none min-w-7 min-h-7">
+                    {profile?.displayName.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+            </Button>
+          </PopoverTrigger>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Your profile</p>
+        </TooltipContent>
+      </Tooltip>
+
       <PopoverContent className="w-[400px]">
         <div>
           <AvatarForm profile={profile} />
