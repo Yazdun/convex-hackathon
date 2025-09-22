@@ -34,8 +34,11 @@ const applicationTables = {
   userProfiles: defineTable({
     userId: v.id("users"),
     displayName: v.string(),
+    username: v.optional(v.string()),
     avatarId: v.optional(v.id("_storage")),
-  }).index("by_user", ["userId"]),
+  })
+    .index("by_user", ["userId"])
+    .index("by_username", ["username"]),
 };
 
 export default defineSchema({

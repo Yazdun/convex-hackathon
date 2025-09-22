@@ -17,7 +17,11 @@ export function Profile() {
   const profile = useQuery(api.profiles.get);
 
   if (!profile) {
-    return <Skeleton className="w-7 h-7" />;
+    return (
+      <Button variant="ghost" disabled size="icon">
+        <Skeleton className="w-7 h-7" />
+      </Button>
+    );
   }
 
   return (

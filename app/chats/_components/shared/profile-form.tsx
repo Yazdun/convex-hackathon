@@ -25,6 +25,14 @@ const FormSchema = z.object({
   displayName: z.string().min(2, {
     message: "Username must be at least 2 characters.",
   }),
+  userName: z
+    .string()
+    .min(2, {
+      message: "Username must be at least 2 characters.",
+    })
+    .regex(/^[a-zA-Z0-9]+$/, {
+      message: "Username can only contain letters and numbers.",
+    }),
 });
 
 export function ProfileForm({ profile }: { profile: IProfile }) {
@@ -32,31 +40,42 @@ export function ProfileForm({ profile }: { profile: IProfile }) {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       displayName: profile.displayName,
+      userName: profile?.username,
     },
   });
   const [loading, setLoading] = useState(false);
 
   const updateProfile = useMutation(api.profiles.update);
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
     setLoading(true);
-    const promise = async () => {
-      try {
-        await updateProfile({
-          displayName: data.displayName.trim(),
-        });
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        console.error("Failed to update profile:", error);
-      }
-    };
-
-    toast.promise(promise, {
-      loading: "Updating...",
-      success: "Success!",
-      error: "Failed to update your profile!",
+    toast.loading("Updating...", {
+      id: "profile-loading-toast",
     });
+
+    try {
+      await updateProfile({
+        displayName: data.displayName.trim(),
+        username: data.userName.trim(),
+      });
+      setLoading(false);
+      toast.dismiss("profile-loading-toast");
+      toast.success("Success!");
+    } catch (error: unknown) {
+      setLoading(false);
+      console.log(error);
+      toast.dismiss("profile-loading-toast");
+
+      const errorMessage =
+        error instanceof Error ? error.message : "An unknown error occurred";
+
+      if (errorMessage.includes("Username is already taken")) {
+        toast.error("Username is already taken");
+        return;
+      }
+
+      toast.error(errorMessage || "Failed to update your profile!");
+    }
   }
 
   return (
@@ -67,9 +86,9 @@ export function ProfileForm({ profile }: { profile: IProfile }) {
           name="displayName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Display name</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder="John Doe" {...field} />
               </FormControl>
               <FormDescription>
                 This is your public display name.
@@ -78,6 +97,21 @@ export function ProfileForm({ profile }: { profile: IProfile }) {
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="userName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Username</FormLabel>
+              <FormControl>
+                <Input placeholder="JohnDoe" {...field} />
+              </FormControl>
+              <FormDescription>This is your unique username.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <div className="flex justify-end gap-3">
           <LogoutButton />
           <Button disabled={loading} size="sm" variant="outline" type="submit">

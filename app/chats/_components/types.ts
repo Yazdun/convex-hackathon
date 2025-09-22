@@ -28,4 +28,5 @@ export interface IProfile {
   displayName: string;
   avatarUrl: string | null;
   avatarId: Id<"_storage"> | undefined;
+  username?: string;
 }
