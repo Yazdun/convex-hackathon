@@ -22,9 +22,12 @@ import { RiJavaLine } from "react-icons/ri";
 import { TbBrandCSharp } from "react-icons/tb";
 import { FaRust } from "react-icons/fa";
 import { RiPhpLine } from "react-icons/ri";
-
 import { MultiSelect } from "@/components/multi-select";
 import { Plus } from "lucide-react";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { toast } from "sonner";
+import { useChat } from "./provider";
 
 export const tagsList = [
   { value: "TypeScript", label: "TypeScript", icon: SiTypescript },
@@ -44,7 +47,7 @@ const FormSchema = z.object({
   description: z.string().min(2, {
     message: "description must be at least 10 characters.",
   }),
-  frameworks: z
+  tags: z
     .array(z.string())
     .min(1, { message: "Please select at least one framework." }),
 });
@@ -54,12 +57,35 @@ export function ChannelForm() {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",
-      frameworks: [],
+      tags: [],
     },
   });
 
+  const { setMode, setChannelId } = useChat();
+  const createChannel = useMutation(api.channels.create);
+
   function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log(data);
+
+    const promise = async () => {
+      try {
+        const channelId = await createChannel({
+          name: data.name,
+          description: data.description,
+          tags: data.tags,
+        });
+        setMode(null);
+        setChannelId(channelId);
+      } catch (error) {
+        console.error("Failed to create channel:", error);
+      }
+    };
+
+    toast.promise(promise, {
+      loading: "Loading...",
+      success: "Success!",
+      error: "Failed to create the channel",
+    });
   }
 
   return (
@@ -101,7 +127,7 @@ export function ChannelForm() {
         />
         <FormField
           control={form.control}
-          name="frameworks"
+          name="tags"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Select Tags</FormLabel>

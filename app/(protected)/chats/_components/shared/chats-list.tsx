@@ -16,7 +16,7 @@ export function ChatsList() {
             onClick={() => setChannelId(channel._id)}
             className="p-2.5 w-full flex  hover:bg-secondary transition-all rounded-lg"
           >
-            #{channel.name}
+            {channel.name}
           </button>
         );
       })}

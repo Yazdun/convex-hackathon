@@ -59,7 +59,7 @@ export function Navbar() {
           >
             <ArrowLeft size={14} />
           </Button>
-          #{channel.name}
+          {channel.name}
         </motion.div>
       );
     }

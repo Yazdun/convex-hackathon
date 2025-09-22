@@ -46,6 +46,7 @@ export const create = mutation({
   args: {
     name: v.string(),
     description: v.optional(v.string()),
+    tags: v.optional(v.array(v.string())),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -55,6 +56,7 @@ export const create = mutation({
       name: args.name,
       description: args.description,
       createdBy: userId,
+      tags: args.tags,
       type: "channel",
     });
   },
