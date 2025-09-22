@@ -31,8 +31,6 @@ import {
  * Animation types and configurations
  */
 export interface AnimationConfig {
-  /** Badge animation type */
-  badgeAnimation?: "bounce" | "pulse" | "wiggle" | "fade" | "slide" | "none";
   /** Popover animation type */
   popoverAnimation?: "scale" | "slide" | "fade" | "flip" | "none";
   /** Option hover animation type */
@@ -57,18 +55,9 @@ const multiSelectVariants = cva("m-1 transition-all duration-300 ease-in-out", {
         "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
       inverted: "inverted",
     },
-    badgeAnimation: {
-      bounce: "hover:scale-105",
-      pulse: "hover:animate-pulse",
-      wiggle: "hover:animate-wiggle",
-      fade: "hover:opacity-80",
-      slide: "hover:translate-x-1",
-      none: "",
-    },
   },
   defaultVariants: {
     variant: "default",
-    badgeAnimation: "bounce",
   },
 });
 
@@ -483,28 +472,6 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 
     const responsiveSettings = getResponsiveSettings();
 
-    const getBadgeAnimationClass = () => {
-      if (animationConfig?.badgeAnimation) {
-        switch (animationConfig.badgeAnimation) {
-          case "bounce":
-            return isAnimating ? "animate-bounce" : "";
-          case "pulse":
-            return "hover:animate-pulse";
-          case "wiggle":
-            return "hover:animate-wiggle";
-          case "fade":
-            return "hover:opacity-80";
-          case "slide":
-            return "hover:translate-x-1";
-          case "none":
-            return "";
-          default:
-            return "";
-        }
-      }
-      return isAnimating ? "animate-bounce" : "";
-    };
-
     const getPopoverAnimationClass = () => {
       if (animationConfig?.popoverAnimation) {
         switch (animationConfig.popoverAnimation) {
@@ -859,7 +826,6 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                           <Badge
                             key={value}
                             className={cn(
-                              getBadgeAnimationClass(),
                               multiSelectVariants({ variant }),
                               customStyle?.gradient &&
                                 "text-white border-transparent",
@@ -934,7 +900,6 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                       <Badge
                         className={cn(
                           "bg-transparent text-foreground border-foreground/1 hover:bg-transparent",
-                          getBadgeAnimationClass(),
                           multiSelectVariants({ variant }),
                           responsiveSettings.compactMode &&
                             "text-xs px-1.5 py-0.5",

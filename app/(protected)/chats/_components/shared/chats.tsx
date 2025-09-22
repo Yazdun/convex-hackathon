@@ -5,7 +5,7 @@ import { Messages } from "./messages";
 import { SendMessage } from "./send-message";
 import { useChat } from "./provider";
 import { ChatsList } from "./chats-list";
-import { CreateChannelForm } from "./create-channel-form";
+import { ChannelForm } from "./channel-form";
 
 export function Chats() {
   const { channelId, mode } = useChat();
@@ -14,7 +14,7 @@ export function Chats() {
     if (mode === "create") {
       return (
         <div className="w-full max-w-2xl p-2.5 m-auto">
-          <CreateChannelForm />
+          <ChannelForm />
         </div>
       );
     }
@@ -22,7 +22,7 @@ export function Chats() {
     if (mode === "edit") {
       return (
         <div className="w-full max-w-2xl p-2.5 m-auto">
-          <CreateChannelForm />
+          <ChannelForm />
         </div>
       );
     }
