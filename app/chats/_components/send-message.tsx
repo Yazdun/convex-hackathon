@@ -16,14 +16,14 @@ import { Input } from "@/components/ui/input";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useChat } from "./provider";
+import { toast } from "sonner";
+import { Send } from "lucide-react";
 
 const FormSchema = z.object({
-  message: z.string().min(1, {
-    message: "Message must be at least 2 characters.",
-  }),
+  message: z.string(),
 });
 
-export function Send() {
+export function SendMessage() {
   const { replyingTo, channelId } = useChat();
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -35,6 +35,11 @@ export function Send() {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     if (!channelId) {
+      return;
+    }
+
+    if (!data.message || data.message === "" || !data.message.length) {
+      toast.error("Message cannot be empty!");
       return;
     }
 
@@ -72,7 +77,9 @@ export function Send() {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button size="icon" variant="ghost" type="submit">
+          <Send />
+        </Button>
       </form>
     </Form>
   );

@@ -21,3 +21,11 @@ export interface IMessage {
   isOwner: boolean;
   _creationTime: number;
 }
+
+export interface IProfile {
+  userId: Id<"users">;
+  email: string | undefined;
+  displayName: string;
+  avatarUrl: string | null;
+  avatarId: Id<"_storage"> | undefined;
+}

@@ -1,19 +1,20 @@
-import {
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
 import { Inbox } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 
 export function Directs() {
   return (
-    <NavigationMenuItem>
-      <NavigationMenuTrigger className="w-9 h-9">
-        <div>
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="ghost" size="icon">
           <Inbox size={19} />
-        </div>
-      </NavigationMenuTrigger>
-      <NavigationMenuContent>hello</NavigationMenuContent>
-    </NavigationMenuItem>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent>Place content for the popover here.</PopoverContent>
+    </Popover>
   );
 }

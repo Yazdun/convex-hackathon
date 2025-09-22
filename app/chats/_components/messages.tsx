@@ -40,11 +40,11 @@ function Message({ data }: { data: IMessage }) {
           <span className="text-sm text-muted-foreground">
             {dayjs(data._creationTime).fromNow()}
           </span>
-          <div className="opacity-0 ml-2 group-hover:opacity-100 transition-opacity">
+          <div className="opacity-0 ml-2 flex items-center gap-2 group-hover:opacity-100 transition-opacity">
             <button className="text-sm">Reply</button>
             {data.isOwner ? (
               <>
-                <button className="text-sm">Reply</button>
+                <button className="text-sm">Edit</button>
                 <button className="text-sm text-destructive">Delete</button>
               </>
             ) : null}

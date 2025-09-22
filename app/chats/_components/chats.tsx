@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Messages } from "./messages";
-import { Send } from "./send";
+import { SendMessage } from "./send-message";
 import { useChat } from "./provider";
 
 export function Chats() {
@@ -13,13 +13,13 @@ export function Chats() {
       <div>
         {channelId ? (
           <div>
-            <div className="w-full max-w-2xl m-auto">
+            <div className="w-full pb-20 max-w-2xl m-auto">
               <Messages channelId={channelId} />
             </div>
             <div className=" bottom-0 left-0  right-0 fixed bg-background z-50">
               <div className="py-2.5 flex justify-center w-full">
                 <div className="w-full max-w-2xl">
-                  <Send />
+                  <SendMessage />
                 </div>
               </div>
             </div>

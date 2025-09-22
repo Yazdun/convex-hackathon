@@ -1,20 +1,21 @@
-import {
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
 import { Bell } from "lucide-react";
 import React from "react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 
 export function Alerts() {
   return (
-    <NavigationMenuItem>
-      <NavigationMenuTrigger className="w-9 h-9 ">
-        <div>
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button size="icon" variant="ghost">
           <Bell size={19} />
-        </div>
-      </NavigationMenuTrigger>
-      <NavigationMenuContent>hello</NavigationMenuContent>
-    </NavigationMenuItem>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent>Place content for the popover here.</PopoverContent>
+    </Popover>
   );
 }
