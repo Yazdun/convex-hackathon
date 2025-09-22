@@ -60,6 +60,7 @@ export const list = query({
           displayName: profile?.displayName || author?.email || "Unknown",
           avatarUrl,
           fileUrl,
+          isOwner: userId === profile?.userId,
           parentMessage,
         };
       }),
