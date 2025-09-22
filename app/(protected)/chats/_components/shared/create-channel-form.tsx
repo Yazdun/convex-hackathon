@@ -16,6 +16,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
+import { MultiSelect } from "@/components/multi-select";
+
+const frameworksList = [
+  { value: "next.js", label: "Next.js" },
+  { value: "react", label: "React" },
+  { value: "vue", label: "Vue.js" },
+  { value: "angular", label: "Angular" },
+];
+
 const FormSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
@@ -23,6 +32,9 @@ const FormSchema = z.object({
   description: z.string().min(2, {
     message: "description must be at least 10 characters.",
   }),
+  frameworks: z
+    .array(z.string())
+    .min(1, { message: "Please select at least one framework." }),
 });
 
 export function CreateChannelForm() {
@@ -30,6 +42,7 @@ export function CreateChannelForm() {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",
+      frameworks: [],
     },
   });
 
@@ -72,6 +85,25 @@ export function CreateChannelForm() {
               <FormDescription>
                 This is your public display name.
               </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="frameworks"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Select Frameworks</FormLabel>
+              <FormControl>
+                <MultiSelect
+                  badgeAnimation="none"
+                  options={frameworksList}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  placeholder="Choose frameworks..."
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
