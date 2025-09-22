@@ -6,13 +6,12 @@ import React from "react";
 import { Profile } from "./profile";
 import { Alerts } from "./alerts";
 import { Directs } from "./directs";
-import { CreateChannel } from "./create-channel";
 import { ModeToggle } from "@/components/mode-toggle";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "next-view-transitions";
 import { motion, AnimatePresence } from "framer-motion";
 import { useChat } from "../provider";
+import { CreateChannel } from "./create-channel";
 
 export function Navbar() {
   const { channelId } = useChat();
@@ -22,21 +21,25 @@ export function Navbar() {
     channelId ? { channelId } : "skip",
   );
 
+  const { setChannelId } = useChat();
+
   const renderName = () => {
     if (channel) {
       return (
         <motion.div
-          initial={{ opacity: 0, x: -10 }}
+          initial={{ opacity: 0, x: 0 }}
           animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 10 }}
-          transition={{ duration: 0.2 }}
+          exit={{ opacity: 0, x: -10 }}
+          transition={{ duration: 0.3 }}
           className="flex items-center gap-1"
           key="Channel"
         >
-          <Button variant="ghost" size="icon">
-            <Link href="/chats">
-              <ArrowLeft size={14} />
-            </Link>
+          <Button
+            onClick={() => setChannelId(null)}
+            variant="ghost"
+            size="icon"
+          >
+            <ArrowLeft size={14} />
           </Button>
           #{channel.name}
         </motion.div>
@@ -46,13 +49,16 @@ export function Navbar() {
     if (channelId && !channel) {
       return (
         <motion.div
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 10 }}
-          transition={{ duration: 0.2 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
           key="Loading"
         >
-          Loading...
+          <Loader2
+            size={19}
+            className="animate-spin text-muted-foreground/50"
+          />
         </motion.div>
       );
     }
@@ -60,10 +66,10 @@ export function Navbar() {
     if (!channelId) {
       return (
         <motion.div
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, x: 0 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
           exit={{ opacity: 0, x: 10 }}
-          transition={{ duration: 0.2 }}
+          transition={{ duration: 0.3 }}
           key="Homepage"
         >
           Homepage

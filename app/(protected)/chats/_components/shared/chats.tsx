@@ -4,7 +4,6 @@ import React from "react";
 import { Messages } from "./messages";
 import { SendMessage } from "./send-message";
 import { useChat } from "./provider";
-import { ChatsList } from "./chats-list";
 
 export function Chats() {
   const { channelId } = useChat();
@@ -25,11 +24,7 @@ export function Chats() {
               </div>
             </div>
           </div>
-        ) : (
-          <div className="w-full max-w-2xl m-auto">
-            <ChatsList />
-          </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

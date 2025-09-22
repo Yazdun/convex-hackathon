@@ -21,7 +21,7 @@ const FormSchema = z.object({
   }),
 });
 
-export function InputForm() {
+export function CreateChannelForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {

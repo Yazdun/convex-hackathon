@@ -14,6 +14,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { CreateChannelForm } from "../shared/create-channel-form";
 
 export function CreateChannel() {
   return (
@@ -27,7 +28,7 @@ export function CreateChannel() {
           </DialogTrigger>
         </TooltipTrigger>
         <TooltipContent>
-          <p>Create new campfire</p>
+          <p>Create new channel</p>
         </TooltipContent>
       </Tooltip>
       <DialogContent>
@@ -38,6 +39,7 @@ export function CreateChannel() {
             account and remove your data from our servers.
           </DialogDescription>
         </DialogHeader>
+        <CreateChannelForm />
       </DialogContent>
     </Dialog>
   );
