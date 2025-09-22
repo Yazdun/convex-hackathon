@@ -77,7 +77,7 @@ export function SendMessage() {
             </FormItem>
           )}
         />
-        <Button size="icon" variant="ghost" type="submit">
+        <Button size="icon" variant="outline" type="submit">
           <Send />
         </Button>
       </form>

@@ -8,8 +8,7 @@ import React from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { type IMessage } from "./types";
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { MarkdownFormatter } from "./shared/mdx";
 
 dayjs.extend(relativeTime);
 
@@ -31,7 +30,7 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
 
 function Message({ data }: { data: IMessage }) {
   return (
-    <div className="flex gap-3 py-2.5 px-2.5 w-full hover:bg-secondary/20 group">
+    <div className="flex gap-3 py-2.5 px-2.5 w-full rounded-lg hover:bg-secondary/20 group">
       <Avatar className="w-10 h-10">
         <AvatarImage src={data.avatarUrl ?? undefined} />
         <AvatarFallback>{data.displayName.charAt(0)}</AvatarFallback>
@@ -52,8 +51,8 @@ function Message({ data }: { data: IMessage }) {
             ) : null}
           </div>
         </div>
-
-        <Markdown remarkPlugins={[remarkGfm]}>{data.content}</Markdown>
+        {/*{data.content}*/}
+        <MarkdownFormatter text={data.content} />
       </div>
     </div>
   );
