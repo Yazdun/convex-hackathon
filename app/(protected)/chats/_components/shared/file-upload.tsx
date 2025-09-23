@@ -5,12 +5,14 @@ import { api } from "@/convex/_generated/api";
 import { useChat } from "./provider";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
-import { AudioLines, Camera } from "lucide-react";
+import { AudioLines, Camera, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function MediaUpload({ channelId }: { channelId: Id<"channels"> }) {
   const { replyingTo, setReplyingTo, inputValue, setInputValue } = useChat();
   const [isRecording, setIsRecording] = useState(false);
+  const [isImageUploading, setIsImageUploading] = useState(false);
+  const [isVoiceUploading, setIsVoiceUploading] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null,
   );
@@ -38,7 +40,12 @@ export function MediaUpload({ channelId }: { channelId: Id<"channels"> }) {
     }
   };
 
-  const handleFileUpload = async (file: File, type: "image" | "audio") => {
+  const handleFileUpload = async (
+    file: File,
+    type: "image" | "audio",
+    setLoading: (loading: boolean) => void,
+  ) => {
+    setLoading(true);
     try {
       const uploadUrl = await generateUploadUrl();
 
@@ -66,13 +73,15 @@ export function MediaUpload({ channelId }: { channelId: Id<"channels"> }) {
       if (replyingTo) setReplyingTo(undefined);
     } catch (error) {
       console.error("Failed to upload file:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && file.type.startsWith("image/")) {
-      handleFileUpload(file, "image");
+      handleFileUpload(file, "image", setIsImageUploading);
     }
     e.target.value = "";
   };
@@ -95,7 +104,7 @@ export function MediaUpload({ channelId }: { channelId: Id<"channels"> }) {
         const audioFile = new File([audioBlob], "voice-message.mp3", {
           type: "audio/mpeg",
         });
-        await handleFileUpload(audioFile, "audio");
+        await handleFileUpload(audioFile, "audio", setIsVoiceUploading);
 
         // Stop all tracks to release microphone
         stream.getTracks().forEach((track) => track.stop());
@@ -135,8 +144,13 @@ export function MediaUpload({ channelId }: { channelId: Id<"channels"> }) {
             onClick={() => fileInputRef.current?.click()}
             title="Upload Image"
             className="shrink-0 size-11"
+            disabled={isImageUploading}
           >
-            <Camera size={18} />
+            {isImageUploading ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <Camera size={18} />
+            )}
           </Button>
 
           {/* Voice Recording */}
@@ -146,12 +160,17 @@ export function MediaUpload({ channelId }: { channelId: Id<"channels"> }) {
             onClick={isRecording ? stopRecording : startRecording}
             title={isRecording ? "Stop Recording" : "Record Voice Message"}
             className="shrink-0 size-11"
+            disabled={isVoiceUploading}
           >
-            <AudioLines
-              className={cn(
-                isRecording ? "text-red-500 animate-pulse" : "text-2xl",
-              )}
-            />
+            {isVoiceUploading ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <AudioLines
+                className={cn(
+                  isRecording ? "text-red-500 animate-pulse" : "text-2xl",
+                )}
+              />
+            )}
           </Button>
         </div>
       </form>

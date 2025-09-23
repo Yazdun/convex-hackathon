@@ -12,6 +12,7 @@ import { MarkdownFormatter } from "./mdx";
 import { DeleteMessage } from "./delete-message";
 import { useChat } from "./provider";
 import { cn } from "@/lib/utils";
+import { VoiceMessage } from "./voice-message";
 
 dayjs.extend(relativeTime);
 
@@ -41,10 +42,11 @@ function Message({ message }: { message: IMessage }) {
         <div>
           <div>
             {message.content && <MarkdownFormatter text={message.content} />}
-            <audio controls className="max-w-sm">
+            {/*<audio controls className="max-w-sm">
               <source src={message.fileUrl} type="audio/mpeg" />
               Your browser does not support the audio element.
-            </audio>
+            </audio>*/}
+            <VoiceMessage fileUrl={message.fileUrl} />
           </div>
         </div>
       );
