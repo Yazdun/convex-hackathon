@@ -59,7 +59,7 @@ export function Navbar() {
           >
             <ArrowLeft size={14} />
           </Button>
-          {channel.name}
+          #{channel.name}
         </motion.div>
       );
     }
@@ -88,9 +88,9 @@ export function Navbar() {
           animate={{ opacity: 1, x: 0, scale: 1 }}
           exit={{ opacity: 0, x: 10 }}
           transition={{ duration: 0.2 }}
-          key="Homepage"
+          key="Explore"
         >
-          Homepage
+          Explore
         </motion.div>
       );
     }

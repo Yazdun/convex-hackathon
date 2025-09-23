@@ -14,12 +14,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { IProfile } from "../types";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { useState } from "react";
 import { LogoutButton } from "./logout-button";
+import { IProfile } from "./types";
 
 const FormSchema = z.object({
   displayName: z.string().min(2, {

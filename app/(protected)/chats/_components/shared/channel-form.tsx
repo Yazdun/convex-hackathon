@@ -41,9 +41,15 @@ export const tagsList = [
 ];
 
 const FormSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
+  name: z
+    .string()
+    .min(2, {
+      message: "Name must be at least 2 characters.",
+    })
+    .regex(/^[a-zA-Z0-9_-]+$/, {
+      message:
+        "Name can only contain letters, numbers, underscores, and dashes. Spaces and other special characters are not allowed.",
+    }),
   description: z.string().min(2, {
     message: "description must be at least 10 characters.",
   }),
@@ -65,8 +71,6 @@ export function ChannelForm() {
   const createChannel = useMutation(api.channels.create);
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
-
     const promise = async () => {
       try {
         const channelId = await createChannel({
