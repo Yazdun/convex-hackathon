@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -165,6 +166,21 @@ const PreviewWidget = ({
 }) => {
   const { scrollToMessage } = useChat();
   const isEdit = type === "edit";
+
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscapeKey);
+
+    return () => {
+      document.removeEventListener("keydown", handleEscapeKey);
+    };
+  }, [onClose]);
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9, y: 10 }}

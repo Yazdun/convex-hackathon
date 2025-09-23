@@ -50,9 +50,14 @@ const FormSchema = z.object({
       message:
         "Name can only contain letters, numbers, underscores, and dashes. Spaces and other special characters are not allowed.",
     }),
-  description: z.string().min(2, {
-    message: "description must be at least 10 characters.",
-  }),
+  description: z
+    .string()
+    .min(2, {
+      message: "Description must be at least 10 characters.",
+    })
+    .max(250, {
+      message: "Description must be less than 250 characters.",
+    }),
   tags: z
     .array(z.string())
     .min(1, { message: "Please select at least one framework." }),

@@ -43,10 +43,6 @@ function Message({ message }: { message: IMessage }) {
         <div>
           <div>
             {message.content && <MarkdownFormatter text={message.content} />}
-            {/*<audio controls className="max-w-sm">
-              <source src={message.fileUrl} type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>*/}
             <VoiceMessage fileUrl={message.fileUrl} />
           </div>
         </div>
@@ -110,11 +106,18 @@ function Message({ message }: { message: IMessage }) {
           <AvatarFallback>{message.displayName.charAt(0)}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-sm">{message.displayName}</span>
-            <span className="text-sm text-muted-foreground">
-              {dayjs(message._creationTime).fromNow()}
-            </span>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-sm">
+                {message.displayName}
+              </span>
+              <span className="text-sm text-muted-foreground">
+                {dayjs(message._creationTime).fromNow()}
+              </span>
+              <span className="text-sm text-muted-foreground">
+                {message.editedAt ? "(edited)" : null}
+              </span>
+            </div>
             <div className="opacity-0 ml-2 flex items-center gap-2 group-hover:opacity-100 transition-opacity">
               <button
                 onClick={() => {

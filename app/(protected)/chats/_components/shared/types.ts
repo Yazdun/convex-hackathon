@@ -31,3 +31,16 @@ export interface IProfile {
   avatarId: Id<"_storage"> | undefined;
   username?: string;
 }
+
+export interface IChannel {
+  users: IProfile[];
+  _id: Id<"channels">;
+  _creationTime: number;
+  description?: string | undefined;
+  avatarId?: Id<"_storage"> | undefined;
+  type?: "channel" | "dm" | undefined;
+  participants?: Id<"users">[] | undefined;
+  tags?: string[] | undefined;
+  name: string;
+  createdBy: Id<"users">;
+}

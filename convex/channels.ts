@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { Id } from "./_generated/dataModel";
 
 export const list = query({
   args: {},
@@ -8,37 +9,97 @@ export const list = query({
     const userId = await getAuthUserId(ctx);
     if (!userId) return [];
 
-    // Get regular channels (including legacy ones without type)
+    // Get all channels
     const allChannels = await ctx.db.query("channels").collect();
-    const channels = allChannels.filter((c) => !c.type || c.type === "channel");
 
-    // Get DM channels where user is a participant
-    const dmChannels = allChannels.filter(
-      (c) => c.type === "dm" && c.participants?.includes(userId),
-    );
+    // Process all channels to have consistent structure
+    const channelsWithUsers = await Promise.all(
+      allChannels.map(async (channel) => {
+        let users: {
+          userId: Id<"users">;
+          email: string | undefined;
+          displayName: string;
+          avatarUrl: string | null;
+          avatarId: Id<"_storage"> | undefined;
+          username: string | undefined;
+        }[] = [];
 
-    // Get other user info for DMs
-    const dmsWithUserInfo = await Promise.all(
-      dmChannels.map(async (dm) => {
-        const otherUserId = dm.participants?.find((id) => id !== userId);
-        if (!otherUserId) return dm;
+        if (channel.type === "dm" && channel.participants?.includes(userId)) {
+          // For DM channels, include all participants
+          users = await Promise.all(
+            channel.participants.map(async (participantId) => {
+              const user = await ctx.db.get(participantId);
+              const profile = await ctx.db
+                .query("userProfiles")
+                .withIndex("by_user", (q) => q.eq("userId", participantId))
+                .first();
 
-        const otherUser = await ctx.db.get(otherUserId);
-        const otherProfile = await ctx.db
-          .query("userProfiles")
-          .withIndex("by_user", (q) => q.eq("userId", otherUserId))
-          .first();
+              let avatarUrl = null;
+              if (profile?.avatarId) {
+                avatarUrl = await ctx.storage.getUrl(profile.avatarId);
+              }
 
-        return {
-          ...dm,
-          name: otherProfile?.displayName || otherUser?.email || "Unknown User",
-          description: "Direct Message",
-          otherUserId,
-        };
+              return {
+                userId: participantId,
+                email: user?.email,
+                displayName: profile?.displayName || user?.email || "Unknown",
+                avatarUrl,
+                avatarId: profile?.avatarId,
+                username: profile?.username,
+              };
+            }),
+          );
+
+          // Set DM name to the other user's display name
+          const otherUserId = channel.participants?.find((id) => id !== userId);
+          const otherUserInfo = users.find((u) => u.userId === otherUserId);
+
+          return {
+            ...channel,
+            name: otherUserInfo?.displayName || "Unknown User",
+            description: "Direct Message",
+            users,
+          };
+        } else if (!channel.type || channel.type === "channel") {
+          // For regular channels
+          if (channel.participants && channel.participants.length > 0) {
+            users = await Promise.all(
+              channel.participants.map(async (participantId) => {
+                const user = await ctx.db.get(participantId);
+                const profile = await ctx.db
+                  .query("userProfiles")
+                  .withIndex("by_user", (q) => q.eq("userId", participantId))
+                  .first();
+
+                let avatarUrl = null;
+                if (profile?.avatarId) {
+                  avatarUrl = await ctx.storage.getUrl(profile.avatarId);
+                }
+
+                return {
+                  userId: participantId,
+                  email: user?.email,
+                  displayName: profile?.displayName || user?.email || "Unknown",
+                  avatarUrl,
+                  avatarId: profile?.avatarId,
+                  username: profile?.username,
+                };
+              }),
+            );
+          }
+
+          return {
+            ...channel,
+            users,
+          };
+        }
+
+        return null; // Filter out channels that don't match criteria
       }),
     );
 
-    return [...channels, ...dmsWithUserInfo];
+    // Filter out null values and return
+    return channelsWithUsers.filter((channel) => channel !== null);
   },
 });
 
