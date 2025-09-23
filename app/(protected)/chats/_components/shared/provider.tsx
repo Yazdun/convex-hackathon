@@ -22,6 +22,8 @@ import { Id } from "@/convex/_generated/dataModel";
 interface ContextProps {
   replyingTo?: IMessage;
   setReplyingTo: Dispatch<SetStateAction<IMessage | undefined>>;
+  toEdit?: IMessage;
+  setToEdit: Dispatch<SetStateAction<IMessage | undefined>>;
   channelId: Id<"channels"> | null;
   setChannelId: (val: string | null) => void;
   setMode: (
@@ -49,6 +51,7 @@ export const Context = createContext<ContextProps | undefined>(undefined);
 
 export const ChatProvider = (props: { children: React.ReactNode }) => {
   const [replyingTo, setReplyingTo] = useState<IMessage | undefined>();
+  const [toEdit, setToEdit] = useState<IMessage | undefined>();
   const [qchannel, qsetChannel] = useQueryState("channel", parseAsString);
   const [mode, setMode] = useQueryState(
     "mode",
@@ -107,10 +110,6 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
     }
   }, [inputValue]);
 
-  useEffect(() => {
-    setReplyingTo(undefined);
-  }, [channelId]);
-
   const scrollToBottom = () => {
     const scrollArea = scrollAreaRef.current;
     if (scrollArea) {
@@ -135,6 +134,22 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
     }
   };
 
+  // Auto-focus textarea on component mount
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.focus();
+    }
+  }, [replyingTo?._id]);
+
+  useEffect(() => {
+    setReplyingTo(undefined);
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.focus();
+    }
+  }, [channelId]);
+
   const value: ContextProps = {
     replyingTo,
     setReplyingTo,
@@ -154,6 +169,8 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
     scrollToTop,
     setHighlightedMessage,
     messageRefs,
+    toEdit,
+    setToEdit,
   };
 
   return <Context.Provider value={value}>{props.children}</Context.Provider>;

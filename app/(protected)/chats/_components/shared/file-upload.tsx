@@ -9,7 +9,8 @@ import { AudioLines, Camera, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function MediaUpload({ channelId }: { channelId: Id<"channels"> }) {
-  const { replyingTo, setReplyingTo, inputValue, setInputValue } = useChat();
+  const { replyingTo, setReplyingTo, inputValue, setInputValue, toEdit } =
+    useChat();
   const [isRecording, setIsRecording] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
   const [isVoiceUploading, setIsVoiceUploading] = useState(false);
@@ -126,6 +127,8 @@ export function MediaUpload({ channelId }: { channelId: Id<"channels"> }) {
     }
   };
 
+  const isDisabled = toEdit ? true : false;
+
   return (
     <div>
       <form onSubmit={handleSend}>
@@ -144,7 +147,7 @@ export function MediaUpload({ channelId }: { channelId: Id<"channels"> }) {
             onClick={() => fileInputRef.current?.click()}
             title="Upload Image"
             className="shrink-0 size-11"
-            disabled={isImageUploading}
+            disabled={isImageUploading || isDisabled}
           >
             {isImageUploading ? (
               <Loader2 className="animate-spin" />
@@ -160,7 +163,7 @@ export function MediaUpload({ channelId }: { channelId: Id<"channels"> }) {
             onClick={isRecording ? stopRecording : startRecording}
             title={isRecording ? "Stop Recording" : "Record Voice Message"}
             className="shrink-0 size-11"
-            disabled={isVoiceUploading}
+            disabled={isVoiceUploading || isDisabled}
           >
             {isVoiceUploading ? (
               <Loader2 className="animate-spin" />

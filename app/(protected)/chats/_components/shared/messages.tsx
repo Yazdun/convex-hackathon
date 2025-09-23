@@ -33,8 +33,9 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
 }
 
 function Message({ message }: { message: IMessage }) {
-  const { setReplyingTo, scrollToMessage, highlightedMessage } = useChat();
-  const { messageRefs, replyingTo } = useChat();
+  const { setReplyingTo, scrollToMessage, highlightedMessage, setInputValue } =
+    useChat();
+  const { messageRefs, replyingTo, setToEdit } = useChat();
 
   const renderMessage = () => {
     if (message.type === "audio" && message.fileUrl) {
@@ -78,24 +79,15 @@ function Message({ message }: { message: IMessage }) {
       )}
     >
       {message.parentMessage ? (
-        <div className="flex pl-10 items-end hover:cursor-pointer text-xs">
+        <div className="flex pl-10 relative items-end hover:cursor-pointer text-xs">
           <div
             className="w-full overflow-hidden pl-2.5 pb-2.5"
             onClick={() =>
               scrollToMessage(message.parentMessage?._id as string)
             }
           >
-            <div className="w-full bg-secondary border-l-2 border-border overflow-hidden relative rounded-lg max-h-[200px] p-2.5">
-              {message.parentMessage.content.length > 200 ? (
-                <div
-                  className={cn(
-                    "absolute left-0 right-0 h-[90px] z-10 group-hover:from-secondary bg-gradient-to-t from-secondary to-transparent bottom-0",
-                    replyingTo?._id === message._id && "from-secondary",
-                    highlightedMessage === message._id && "from-secondary",
-                  )}
-                />
-              ) : null}
-
+            <div className="absolute border-l-2 rounded-tl-lg border-t-2 w-[30px] h-10 left-5 -bottom-1" />
+            <div className="w-full bg-inherit border rounded-lg border-border overflow-hidden max-h-[200px] p-2.5">
               <div className="mb-1.5 flex items-center gap-1.5">
                 <Avatar className="w-5 h-5">
                   <AvatarImage
@@ -134,7 +126,15 @@ function Message({ message }: { message: IMessage }) {
               </button>
               {message.isOwner ? (
                 <>
-                  <button className="text-sm hover:underline">Edit</button>
+                  <button
+                    onClick={() => {
+                      setToEdit(message);
+                      setInputValue(message.content);
+                    }}
+                    className="text-sm hover:underline"
+                  >
+                    Edit
+                  </button>
 
                   <DeleteMessage
                     messageId={message._id}

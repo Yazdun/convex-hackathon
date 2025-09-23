@@ -5,21 +5,36 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useChat } from "./provider";
 import { toast } from "sonner";
-import { Reply, X } from "lucide-react";
+import { PencilRuler, Reply, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { AnimatePresence, motion } from "framer-motion";
 import { MediaUpload } from "./file-upload";
+import { IMessage } from "./types";
 
 export function SendMessage() {
-  const { inputValue, setInputValue, textareaRef, scrollToBottom } = useChat();
-
-  const { replyingTo, setReplyingTo, channelId, scrollToMessage } = useChat();
+  const {
+    inputValue,
+    setInputValue,
+    textareaRef,
+    scrollToBottom,
+    replyingTo,
+    toEdit,
+    setToEdit,
+    setReplyingTo,
+    channelId,
+    scrollToMessage,
+  } = useChat();
 
   const sendMessage = useMutation(api.messages.send);
+  const editMessage = useMutation(api.messages.edit);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
+      if (toEdit) {
+        handleEditMessage();
+        return;
+      }
       handleSendMessage();
     }
   };
@@ -28,6 +43,7 @@ export function SendMessage() {
     if (!inputValue.trim()) return;
 
     if (!channelId) {
+      toast.error("Missing message id!");
       return;
     }
 
@@ -51,41 +67,69 @@ export function SendMessage() {
     }
   };
 
+  const handleEditMessage = async () => {
+    if (!inputValue.trim()) return;
+    if (!toEdit) {
+      toast.error("Missing message id!");
+      return;
+    }
+    if (!channelId) {
+      toast.error("Missing channel id!");
+      return;
+    }
+
+    if (!inputValue || inputValue === "" || !inputValue) {
+      toast.error("Message cannot be empty!");
+      return;
+    }
+
+    try {
+      await editMessage({
+        content: inputValue,
+        messageId: toEdit._id,
+      });
+      scrollToMessage(toEdit._id);
+      setInputValue("");
+      setReplyingTo(undefined);
+      setToEdit(undefined);
+    } catch (error) {
+      console.error("Failed to send message:", error);
+    }
+  };
+
+  const renderWidget = () => {
+    if (replyingTo) {
+      return (
+        <PreviewWidget
+          message={replyingTo}
+          onClose={() => setReplyingTo(undefined)}
+          key={replyingTo._id}
+          type="reply"
+        />
+      );
+    }
+
+    if (toEdit) {
+      return (
+        <PreviewWidget
+          message={toEdit}
+          onClose={() => {
+            setToEdit(undefined);
+            setInputValue("");
+          }}
+          key={toEdit._id}
+          type="edit"
+        />
+      );
+    }
+
+    return null;
+  };
+
   return (
     <div className="flex gap-2 items-end relative">
       <AnimatePresence mode="wait" initial={false}>
-        {replyingTo ? (
-          <motion.div
-            key={replyingTo._id}
-            initial={{ opacity: 0, scale: 0.9, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="absolute left-0 right-0 -top-16 z-50 text-sm"
-          >
-            <div className="p-2.5 bg-popover w-full border flex items-center justify-between z-50 rounded-md">
-              <button
-                onClick={() => scrollToMessage(replyingTo._id)}
-                className="flex justify-start text-left hover:cursor-pointer w-full items-center gap-2"
-              >
-                <Reply />
-                <div>
-                  <span>Reply to {replyingTo.author}</span>
-                  <p className="text-muted-foreground">
-                    {replyingTo.content.slice(0, 50)}
-                    {replyingTo.content.length > 50 ? "..." : ""}
-                  </p>
-                </div>
-              </button>
-              <Button
-                onClick={() => setReplyingTo(undefined)}
-                variant="ghost"
-                size="icon"
-              >
-                <X />
-              </Button>
-            </div>
-          </motion.div>
-        ) : null}
+        {renderWidget()}
       </AnimatePresence>
       <Textarea
         ref={textareaRef}
@@ -109,3 +153,47 @@ export function SendMessage() {
     </div>
   );
 }
+
+const PreviewWidget = ({
+  message,
+  onClose,
+  type,
+}: {
+  message: IMessage;
+  onClose: () => void;
+  type: "edit" | "reply";
+}) => {
+  const { scrollToMessage } = useChat();
+  const isEdit = type === "edit";
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9, y: 10 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      className="absolute left-0 right-0 -top-16 z-50 text-sm"
+    >
+      <div className="p-2.5 bg-popover w-full border flex items-center justify-between z-50 rounded-md">
+        <button
+          onClick={() => scrollToMessage(message._id)}
+          className="flex justify-start text-left hover:cursor-pointer w-full items-center gap-2"
+        >
+          {isEdit ? <PencilRuler /> : <Reply />}
+          <div>
+            {isEdit ? (
+              <span>Edit message</span>
+            ) : (
+              <span>Reply to {message.author}</span>
+            )}
+            <p className="text-muted-foreground">
+              {message.content.slice(0, 50)}
+              {message.content.length > 50 ? "..." : ""}
+            </p>
+          </div>
+        </button>
+        <Button onClick={() => onClose()} variant="ghost" size="icon">
+          <X />
+        </Button>
+      </div>
+    </motion.div>
+  );
+};

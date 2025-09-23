@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Play, Pause } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -10,18 +10,20 @@ interface VoiceMessageProps {
   className?: string;
 }
 
-// Generate simple waveform data like Telegram
-const generateWaveform = (length = 30) => {
-  return Array.from({ length }, () => Math.random() * 0.8 + 0.2);
-};
-
 export function VoiceMessage({ fileUrl, className }: VoiceMessageProps) {
+  // Generate simple waveform data like Telegram
+  const generateWaveform = (length = 30) => {
+    return Array.from({ length }, () => Math.random() * 0.8 + 0.2);
+  };
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [progress, setProgress] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const waveformData = generateWaveform();
+  const waveformData = useMemo(() => generateWaveform(), [fileUrl]);
+
+  console.log(waveformData);
 
   useEffect(() => {
     const audio = audioRef.current;
