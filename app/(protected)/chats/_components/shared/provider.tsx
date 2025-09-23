@@ -36,6 +36,13 @@ interface ContextProps {
   inputValue: string;
   setInputValue: Dispatch<SetStateAction<string>>;
   scrollToBottom: () => void;
+  highlightedMessage: string | null;
+  setHighlightedMessage: Dispatch<SetStateAction<string | null>>;
+  scrollToMessage: (messageId: string) => void;
+  scrollToTop: () => void;
+  messageRefs: RefObject<{
+    [key: string]: HTMLDivElement | null;
+  }>;
 }
 
 export const Context = createContext<ContextProps | undefined>(undefined);
@@ -52,6 +59,42 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
   const [textareaHeight, setTextareaHeight] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  const messageRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const [highlightedMessage, setHighlightedMessage] = useState<string | null>(
+    null,
+  );
+
+  const scrollToMessage = (messageId: string) => {
+    const messageElement = messageRefs.current[messageId];
+    if (messageElement && scrollAreaRef.current) {
+      // Get the scroll area viewport
+      const viewport = scrollAreaRef.current.querySelector(
+        "[data-radix-scroll-area-viewport]",
+      );
+      if (viewport) {
+        const messageRect = messageElement.getBoundingClientRect();
+        const viewportRect = viewport.getBoundingClientRect();
+
+        // Calculate the scroll position to center the message
+        const scrollTop =
+          viewport.scrollTop +
+          messageRect.top -
+          viewportRect.top -
+          viewportRect.height / 2 +
+          messageRect.height / 2;
+
+        viewport.scrollTo({
+          top: scrollTop,
+          behavior: "smooth",
+        });
+
+        // Highlight the message temporarily
+        setHighlightedMessage(messageId);
+        setTimeout(() => setHighlightedMessage(null), 2000);
+      }
+    }
+  };
 
   const channelId = qchannel as Id<"channels"> | null;
   const setChannelId = (val: string | null) => qsetChannel(val);
@@ -83,6 +126,15 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
     }
   };
 
+  const scrollToTop = () => {
+    const viewport = scrollAreaRef.current?.querySelector(
+      "[data-radix-scroll-area-viewport]",
+    );
+    if (viewport) {
+      viewport.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   const value: ContextProps = {
     replyingTo,
     setReplyingTo,
@@ -97,6 +149,11 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
     textareaHeight,
     setTextareaHeight,
     scrollToBottom,
+    scrollToMessage,
+    highlightedMessage,
+    scrollToTop,
+    setHighlightedMessage,
+    messageRefs,
   };
 
   return <Context.Provider value={value}>{props.children}</Context.Provider>;

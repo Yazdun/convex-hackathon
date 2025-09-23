@@ -12,7 +12,7 @@ import { AnimatePresence } from "framer-motion";
 export function SendMessage() {
   const { inputValue, setInputValue, textareaRef, scrollToBottom } = useChat();
 
-  const { replyingTo, setReplyingTo, channelId } = useChat();
+  const { replyingTo, setReplyingTo, channelId, scrollToMessage } = useChat();
 
   const sendMessage = useMutation(api.messages.send);
 
@@ -56,7 +56,10 @@ export function SendMessage() {
         {replyingTo ? (
           <div className="absolute left-0 right-0 -top-16 text-sm">
             <div className="p-2.5 bg-background w-full border flex items-center justify-between z-50 rounded-md">
-              <div className="flex items-center gap-2">
+              <button
+                onClick={() => scrollToMessage(replyingTo._id)}
+                className="flex justify-start text-left hover:cursor-pointer w-full items-center gap-2"
+              >
                 <Reply />
                 <div>
                   <span>Reply to {replyingTo.author}</span>
@@ -65,7 +68,7 @@ export function SendMessage() {
                     {replyingTo.content.length > 50 ? "..." : ""}
                   </p>
                 </div>
-              </div>
+              </button>
               <Button
                 onClick={() => setReplyingTo(undefined)}
                 variant="ghost"
