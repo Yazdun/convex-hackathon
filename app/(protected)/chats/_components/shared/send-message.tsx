@@ -1,17 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useChat } from "./provider";
@@ -19,26 +8,34 @@ import { toast } from "sonner";
 import { Send } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 
-const FormSchema = z.object({
-  message: z.string(),
-});
-
-export function SendMessage() {
+export function SendMessage({
+  textareaRef,
+  inputValue,
+  setInputValue,
+}: {
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>;
+  inputValue: string;
+  setInputValue: React.Dispatch<React.SetStateAction<string>>;
+}) {
   const { replyingTo, channelId } = useChat();
 
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      message: "",
-    },
-  });
+  const sendMessage = useMutation(api.messages.send);
 
-  async function onSubmit(data: z.infer<typeof FormSchema>) {
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  const handleSendMessage = async () => {
+    if (!inputValue.trim()) return;
+
     if (!channelId) {
       return;
     }
 
-    if (!data.message || data.message === "" || !data.message.length) {
+    if (!inputValue || inputValue === "" || !inputValue) {
       toast.error("Message cannot be empty!");
       return;
     }
@@ -46,41 +43,36 @@ export function SendMessage() {
     try {
       await sendMessage({
         channelId,
-        content: data.message,
+        content: inputValue,
         type: "text",
         parentMessageId: replyingTo?._id,
       });
-      form.reset();
+      setInputValue("");
     } catch (error) {
       console.error("Failed to send message:", error);
     }
-  }
-
-  const sendMessage = useMutation(api.messages.send);
+  };
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex items-center px-2.5 gap-1 w-full"
+    <div className="flex gap-2 items-end">
+      <Textarea
+        ref={textareaRef}
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        onKeyPress={handleKeyPress}
+        placeholder="Type your message... (Press Enter to send, Shift+Enter for new line)"
+        className="flex-1 resize-none min-h-[44px] max-h-[200px]"
+        rows={1}
+      />
+      <Button
+        onClick={handleSendMessage}
+        disabled={!inputValue.trim()}
+        size="icon"
+        variant="outline"
+        className="shrink-0 size-11"
       >
-        <FormField
-          control={form.control}
-          name="message"
-          render={({ field }) => (
-            <FormItem className="w-full">
-              <FormLabel className="sr-only">Message</FormLabel>
-              <FormControl>
-                <Textarea placeholder="Start typing..." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button size="icon" variant="outline" type="submit">
-          <Send />
-        </Button>
-      </form>
-    </Form>
+        <Send className="size-4" />
+      </Button>
+    </div>
   );
 }
