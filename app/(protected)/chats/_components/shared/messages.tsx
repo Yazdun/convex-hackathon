@@ -94,7 +94,6 @@ function Message({ data }: { data: IMessage }) {
               <button
                 onClick={() => {
                   setReplyingTo(data);
-                  scrollToMessage(data._id);
                 }}
                 className="text-sm hover:underline"
               >
