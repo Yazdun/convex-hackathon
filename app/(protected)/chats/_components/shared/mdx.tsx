@@ -15,7 +15,12 @@ export function MarkdownFormatter({
   className = "",
 }: MarkdownFormatterProps) {
   return (
-    <div className={cn(`text-foreground w-full max-w-full`, className)}>
+    <div
+      className={cn(
+        `text-foreground whitespace-pre-wrap w-full max-w-full`,
+        className,
+      )}
+    >
       <ReactMarkdown
         components={{
           // Links with underline styling
@@ -31,10 +36,10 @@ export function MarkdownFormatter({
           ),
           // Code blocks - minimal black and white styling
           pre: ({ children }) => (
-            <pre className="text-foreground rounded-md border my-2 font-mono text-sm overflow-hidden">
+            <pre className="text-foreground bg-gradient-to-br from-secondary/50 to-transparent rounded-md my-2 font-mono text-sm overflow-hidden">
               <div className="flex">
-                <ScrollArea type="always" className="w-1 flex-1">
-                  <div className="flex p-2.5 bg-muted/10">{children}</div>
+                <ScrollArea className="w-1 flex-1">
+                  <div className="flex p-2.5">{children}</div>
                   <ScrollBar orientation="horizontal" className="w-full" />
                 </ScrollArea>
               </div>

@@ -5,19 +5,14 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useChat } from "./provider";
 import { toast } from "sonner";
-import { Send } from "lucide-react";
+import { Reply, Send, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
+import { AnimatePresence } from "framer-motion";
 
-export function SendMessage({
-  textareaRef,
-  inputValue,
-  setInputValue,
-}: {
-  textareaRef: React.RefObject<HTMLTextAreaElement | null>;
-  inputValue: string;
-  setInputValue: React.Dispatch<React.SetStateAction<string>>;
-}) {
-  const { replyingTo, channelId } = useChat();
+export function SendMessage() {
+  const { inputValue, setInputValue, textareaRef, scrollToBottom } = useChat();
+
+  const { replyingTo, setReplyingTo, channelId } = useChat();
 
   const sendMessage = useMutation(api.messages.send);
 
@@ -48,13 +43,40 @@ export function SendMessage({
         parentMessageId: replyingTo?._id,
       });
       setInputValue("");
+      scrollToBottom();
+      setReplyingTo(undefined);
     } catch (error) {
       console.error("Failed to send message:", error);
     }
   };
 
   return (
-    <div className="flex gap-2 items-end">
+    <div className="flex gap-2 items-end relative">
+      <AnimatePresence mode="wait" initial={false}>
+        {replyingTo ? (
+          <div className="absolute left-0 right-0 -top-16 text-sm">
+            <div className="p-2.5 bg-background w-full border flex items-center justify-between z-50 rounded-md">
+              <div className="flex items-center gap-2">
+                <Reply />
+                <div>
+                  <span>Reply to {replyingTo.author}</span>
+                  <p className="text-muted-foreground">
+                    {replyingTo.content.slice(0, 50)}
+                    {replyingTo.content.length > 50 ? "..." : ""}
+                  </p>
+                </div>
+              </div>
+              <Button
+                onClick={() => setReplyingTo(undefined)}
+                variant="ghost"
+                size="icon"
+              >
+                <X />
+              </Button>
+            </div>
+          </div>
+        ) : null}
+      </AnimatePresence>
       <Textarea
         ref={textareaRef}
         value={inputValue}

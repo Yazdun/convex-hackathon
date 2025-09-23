@@ -10,6 +10,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { type IMessage } from "./types";
 import { MarkdownFormatter } from "./mdx";
 import { DeleteMessage } from "./delete-message";
+import { useChat } from "./provider";
 
 dayjs.extend(relativeTime);
 
@@ -30,8 +31,9 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
 }
 
 function Message({ data }: { data: IMessage }) {
+  const { setReplyingTo } = useChat();
   return (
-    <div className="flex gap-3 py-2.5 px-2.5 w-full rounded-lg hover:bg-secondary/20 group">
+    <div className="flex gap-3 py-2.5 px-2.5 w-full rounded-lg hover:bg-secondary/50 group">
       <Avatar className="w-10 h-10">
         <AvatarImage src={data.avatarUrl ?? undefined} />
         <AvatarFallback>{data.displayName.charAt(0)}</AvatarFallback>
@@ -43,7 +45,9 @@ function Message({ data }: { data: IMessage }) {
             {dayjs(data._creationTime).fromNow()}
           </span>
           <div className="opacity-0 ml-2 flex items-center gap-2 group-hover:opacity-100 transition-opacity">
-            <button className="text-sm">Reply</button>
+            <button onClick={() => setReplyingTo(data)} className="text-sm">
+              Reply
+            </button>
             {data.isOwner ? (
               <>
                 <button className="text-sm">Edit</button>
