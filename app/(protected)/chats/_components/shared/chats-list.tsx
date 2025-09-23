@@ -19,7 +19,10 @@ export function ChatsList() {
           >
             <div className="text-left">
               <h2 className="font-mono text-lg">#{channel.name}</h2>
-              <MarkdownFormatter text={channel.description ?? ""} />
+              <MarkdownFormatter
+                className="whitespace-pre-wrap"
+                text={channel.description ?? ""}
+              />
             </div>
           </button>
         );

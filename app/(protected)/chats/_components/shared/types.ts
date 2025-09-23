@@ -16,6 +16,7 @@ export interface IMessage {
     type: "text" | "image" | "audio";
     authorDisplayName: string;
     _creationTime: number;
+    avatarUrl: string | null;
   } | null;
   editedAt?: number;
   isOwner: boolean;

@@ -12,7 +12,6 @@ import { MarkdownFormatter } from "./mdx";
 import { DeleteMessage } from "./delete-message";
 import { useChat } from "./provider";
 import { cn } from "@/lib/utils";
-import { CornerTopLeftIcon } from "@radix-ui/react-icons";
 
 dayjs.extend(relativeTime);
 
@@ -20,7 +19,7 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
   const messages = useQuery(api.messages.list, { channelId }) || [];
 
   return (
-    <ul className="w-full">
+    <ul className="w-full grid gap-0.5">
       {messages.map((msg) => {
         return (
           <li key={msg._id} className="w-full">
@@ -42,22 +41,42 @@ function Message({ data }: { data: IMessage }) {
         messageRefs.current[data._id] = el;
       }}
       className={cn(
-        replyingTo?._id === data._id && "bg-secondary hover:bg-secondary",
+        replyingTo?._id === data._id && "bg-secondary/50",
         highlightedMessage === data._id && "bg-secondary",
-        "p-2.5 transition-colors rounded-lg hover:bg-secondary/50 group",
+        "p-2.5 rounded-lg hover:bg-secondary/50 group transition-colors",
       )}
     >
       {data.parentMessage ? (
-        <div className="flex items-start  text-xs">
-          <div className="w-10 ml-2 mr-1 text-muted-foreground justify-center items-center flex">
-            <CornerTopLeftIcon className="h-[30px] -mb-2 w-[30px]" />
-          </div>
-          <button
-            className="hover:underline underline-offset-2"
+        <div className="flex pl-10 items-end hover:cursor-pointer text-xs">
+          <div
+            className="w-full overflow-hidden pl-2.5 pb-2.5"
             onClick={() => scrollToMessage(data.parentMessage?._id as string)}
           >
-            <div>{data.parentMessage.content}</div>
-          </button>
+            <div className="w-full bg-secondary border-l-2 border-border overflow-hidden relative rounded-lg max-h-[200px] p-2.5">
+              {data.parentMessage.content.length > 200 ? (
+                <div
+                  className={cn(
+                    "absolute left-0 right-0 h-[90px] z-10 group-hover:from-secondary bg-gradient-to-t from-secondary to-transparent bottom-0",
+                    replyingTo?._id === data._id && "from-secondary",
+                    highlightedMessage === data._id && "from-secondary",
+                  )}
+                />
+              ) : null}
+
+              <div className="mb-1.5 flex items-center gap-1.5">
+                <Avatar className="w-5 h-5">
+                  <AvatarImage
+                    src={data.parentMessage.avatarUrl ?? undefined}
+                  />
+                  <AvatarFallback>
+                    {data.parentMessage.authorDisplayName.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                {data.parentMessage.authorDisplayName}
+              </div>
+              <MarkdownFormatter text={data.parentMessage.content} />
+            </div>
+          </div>
         </div>
       ) : null}
       <div className={cn("flex gap-3  w-full")}>

@@ -43,12 +43,20 @@ export const list = query({
               .withIndex("by_user", (q) => q.eq("userId", parent.authorId))
               .first();
 
+            let parentProfileAvatarUrl = null;
+            if (parentProfile?.avatarId) {
+              parentProfileAvatarUrl = await ctx.storage.getUrl(
+                parentProfile.avatarId,
+              );
+            }
+
             parentMessage = {
               _id: parent._id,
               content: parent.content,
               type: parent.type,
               authorDisplayName:
                 parentProfile?.displayName || parentAuthor?.email || "Unknown",
+              avatarUrl: parentProfileAvatarUrl,
               _creationTime: parent._creationTime,
             };
           }

@@ -119,7 +119,7 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
       );
       if (viewport) {
         viewport.scrollTo({
-          top: viewport.scrollHeight,
+          top: viewport.scrollHeight + 2000,
           behavior: "smooth",
         });
       }
