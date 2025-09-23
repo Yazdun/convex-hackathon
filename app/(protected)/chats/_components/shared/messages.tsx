@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { type IMessage } from "./types";
 import { MarkdownFormatter } from "./mdx";
+import { DeleteMessage } from "./delete-message";
 
 dayjs.extend(relativeTime);
 
@@ -46,12 +47,17 @@ function Message({ data }: { data: IMessage }) {
             {data.isOwner ? (
               <>
                 <button className="text-sm">Edit</button>
-                <button className="text-sm text-destructive">Delete</button>
+
+                <DeleteMessage
+                  messageId={data._id}
+                  triggerComponent={
+                    <button className="text-sm text-destructive">Delete</button>
+                  }
+                />
               </>
             ) : null}
           </div>
         </div>
-        {/*{data.content}*/}
         <MarkdownFormatter text={data.content} />
       </div>
     </div>
