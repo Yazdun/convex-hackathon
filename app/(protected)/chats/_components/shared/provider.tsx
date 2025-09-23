@@ -76,13 +76,9 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
         const messageRect = messageElement.getBoundingClientRect();
         const viewportRect = viewport.getBoundingClientRect();
 
-        // Calculate the scroll position to center the message
+        // Calculate the scroll position to place the message at the top
         const scrollTop =
-          viewport.scrollTop +
-          messageRect.top -
-          viewportRect.top -
-          viewportRect.height / 2 +
-          messageRect.height / 2;
+          viewport.scrollTop + messageRect.top - viewportRect.top;
 
         viewport.scrollTo({
           top: scrollTop,
@@ -110,6 +106,10 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
       setTextareaHeight(newHeight);
     }
   }, [inputValue]);
+
+  useEffect(() => {
+    setReplyingTo(undefined);
+  }, [channelId]);
 
   const scrollToBottom = () => {
     const scrollArea = scrollAreaRef.current;

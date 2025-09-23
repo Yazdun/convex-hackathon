@@ -7,7 +7,7 @@ import { useChat } from "./provider";
 import { toast } from "sonner";
 import { Reply, Send, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 export function SendMessage() {
   const { inputValue, setInputValue, textareaRef, scrollToBottom } = useChat();
@@ -54,7 +54,13 @@ export function SendMessage() {
     <div className="flex gap-2 items-end relative">
       <AnimatePresence mode="wait" initial={false}>
         {replyingTo ? (
-          <div className="absolute left-0 right-0 -top-16 text-sm">
+          <motion.div
+            key={replyingTo._id}
+            initial={{ opacity: 0, scale: 0.9, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="absolute left-0 right-0 -top-16 text-sm"
+          >
             <div className="p-2.5 bg-background w-full border flex items-center justify-between z-50 rounded-md">
               <button
                 onClick={() => scrollToMessage(replyingTo._id)}
@@ -77,7 +83,7 @@ export function SendMessage() {
                 <X />
               </Button>
             </div>
-          </div>
+          </motion.div>
         ) : null}
       </AnimatePresence>
       <Textarea
