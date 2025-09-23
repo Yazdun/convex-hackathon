@@ -5,9 +5,10 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useChat } from "./provider";
 import { toast } from "sonner";
-import { Reply, Send, X } from "lucide-react";
+import { Reply, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { AnimatePresence, motion } from "framer-motion";
+import { MediaUpload } from "./file-upload";
 
 export function SendMessage() {
   const { inputValue, setInputValue, textareaRef, scrollToBottom } = useChat();
@@ -95,7 +96,8 @@ export function SendMessage() {
         className="flex-1 resize-none min-h-[44px] max-h-[200px]"
         rows={1}
       />
-      <Button
+      {channelId ? <MediaUpload channelId={channelId} /> : null}
+      {/*<Button
         onClick={handleSendMessage}
         disabled={!inputValue.trim()}
         size="icon"
@@ -103,7 +105,7 @@ export function SendMessage() {
         className="shrink-0 size-11"
       >
         <Send className="size-4" />
-      </Button>
+      </Button>*/}
     </div>
   );
 }

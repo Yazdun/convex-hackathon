@@ -23,7 +23,7 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
       {messages.map((msg) => {
         return (
           <li key={msg._id} className="w-full">
-            <Message data={msg} />
+            <Message message={msg} />
           </li>
         );
       })}
@@ -31,34 +31,65 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
   );
 }
 
-function Message({ data }: { data: IMessage }) {
+function Message({ message }: { message: IMessage }) {
   const { setReplyingTo, scrollToMessage, highlightedMessage } = useChat();
   const { messageRefs, replyingTo } = useChat();
+
+  const renderMessage = () => {
+    if (message.type === "audio" && message.fileUrl) {
+      return (
+        <div>
+          <div>
+            {message.content && <MarkdownFormatter text={message.content} />}
+            <audio controls className="max-w-sm">
+              <source src={message.fileUrl} type="audio/mpeg" />
+              Your browser does not support the audio element.
+            </audio>
+          </div>
+        </div>
+      );
+    }
+    if (message.type === "image" && message.fileUrl) {
+      return (
+        <div>
+          {message.content && <MarkdownFormatter text={message.content} />}
+          <img
+            src={message.fileUrl}
+            alt="Shared image"
+            className="max-w-sm rounded border"
+          />
+        </div>
+      );
+    }
+    return <MarkdownFormatter text={message.content} />;
+  };
 
   return (
     <div
       ref={(el) => {
-        messageRefs.current[data._id] = el;
+        messageRefs.current[message._id] = el;
       }}
       className={cn(
-        replyingTo?._id === data._id && "bg-secondary/50",
-        highlightedMessage === data._id && "bg-secondary",
+        replyingTo?._id === message._id && "bg-secondary/50",
+        highlightedMessage === message._id && "bg-secondary",
         "p-2.5 rounded-lg hover:bg-secondary/50 group transition-colors",
       )}
     >
-      {data.parentMessage ? (
+      {message.parentMessage ? (
         <div className="flex pl-10 items-end hover:cursor-pointer text-xs">
           <div
             className="w-full overflow-hidden pl-2.5 pb-2.5"
-            onClick={() => scrollToMessage(data.parentMessage?._id as string)}
+            onClick={() =>
+              scrollToMessage(message.parentMessage?._id as string)
+            }
           >
             <div className="w-full bg-secondary border-l-2 border-border overflow-hidden relative rounded-lg max-h-[200px] p-2.5">
-              {data.parentMessage.content.length > 200 ? (
+              {message.parentMessage.content.length > 200 ? (
                 <div
                   className={cn(
                     "absolute left-0 right-0 h-[90px] z-10 group-hover:from-secondary bg-gradient-to-t from-secondary to-transparent bottom-0",
-                    replyingTo?._id === data._id && "from-secondary",
-                    highlightedMessage === data._id && "from-secondary",
+                    replyingTo?._id === message._id && "from-secondary",
+                    highlightedMessage === message._id && "from-secondary",
                   )}
                 />
               ) : null}
@@ -66,45 +97,45 @@ function Message({ data }: { data: IMessage }) {
               <div className="mb-1.5 flex items-center gap-1.5">
                 <Avatar className="w-5 h-5">
                   <AvatarImage
-                    src={data.parentMessage.avatarUrl ?? undefined}
+                    src={message.parentMessage.avatarUrl ?? undefined}
                   />
                   <AvatarFallback>
-                    {data.parentMessage.authorDisplayName.charAt(0)}
+                    {message.parentMessage.authorDisplayName.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
-                {data.parentMessage.authorDisplayName}
+                {message.parentMessage.authorDisplayName}
               </div>
-              <MarkdownFormatter text={data.parentMessage.content} />
+              <MarkdownFormatter text={message.parentMessage.content} />
             </div>
           </div>
         </div>
       ) : null}
       <div className={cn("flex gap-3  w-full")}>
         <Avatar className="w-10 h-10">
-          <AvatarImage src={data.avatarUrl ?? undefined} />
-          <AvatarFallback>{data.displayName.charAt(0)}</AvatarFallback>
+          <AvatarImage src={message.avatarUrl ?? undefined} />
+          <AvatarFallback>{message.displayName.charAt(0)}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-sm">{data.displayName}</span>
+            <span className="font-semibold text-sm">{message.displayName}</span>
             <span className="text-sm text-muted-foreground">
-              {dayjs(data._creationTime).fromNow()}
+              {dayjs(message._creationTime).fromNow()}
             </span>
             <div className="opacity-0 ml-2 flex items-center gap-2 group-hover:opacity-100 transition-opacity">
               <button
                 onClick={() => {
-                  setReplyingTo(data);
+                  setReplyingTo(message);
                 }}
                 className="text-sm hover:underline"
               >
                 Reply
               </button>
-              {data.isOwner ? (
+              {message.isOwner ? (
                 <>
                   <button className="text-sm hover:underline">Edit</button>
 
                   <DeleteMessage
-                    messageId={data._id}
+                    messageId={message._id}
                     triggerComponent={
                       <button className="text-sm hover:underline text-destructive">
                         Delete
@@ -115,7 +146,7 @@ function Message({ data }: { data: IMessage }) {
               ) : null}
             </div>
           </div>
-          <MarkdownFormatter text={data.content} />
+          {renderMessage()}
         </div>
       </div>
     </div>
