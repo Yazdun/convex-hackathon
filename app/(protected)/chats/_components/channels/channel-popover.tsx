@@ -57,6 +57,7 @@ export function ChannelPopover({ channel }: { channel: IChannelMin }) {
               disabled={mode === "editChannel"}
               onClick={() => {
                 setMode("editChannel");
+                setOpen(false);
               }}
             >
               <Settings2 />
