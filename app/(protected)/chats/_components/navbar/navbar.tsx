@@ -105,7 +105,7 @@ export function Navbar() {
         <motion.div
           initial={{ opacity: 0, x: 0 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
-          exit={{ opacity: 0, x: 10 }}
+          exit={{ opacity: 0, x: -10 }}
           transition={{ duration: 0.2 }}
           key="Explore"
           className="flex items-center gap-1"

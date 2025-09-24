@@ -4,7 +4,8 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import React from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import React, { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { DeleteMessage } from "./delete-message";
@@ -13,22 +14,82 @@ import { VoiceMessage } from "./voice-message";
 import { IMessage } from "../types/types";
 import { useChat } from "../providers/chat-provider";
 import { MarkdownFormatter } from "../markdown/mdx";
+import { motion } from "framer-motion";
 
 dayjs.extend(relativeTime);
 
+const motionConfig = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.3 },
+};
+
 export function Messages({ channelId }: { channelId: Id<"channels"> }) {
-  const messages = useQuery(api.messages.list, { channelId }) || [];
+  const messages = useQuery(api.messages.list, { channelId });
+  const [showLoading, setShowLoading] = useState(false);
+
+  useEffect(() => {
+    if (messages === undefined) {
+      const timer = setTimeout(() => {
+        setShowLoading(true);
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    } else {
+      setShowLoading(false);
+    }
+  }, [messages]);
+
+  if (messages === undefined && showLoading) {
+    return (
+      <ul className="w-full grid gap-0.5">
+        {Array.from({ length: 10 }).map((_, index) => (
+          <motion.li {...motionConfig} key={index} className="w-full">
+            <MessageSkeleton idx={index} />
+          </motion.li>
+        ))}
+      </ul>
+    );
+  }
+
+  if (!messages) {
+    return null;
+  }
 
   return (
     <ul className="w-full grid gap-0.5">
       {messages.map((msg) => {
         return (
-          <li key={msg._id} className="w-full">
+          <motion.li {...motionConfig} key={msg._id} className="w-full">
             <Message message={msg} />
-          </li>
+          </motion.li>
         );
       })}
     </ul>
+  );
+}
+
+function MessageSkeleton({ idx }: { idx: number }) {
+  return (
+    <div
+      className="p-2.5 rounded-lg"
+      style={{
+        opacity: 1 - idx / 10,
+      }}
+    >
+      <div className="flex gap-3 w-full">
+        <Skeleton className="w-10 h-10 rounded-full" />
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-2">
+            <Skeleton className="h-4 w-20" />
+            <Skeleton className="h-3 w-16" />
+          </div>
+          <Skeleton className="h-4 w-full mb-1" />
+          <Skeleton className="h-4 w-3/4" />
+        </div>
+      </div>
+    </div>
   );
 }
 

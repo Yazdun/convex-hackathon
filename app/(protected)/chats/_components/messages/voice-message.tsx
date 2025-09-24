@@ -21,7 +21,7 @@ export function VoiceMessage({ fileUrl, className }: VoiceMessageProps) {
   const [duration, setDuration] = useState(0);
   const [progress, setProgress] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const waveformData = useMemo(() => generateWaveform(), [fileUrl]);
+  const waveformData = useMemo(() => generateWaveform(), []);
 
   console.log(waveformData);
 

@@ -85,9 +85,7 @@ export function Chats() {
 
   return (
     <div>
-      <AnimatePresence mode="wait" initial={false}>
-        {renderChildren()}
-      </AnimatePresence>
+      <AnimatePresence mode="wait">{renderChildren()}</AnimatePresence>
     </div>
   );
 }
