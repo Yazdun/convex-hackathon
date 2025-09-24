@@ -43,4 +43,5 @@ export interface IChannel {
   tags?: string[] | undefined;
   name: string;
   createdBy: Id<"users">;
+  isSubscribed: boolean;
 }

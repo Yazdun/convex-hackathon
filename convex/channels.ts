@@ -58,6 +58,7 @@ export const list = query({
             ...channel,
             name: otherUserInfo?.displayName || "Unknown User",
             description: "Direct Message",
+            isSubscribed: channel.participants.includes(userId),
             users,
           };
         } else if (!channel.type || channel.type === "channel") {
@@ -90,6 +91,7 @@ export const list = query({
 
           return {
             ...channel,
+            isSubscribed: channel?.participants?.includes(userId) ?? false,
             users,
           };
         }
@@ -119,7 +121,36 @@ export const create = mutation({
       createdBy: userId,
       tags: args.tags,
       type: "channel",
+      participants: [userId],
     });
+  },
+});
+
+export const subscribe = mutation({
+  args: {
+    channelId: v.id("channels"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const channel = await ctx.db.get(args.channelId);
+
+    if (!channel) {
+      throw new Error("Not authorized to edit this message");
+    }
+
+    if (channel.participants?.includes(userId)) {
+      // User is already subscribed, so unsubscribe them
+      await ctx.db.patch(args.channelId, {
+        participants: channel.participants?.filter((id) => id !== userId),
+      });
+    } else {
+      // User is not subscribed, so subscribe them
+      await ctx.db.patch(args.channelId, {
+        participants: [...(channel.participants || []), userId],
+      });
+    }
   },
 });
 
