@@ -35,7 +35,13 @@ const FormSchema = z.object({
     }),
 });
 
-export function ProfileForm({ profile }: { profile: IProfile }) {
+export function ProfileForm({
+  profile,
+  callback,
+}: {
+  profile: IProfile;
+  callback?: () => void;
+}) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -62,6 +68,9 @@ export function ProfileForm({ profile }: { profile: IProfile }) {
       setLoading(false);
       toast.dismiss("profile-loading-toast");
       toast.success("Success!");
+      if (callback) {
+        callback();
+      }
     } catch (error: unknown) {
       setLoading(false);
       console.log(error);

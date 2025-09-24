@@ -4,7 +4,7 @@ import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import React from "react";
 import { ModeToggle } from "@/components/mode-toggle";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Rss } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { CreateChannel } from "../channels/create-channel";
@@ -108,7 +108,9 @@ export function Navbar() {
           exit={{ opacity: 0, x: 10 }}
           transition={{ duration: 0.2 }}
           key="Explore"
+          className="flex items-center gap-1"
         >
+          <Rss size={16} />
           Feed
         </motion.div>
       );

@@ -20,6 +20,7 @@ import { ProfileForm } from "./profile-form";
 
 export function Profile() {
   const profile = useQuery(api.profiles.get);
+  const [open, setOpen] = React.useState(false);
 
   if (!profile) {
     return (
@@ -30,7 +31,7 @@ export function Profile() {
   }
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <Tooltip>
         <TooltipTrigger asChild>
           <PopoverTrigger asChild>
@@ -54,7 +55,7 @@ export function Profile() {
       <PopoverContent className="w-[400px]">
         <div>
           <AvatarForm profile={profile} />
-          <ProfileForm profile={profile} />
+          <ProfileForm callback={() => setOpen(false)} profile={profile} />
         </div>
       </PopoverContent>
     </Popover>

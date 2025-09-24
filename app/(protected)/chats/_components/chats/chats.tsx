@@ -7,6 +7,34 @@ import { CreateChannelForm } from "../channels/create-channel-form";
 import { useChat } from "../providers/chat-provider";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { EditChannelContainer } from "../channels/edit-channel-form";
+import { AnimatePresence, motion } from "framer-motion";
+
+const motionConfig = {
+  createChannel: {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+    transition: { duration: 0.3 },
+  },
+  editChannel: {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+    transition: { duration: 0.3 },
+  },
+  chatFeed: {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+    transition: { duration: 0.3 },
+  },
+  chatsList: {
+    initial: { opacity: 0, scale: 0.95 },
+    animate: { opacity: 1, scale: 1 },
+    exit: { opacity: 0, scale: 0.95 },
+    transition: { duration: 0.3 },
+  },
+};
 
 export function Chats() {
   const { channelId, mode } = useChat();
@@ -14,40 +42,52 @@ export function Chats() {
   const renderChildren = () => {
     if (mode === "createChannel") {
       return (
-        <div className="w-full max-w-2xl p-2.5 m-auto">
+        <motion.div
+          key="createChannel"
+          {...motionConfig.createChannel}
+          className="w-full max-w-2xl p-2.5 m-auto"
+        >
           <CreateChannelForm />
-        </div>
+        </motion.div>
       );
     }
 
     if (mode === "editChannel") {
       return (
-        <div className="w-full max-w-2xl p-2.5 m-auto">
+        <motion.div
+          key="editChannel"
+          {...motionConfig.editChannel}
+          className="w-full max-w-2xl p-2.5 m-auto"
+        >
           <EditChannelContainer />
-        </div>
+        </motion.div>
       );
     }
 
     if (channelId) {
       return (
-        <div>
+        <motion.div key={`chat-${channelId}`} {...motionConfig.chatFeed}>
           <ChatFeed channelId={channelId} />
-        </div>
+        </motion.div>
       );
     }
 
     return (
-      <ScrollArea className="h-[calc(100vh-50px)]">
-        <div className="w-full max-w-2xl m-auto">
-          <ChatsList />
-        </div>
-      </ScrollArea>
+      <motion.div key="chatsList">
+        <ScrollArea className="h-[calc(100vh-50px)]">
+          <div className="w-full max-w-2xl m-auto">
+            <ChatsList />
+          </div>
+        </ScrollArea>
+      </motion.div>
     );
   };
 
   return (
     <div>
-      <div>{renderChildren()}</div>
+      <AnimatePresence mode="wait" initial={false}>
+        {renderChildren()}
+      </AnimatePresence>
     </div>
   );
 }
