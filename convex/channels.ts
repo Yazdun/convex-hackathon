@@ -193,7 +193,66 @@ export const get = query({
     const userId = await getAuthUserId(ctx);
     if (!userId) return null;
 
-    return await ctx.db.get(args.channelId);
+    const channel = await ctx.db.get(args.channelId);
+    if (!channel) return null;
+
+    let users: {
+      userId: Id<"users">;
+      email: string | undefined;
+      displayName: string;
+      avatarUrl: string | null;
+      avatarId: Id<"_storage"> | undefined;
+      username: string | undefined;
+    }[] = [];
+
+    // Get participant information if channel has participants
+    if (channel.participants && channel.participants.length > 0) {
+      users = await Promise.all(
+        channel.participants.map(async (participantId) => {
+          const user = await ctx.db.get(participantId);
+          const profile = await ctx.db
+            .query("userProfiles")
+            .withIndex("by_user", (q) => q.eq("userId", participantId))
+            .first();
+
+          let avatarUrl = null;
+          if (profile?.avatarId) {
+            avatarUrl = await ctx.storage.getUrl(profile.avatarId);
+          }
+
+          return {
+            userId: participantId,
+            email: user?.email,
+            displayName: profile?.displayName || user?.email || "Unknown",
+            avatarUrl,
+            avatarId: profile?.avatarId,
+            username: profile?.username,
+          };
+        }),
+      );
+    }
+
+    // For DM channels, set name to other user's display name
+    if (channel.type === "dm") {
+      const otherUserId = channel.participants?.find((id) => id !== userId);
+      const otherUserInfo = users.find((u) => u.userId === otherUserId);
+
+      return {
+        ...channel,
+        name: otherUserInfo?.displayName || "Unknown User",
+        description: "Direct Message",
+        isOwner: userId === channel.createdBy,
+        isSubscribed: channel.participants?.includes(userId) ?? false,
+        users,
+      };
+    }
+
+    return {
+      ...channel,
+      isOwner: userId === channel.createdBy,
+      isSubscribed: channel.participants?.includes(userId) ?? false,
+      users,
+    };
   },
 });
 

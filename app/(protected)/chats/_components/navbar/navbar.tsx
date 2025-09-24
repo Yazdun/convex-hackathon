@@ -12,6 +12,7 @@ import { useChat } from "../providers/chat-provider";
 import { Directs } from "../alerts/directs";
 import { Alerts } from "../alerts/alerts";
 import { Profile } from "../profiles/profile";
+import { ChannelPopover } from "../channels/channel-popover";
 
 export function Navbar() {
   const { channelId } = useChat();
@@ -59,7 +60,7 @@ export function Navbar() {
           >
             <ArrowLeft size={14} />
           </Button>
-          #{channel.name}
+          <ChannelPopover channel={channel} />
         </motion.div>
       );
     }

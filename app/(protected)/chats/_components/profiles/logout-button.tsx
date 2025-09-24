@@ -35,7 +35,13 @@ export function LogoutButton() {
   };
 
   return (
-    <Button type="button" size="sm" variant="ghost" onClick={handleSignout}>
+    <Button
+      disabled={loading}
+      type="button"
+      size="sm"
+      variant="ghost"
+      onClick={handleSignout}
+    >
       {loading ? "Loading..." : "Logout"}
     </Button>
   );
