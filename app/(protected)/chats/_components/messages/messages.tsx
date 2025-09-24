@@ -15,6 +15,7 @@ import { IMessage } from "../types/types";
 import { useChat } from "../providers/chat-provider";
 import { MarkdownFormatter } from "../markdown/mdx";
 import { motion } from "framer-motion";
+import { MessageCircleDashed } from "lucide-react";
 
 dayjs.extend(relativeTime);
 
@@ -28,6 +29,8 @@ const motionConfig = {
 export function Messages({ channelId }: { channelId: Id<"channels"> }) {
   const messages = useQuery(api.messages.list, { channelId });
   const [showLoading, setShowLoading] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const { scrollToBottom } = useChat();
 
   useEffect(() => {
     if (messages === undefined) {
@@ -37,9 +40,18 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
 
       return () => clearTimeout(timer);
     } else {
+      const lastMsg = messages.pop();
+      if (lastMsg?.isOwner) {
+        scrollToBottom();
+      }
+      setIsMounted(true);
       setShowLoading(false);
     }
   }, [messages]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [isMounted]);
 
   if (messages === undefined && showLoading) {
     return (
@@ -57,8 +69,19 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
     return null;
   }
 
+  if (!messages.length) {
+    return (
+      <motion.div className="p-2.5" {...motionConfig} key="empty-chat">
+        <div className="p-5 border-dashed rounded-lg text-lg flex-col text-muted-foreground gap-2 border-2 flex items-center text-center justify-center border py-10">
+          <MessageCircleDashed size={30} strokeWidth={2} />
+          Start the conversation
+        </div>
+      </motion.div>
+    );
+  }
+
   return (
-    <ul className="w-full grid gap-0.5">
+    <ul className="w-full grid gap-0.5 pb-2.5">
       {messages.map((msg) => {
         return (
           <motion.li {...motionConfig} key={msg._id} className="w-full">

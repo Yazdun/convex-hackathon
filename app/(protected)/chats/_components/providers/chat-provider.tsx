@@ -143,11 +143,17 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
   }, [replyingTo?._id, toEdit?._id]);
 
   useEffect(() => {
-    setReplyingTo(undefined);
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.focus();
-    }
+    const timer = setTimeout(() => {
+      setReplyingTo(undefined);
+      setToEdit(undefined);
+      const textarea = textareaRef.current;
+      console.log(textarea);
+      if (textarea) {
+        textarea.focus();
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
   }, [channelId]);
 
   const value: ContextProps = {
