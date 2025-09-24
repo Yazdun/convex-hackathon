@@ -1,12 +1,11 @@
 import { useState, useRef } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-
-import { useChat } from "./provider";
 import { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { AudioLines, Camera, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useChat } from "../providers/chat-provider";
 
 export function MediaUpload({ channelId }: { channelId: Id<"channels"> }) {
   const { replyingTo, setReplyingTo, inputValue, setInputValue, toEdit } =

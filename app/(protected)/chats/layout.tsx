@@ -1,6 +1,6 @@
 import React from "react";
-import { Navbar } from "./_components/desktop/navbar";
-import { ChatProvider } from "./_components/shared/provider";
+import { ChatProvider } from "./_components/providers/chat-provider";
+import { Navbar } from "./_components/navbar/navbar";
 
 export default async function Layout({
   children,

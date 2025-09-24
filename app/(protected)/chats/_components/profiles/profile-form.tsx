@@ -19,7 +19,7 @@ import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { useState } from "react";
 import { LogoutButton } from "./logout-button";
-import { IProfile } from "./types";
+import { IProfile } from "../types/types";
 
 const FormSchema = z.object({
   displayName: z.string().min(2, {

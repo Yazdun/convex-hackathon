@@ -3,10 +3,10 @@
 import type React from "react";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Messages } from "./messages";
 import { Id } from "@/convex/_generated/dataModel";
-import { SendMessage } from "./send-message";
-import { useChat } from "./provider";
+import { useChat } from "../providers/chat-provider";
+import { Messages } from "../messages/messages";
+import { SendMessage } from "../messages/send-message";
 
 export default function ChatFeed({ channelId }: { channelId: Id<"channels"> }) {
   const { textareaHeight, scrollAreaRef } = useChat();

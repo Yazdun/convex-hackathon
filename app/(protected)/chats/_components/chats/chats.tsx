@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import { useChat } from "./provider";
 import { ChatsList } from "./chats-list";
-import { ChannelForm } from "./channel-form";
 import ChatFeed from "./chat-feed";
+import { ChannelForm } from "../channels/channel-form";
+import { useChat } from "../providers/chat-provider";
 
 export function Chats() {
   const { channelId, mode } = useChat();

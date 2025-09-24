@@ -10,7 +10,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { IMessage } from "./types";
 import {
   Options,
   useQueryState,
@@ -18,6 +17,7 @@ import {
   parseAsStringLiteral,
 } from "nuqs";
 import { Id } from "@/convex/_generated/dataModel";
+import { IMessage } from "../types/types";
 
 interface ContextProps {
   replyingTo?: IMessage;
@@ -140,7 +140,7 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
     if (textarea) {
       textarea.focus();
     }
-  }, [replyingTo?._id]);
+  }, [replyingTo?._id, toEdit?._id]);
 
   useEffect(() => {
     setReplyingTo(undefined);

@@ -4,13 +4,13 @@ import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useChat } from "./provider";
 import { toast } from "sonner";
 import { PencilRuler, Reply, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { AnimatePresence, motion } from "framer-motion";
 import { MediaUpload } from "./file-upload";
-import { IMessage } from "./types";
+import { useChat } from "../providers/chat-provider";
+import { IMessage } from "../types/types";
 
 export function SendMessage() {
   const {

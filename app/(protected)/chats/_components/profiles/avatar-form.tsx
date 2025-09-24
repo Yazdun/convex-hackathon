@@ -4,7 +4,7 @@ import { api } from "@/convex/_generated/api";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Loader2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { IProfile } from "./types";
+import { IProfile } from "../types/types";
 
 export function AvatarForm({ profile }: { profile: IProfile }) {
   const [isUploading, setIsUploading] = useState(false);

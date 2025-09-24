@@ -3,15 +3,15 @@
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import React from "react";
-import { Profile } from "./profile";
-import { Alerts } from "./alerts";
-import { Directs } from "./directs";
 import { ModeToggle } from "@/components/mode-toggle";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import { CreateChannel } from "./create-channel";
-import { useChat } from "../shared/provider";
+import { CreateChannel } from "../channels/create-channel";
+import { useChat } from "../providers/chat-provider";
+import { Directs } from "../alerts/directs";
+import { Alerts } from "../alerts/alerts";
+import { Profile } from "../profiles/profile";
 
 export function Navbar() {
   const { channelId } = useChat();
@@ -90,7 +90,7 @@ export function Navbar() {
           transition={{ duration: 0.2 }}
           key="Explore"
         >
-          Explore
+          Feed
         </motion.div>
       );
     }

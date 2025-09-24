@@ -7,12 +7,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import React from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { type IMessage } from "./types";
-import { MarkdownFormatter } from "./mdx";
 import { DeleteMessage } from "./delete-message";
-import { useChat } from "./provider";
 import { cn } from "@/lib/utils";
 import { VoiceMessage } from "./voice-message";
+import { IMessage } from "../types/types";
+import { useChat } from "../providers/chat-provider";
+import { MarkdownFormatter } from "../markdown/mdx";
 
 dayjs.extend(relativeTime);
 

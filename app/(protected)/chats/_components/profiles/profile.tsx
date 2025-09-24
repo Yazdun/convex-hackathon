@@ -15,8 +15,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { AvatarForm } from "../shared/avatar-form";
-import { ProfileForm } from "../shared/profile-form";
+import { AvatarForm } from "./avatar-form";
+import { ProfileForm } from "./profile-form";
 
 export function Profile() {
   const profile = useQuery(api.profiles.get);

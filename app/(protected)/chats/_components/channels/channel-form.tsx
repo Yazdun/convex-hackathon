@@ -27,7 +27,7 @@ import { Plus } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
-import { useChat } from "./provider";
+import { useChat } from "../providers/chat-provider";
 
 export const tagsList = [
   { value: "TypeScript", label: "TypeScript", icon: SiTypescript },

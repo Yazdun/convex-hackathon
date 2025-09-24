@@ -6,7 +6,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useChat } from "../shared/provider";
+import { useChat } from "../providers/chat-provider";
 
 export function CreateChannel() {
   const { setMode } = useChat();

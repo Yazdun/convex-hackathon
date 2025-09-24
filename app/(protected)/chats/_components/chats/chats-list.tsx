@@ -1,13 +1,21 @@
 import { api } from "@/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
-import React from "react";
-import { MarkdownFormatter } from "./mdx";
+import React, { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { IChannel } from "./types";
 import { Button } from "@/components/ui/button";
-import { useChat } from "./provider";
 import { toast } from "sonner";
-import { CornerDownRight, Loader2, UserMinus2, UserPlus2 } from "lucide-react";
+import {
+  Brain,
+  CornerDownRight,
+  Loader2,
+  UserMinus2,
+  UserPlus2,
+} from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { IChannel } from "../types/types";
+import { MarkdownFormatter } from "../markdown/mdx";
+import { useChat } from "../providers/chat-provider";
 
 export function ChatsList() {
   const channels = useQuery(api.channels.list) || [];
@@ -34,7 +42,9 @@ export function ChannelPreviewCard({ channel }: { channel: IChannel }) {
     return `${channel.users.length} Subscribers`;
   };
   return (
-    <div className="p-5 border w-full grid gap-2 hover:bg-secondary/20 transition-all rounded-lg">
+    <div className="p-5 relative border w-full group grid gap-2 hover:bg-secondary/20 transition-all rounded-lg">
+      <ChatSummary />
+
       <div className="text-left grid gap-2">
         <div className="flex items-center justify-between">
           <h2 className="font-mono text-lg">#{channel.name}</h2>
@@ -63,6 +73,22 @@ export function ChannelPreviewCard({ channel }: { channel: IChannel }) {
           <Subscribe channel={channel} />
         </div>
       </div>
+    </div>
+  );
+}
+
+function ChatSummary() {
+  const [open] = useState(false);
+  return (
+    <div
+      className={cn(
+        "absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition-all",
+        open && "opacity-100",
+      )}
+    >
+      <Button variant={open ? "secondary" : "ghost"} size="icon">
+        <Brain />
+      </Button>
     </div>
   );
 }
