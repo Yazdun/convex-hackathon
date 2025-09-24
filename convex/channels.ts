@@ -187,6 +187,74 @@ export const createDM = mutation({
   },
 });
 
+export const deleteChannel = mutation({
+  args: {
+    channelId: v.id("channels"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const channel = await ctx.db.get(args.channelId);
+    if (!channel) {
+      throw new Error("Channel not found");
+    }
+
+    // Check permissions
+    if (channel.type === "dm") {
+      // For DMs, user must be a participant
+      if (!channel.participants?.includes(userId)) {
+        throw new Error("Not authorized to delete this channel");
+      }
+    } else {
+      // For regular channels, user must be the owner
+      if (channel.createdBy !== userId) {
+        throw new Error("Not authorized to delete this channel");
+      }
+    }
+
+    // Delete the channel
+    await ctx.db.delete(args.channelId);
+  },
+});
+
+export const update = mutation({
+  args: {
+    channelId: v.id("channels"),
+    name: v.string(),
+    description: v.optional(v.string()),
+    tags: v.optional(v.array(v.string())),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const channel = await ctx.db.get(args.channelId);
+    if (!channel) {
+      throw new Error("Channel not found");
+    }
+
+    // Check if user is the owner
+    if (channel.createdBy !== userId) {
+      throw new Error("Not authorized to edit this channel");
+    }
+
+    // Don't allow editing DM channels
+    if (channel.type === "dm") {
+      throw new Error("Cannot edit direct message channels");
+    }
+
+    // Update the channel
+    await ctx.db.patch(args.channelId, {
+      name: args.name,
+      description: args.description,
+      tags: args.tags,
+    });
+
+    return args.channelId;
+  },
+});
+
 export const get = query({
   args: { channelId: v.id("channels") },
   handler: async (ctx, args) => {

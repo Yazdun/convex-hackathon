@@ -57,5 +57,6 @@ export interface IChannelMin {
   name: string;
   createdBy: Id<"users">;
   isOwner: boolean;
+  isSubscribed: boolean;
   users: IProfile[];
 }

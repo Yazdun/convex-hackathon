@@ -14,7 +14,11 @@ export function CreateChannel() {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <Button onClick={() => setMode("create")} variant="ghost" size="icon">
+        <Button
+          onClick={() => setMode("createChannel")}
+          variant="ghost"
+          size="icon"
+        >
           <Plus />
         </Button>
       </TooltipTrigger>

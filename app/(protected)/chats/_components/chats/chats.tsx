@@ -3,25 +3,27 @@
 import React from "react";
 import { ChatsList } from "./chats-list";
 import ChatFeed from "./chat-feed";
-import { ChannelForm } from "../channels/channel-form";
+import { CreateChannelForm } from "../channels/create-channel-form";
 import { useChat } from "../providers/chat-provider";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { EditChannelContainer } from "../channels/edit-channel-form";
 
 export function Chats() {
   const { channelId, mode } = useChat();
 
   const renderChildren = () => {
-    if (mode === "create") {
+    if (mode === "createChannel") {
       return (
         <div className="w-full max-w-2xl p-2.5 m-auto">
-          <ChannelForm />
+          <CreateChannelForm />
         </div>
       );
     }
 
-    if (mode === "edit") {
+    if (mode === "editChannel") {
       return (
         <div className="w-full max-w-2xl p-2.5 m-auto">
-          <ChannelForm />
+          <EditChannelContainer />
         </div>
       );
     }
@@ -35,9 +37,11 @@ export function Chats() {
     }
 
     return (
-      <div className="w-full max-w-2xl m-auto">
-        <ChatsList />
-      </div>
+      <ScrollArea className="h-[calc(100vh-50px)]">
+        <div className="w-full max-w-2xl m-auto">
+          <ChatsList />
+        </div>
+      </ScrollArea>
     );
   };
 

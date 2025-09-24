@@ -6,24 +6,17 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { MarkdownFormatter } from "../markdown/mdx";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useChat } from "../providers/chat-provider";
 import { toast } from "sonner";
-import { CornerDownRight, Loader2 } from "lucide-react";
+import { CornerDownRight, Loader2, Settings2 } from "lucide-react";
 
 export function ChannelPopover({ channel }: { channel: IChannelMin }) {
   const [open, setOpen] = useState(false);
+  const { setMode, mode } = useChat();
 
   const handleOpenChange = () => setOpen((prev) => !prev);
 
@@ -59,7 +52,16 @@ export function ChannelPopover({ channel }: { channel: IChannelMin }) {
             ) : null}
           </div>
           {channel.isOwner ? (
-            <DeleteChannel />
+            <Button
+              variant="outline"
+              disabled={mode === "editChannel"}
+              onClick={() => {
+                setMode("editChannel");
+              }}
+            >
+              <Settings2 />
+              Manage Channel
+            </Button>
           ) : (
             <Unsubscribe channel={channel} onClose={handleOpenChange} />
           )}
@@ -116,24 +118,5 @@ function Unsubscribe({
       {renderIcon()}
       Leave Channel
     </Button>
-  );
-}
-
-function DeleteChannel() {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="destructive">Delete Channel</Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Are you absolutely sure?</DialogTitle>
-          <DialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
-          </DialogDescription>
-        </DialogHeader>
-      </DialogContent>
-    </Dialog>
   );
 }

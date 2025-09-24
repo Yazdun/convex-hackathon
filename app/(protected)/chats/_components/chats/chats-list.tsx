@@ -69,6 +69,12 @@ export function ChannelPreviewCard({ channel }: { channel: IChannel }) {
                 </Avatar>
               );
             })}
+            {channel.users.length > 4 ? (
+              <Avatar>
+                <AvatarImage src={undefined} alt={``} />
+                <AvatarFallback>+{channel.users.length - 4}</AvatarFallback>
+              </Avatar>
+            ) : null}
           </div>
           <Subscribe channel={channel} />
         </div>
