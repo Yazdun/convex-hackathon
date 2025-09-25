@@ -30,6 +30,12 @@ export const getUserInbox = query({
           .withIndex("by_user", (q) => q.eq("userId", announcement.createdBy))
           .first();
 
+        // Get creator avatar URL
+        let creatorAvatarUrl = null;
+        if (creatorProfile?.avatarId) {
+          creatorAvatarUrl = await ctx.storage.getUrl(creatorProfile.avatarId);
+        }
+
         // Get channel information
         const channel = await ctx.db.get(announcement.channelId);
 
@@ -40,6 +46,7 @@ export const getUserInbox = query({
           announcement: {
             ...announcement,
             creatorName: creatorProfile?.displayName || "Unknown User",
+            creatorAvatarUrl,
           },
           channel: channel
             ? {

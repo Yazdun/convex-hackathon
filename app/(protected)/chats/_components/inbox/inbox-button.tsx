@@ -12,7 +12,9 @@ import {
 
 export function InboxButton() {
   const inbox = useQuery(api.inbox.getUserInbox);
-  const { setMode } = useChat();
+  const { setMode, setChannelId } = useChat();
+
+  const unread = inbox?.filter((i) => i.status === "delivered") ?? [];
 
   return (
     <Tooltip>
@@ -21,21 +23,22 @@ export function InboxButton() {
           variant="ghost"
           onClick={() => {
             setMode("inbox");
+            setChannelId(null);
           }}
           className="relative"
           size="icon"
         >
           <InboxIcon size={19} />
           <AnimatePresence mode="wait">
-            {inbox?.length ? (
+            {unread?.length ? (
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
-                key={`${inbox.length}-inbox-key`}
+                key={`${unread.length}-inbox-key`}
                 className="absolute bg-red-500 font-bold font-mono flex items-center justify-center text-[10px] rounded-full w-4 h-4 right-0 mt-3"
               >
-                {inbox?.length}
+                {unread?.length}
               </motion.div>
             ) : null}
           </AnimatePresence>

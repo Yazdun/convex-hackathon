@@ -88,6 +88,7 @@ export interface IInbox {
     createdBy: Id<"users">;
     content: string;
     title: string;
+    creatorAvatarUrl: string | null;
   };
   channel: {
     _id: Id<"channels">;
