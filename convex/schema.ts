@@ -40,6 +40,23 @@ const applicationTables = {
   })
     .index("by_user", ["userId"])
     .index("by_username", ["username"]),
+
+  reactions: defineTable({
+    messageId: v.id("messages"),
+    userId: v.id("users"),
+    reactionType: v.union(
+      v.literal("laugh"),
+      v.literal("heart"),
+      v.literal("thumbs_up"),
+      v.literal("thumbs_down"),
+      v.literal("shit"),
+      v.literal("gem"),
+    ),
+  })
+    .index("by_message", ["messageId"])
+    .index("by_user", ["userId"])
+    .index("by_message_user", ["messageId", "userId"])
+    .index("by_message_reaction", ["messageId", "reactionType"]),
 };
 
 export default defineSchema({

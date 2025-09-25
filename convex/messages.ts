@@ -2,6 +2,15 @@ import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
+// Define the reaction types
+type ReactionType =
+  | "laugh"
+  | "heart"
+  | "thumbs_up"
+  | "thumbs_down"
+  | "shit"
+  | "gem";
+
 export const list = query({
   args: { channelId: v.id("channels") },
   handler: async (ctx, args) => {
@@ -13,6 +22,71 @@ export const list = query({
       .withIndex("by_channel", (q) => q.eq("channelId", args.channelId))
       .order("asc")
       .collect();
+
+    // Get all reactions for all messages in batch
+    const messageIds = messages.map((m) => m._id);
+    const allReactions = await Promise.all(
+      messageIds.map((messageId) =>
+        ctx.db
+          .query("reactions")
+          .withIndex("by_message", (q) => q.eq("messageId", messageId))
+          .collect(),
+      ),
+    );
+
+    // Define reaction types
+    const REACTION_TYPES = [
+      "laugh",
+      "heart",
+      "thumbs_up",
+      "thumbs_down",
+      "shit",
+      "gem",
+    ] as const;
+
+    // Process reactions for each message
+    const reactionsByMessage: Record<
+      string,
+      Array<{
+        reactionType: ReactionType;
+        hasCurrentUser: boolean;
+        count: number;
+      }>
+    > = {};
+
+    messageIds.forEach((messageId, index) => {
+      const reactions = allReactions[index];
+      const reactionCounts: Record<
+        ReactionType,
+        { count: number; hasCurrentUser: boolean }
+      > = Object.fromEntries(
+        REACTION_TYPES.map((type) => [
+          type,
+          { count: 0, hasCurrentUser: false },
+        ]),
+      ) as Record<ReactionType, { count: number; hasCurrentUser: boolean }>;
+
+      // Process reactions for this message
+      reactions.forEach((reaction) => {
+        if (!reactionCounts[reaction.reactionType]) {
+          reactionCounts[reaction.reactionType] = {
+            count: 0,
+            hasCurrentUser: false,
+          };
+        }
+        reactionCounts[reaction.reactionType].count++;
+        if (userId && reaction.userId === userId) {
+          reactionCounts[reaction.reactionType].hasCurrentUser = true;
+        }
+      });
+
+      // Convert to array format
+      reactionsByMessage[messageId] = REACTION_TYPES.map((type) => ({
+        reactionType: type,
+        hasCurrentUser: reactionCounts[type].hasCurrentUser,
+        count: reactionCounts[type].count,
+      }));
+    });
 
     return await Promise.all(
       messages.map(async (message) => {
@@ -70,6 +144,7 @@ export const list = query({
           fileUrl,
           isOwner: userId === author?._id,
           parentMessage,
+          reactions: reactionsByMessage[message._id] || [],
         };
       }),
     );

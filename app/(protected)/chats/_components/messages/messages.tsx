@@ -16,6 +16,7 @@ import { useChat } from "../providers/chat-provider";
 import { MarkdownFormatter } from "../markdown/mdx";
 import { motion } from "framer-motion";
 import { MessageCircleDashed } from "lucide-react";
+import { ReactionPicker, Reactions } from "../reactions/reaction";
 
 dayjs.extend(relativeTime);
 
@@ -256,6 +257,11 @@ function Message({ message }: { message: IMessage }) {
             </div>
           </div>
           {renderMessage()}
+          <Reactions messageId={message._id} reactions={message.reactions} />
+          <ReactionPicker
+            messageId={message._id}
+            reactions={message.reactions}
+          />
         </div>
       </div>
     </div>

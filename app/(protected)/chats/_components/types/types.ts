@@ -21,6 +21,7 @@ export interface IMessage {
   editedAt?: number;
   isOwner: boolean;
   _creationTime: number;
+  reactions: IReaction[];
 }
 
 export interface IProfile {
@@ -59,4 +60,18 @@ export interface IChannelMin {
   isOwner: boolean;
   isSubscribed: boolean;
   users: IProfile[];
+}
+
+export type TReactionType =
+  | "laugh"
+  | "heart"
+  | "thumbs_up"
+  | "thumbs_down"
+  | "shit"
+  | "gem";
+
+export interface IReaction {
+  reactionType: TReactionType;
+  hasCurrentUser: boolean;
+  count: number;
 }
