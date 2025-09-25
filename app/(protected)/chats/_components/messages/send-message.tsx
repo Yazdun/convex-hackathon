@@ -142,15 +142,6 @@ export function SendMessage() {
         rows={1}
       />
       {channelId ? <MediaUpload channelId={channelId} /> : null}
-      {/*<Button
-        onClick={handleSendMessage}
-        disabled={!inputValue.trim()}
-        size="icon"
-        variant="outline"
-        className="shrink-0 size-11"
-      >
-        <Send className="size-4" />
-      </Button>*/}
     </div>
   );
 }

@@ -12,7 +12,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useChat } from "../providers/chat-provider";
 import { toast } from "sonner";
-import { CornerDownRight, Loader2, Settings2 } from "lucide-react";
+import { CornerDownRight, Loader2, Megaphone, Settings2 } from "lucide-react";
 
 export function ChannelPopover({ channel }: { channel: IChannelMin }) {
   const [open, setOpen] = useState(false);
@@ -22,11 +22,26 @@ export function ChannelPopover({ channel }: { channel: IChannelMin }) {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger className="hover:underline underline-offset-4 cursor-pointer">
+      <PopoverTrigger className="underline hover:opacity-80 transition-all underline-offset-4 cursor-pointer">
         <div>#{channel.name}</div>
       </PopoverTrigger>
       <PopoverContent className="w-[400px] flex flex-col gap-2" sideOffset={10}>
-        <h2>#{channel.name}</h2>
+        <div className="flex items-center justify-between">
+          <h2>#{channel.name}</h2>
+          {channel.isOwner ? (
+            <Button
+              variant="outline"
+              size="icon"
+              disabled={mode === "editChannel"}
+              onClick={() => {
+                setMode("editChannel");
+                setOpen(false);
+              }}
+            >
+              <Settings2 />
+            </Button>
+          ) : null}
+        </div>
         <MarkdownFormatter
           className="text-sm text-muted-foreground"
           text={channel.description ?? "Description not available!"}
@@ -53,15 +68,13 @@ export function ChannelPopover({ channel }: { channel: IChannelMin }) {
           </div>
           {channel.isOwner ? (
             <Button
-              variant="outline"
-              disabled={mode === "editChannel"}
               onClick={() => {
-                setMode("editChannel");
                 setOpen(false);
+                setMode("createAnnouncement");
               }}
             >
-              <Settings2 />
-              Manage Channel
+              <Megaphone />
+              Announcement
             </Button>
           ) : (
             <Unsubscribe channel={channel} onClose={handleOpenChange} />

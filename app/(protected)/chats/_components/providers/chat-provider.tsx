@@ -27,10 +27,10 @@ interface ContextProps {
   channelId: Id<"channels"> | null;
   setChannelId: (val: string | null) => void;
   setMode: (
-    value: "createChannel" | "editChannel" | null,
+    value: "createChannel" | "editChannel" | "createAnnouncement" | null,
     options?: Options,
   ) => Promise<URLSearchParams>;
-  mode: "createChannel" | "editChannel" | null;
+  mode: "createChannel" | "editChannel" | "createAnnouncement" | null;
   scrollAreaRef: RefObject<HTMLDivElement | null>;
   textareaRef: RefObject<HTMLTextAreaElement | null>;
   setTextareaHeight: Dispatch<SetStateAction<number>>;
@@ -57,7 +57,11 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
   const [qchannel, qsetChannel] = useQueryState("channel", parseAsString);
   const [mode, setMode] = useQueryState(
     "mode",
-    parseAsStringLiteral(["createChannel", "editChannel"]),
+    parseAsStringLiteral([
+      "createChannel",
+      "editChannel",
+      "createAnnouncement",
+    ]),
   );
 
   const [inputValue, setInputValue] = useState("");

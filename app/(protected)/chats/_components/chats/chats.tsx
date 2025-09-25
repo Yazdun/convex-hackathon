@@ -8,6 +8,7 @@ import { useChat } from "../providers/chat-provider";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { EditChannelContainer } from "../channels/edit-channel-form";
 import { AnimatePresence, motion } from "framer-motion";
+import { AnnouncementCreate } from "../annoucement/announcement-create";
 
 const motionConfig = {
   createChannel: {
@@ -60,6 +61,18 @@ export function Chats() {
           className="w-full max-w-2xl p-2.5 m-auto"
         >
           <EditChannelContainer />
+        </motion.div>
+      );
+    }
+
+    if (mode === "createAnnouncement") {
+      return (
+        <motion.div
+          key="editChannel"
+          {...motionConfig.editChannel}
+          className="w-full max-w-2xl p-2.5 m-auto"
+        >
+          <AnnouncementCreate />
         </motion.div>
       );
     }

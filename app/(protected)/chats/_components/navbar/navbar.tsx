@@ -42,24 +42,6 @@ export function Navbar() {
       );
     }
 
-    if (mode === "editChannel") {
-      return (
-        <motion.div
-          initial={{ opacity: 0, x: 0 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: channelId ? 10 : -10 }}
-          transition={{ duration: 0.2 }}
-          className="flex items-center gap-1.5"
-          key="Create"
-        >
-          <Button onClick={() => setMode(null)} variant="outline" size="icon">
-            <ArrowLeft size={14} />
-          </Button>
-          Manage #{channel?.name}
-        </motion.div>
-      );
-    }
-
     if (channel) {
       return (
         <motion.div

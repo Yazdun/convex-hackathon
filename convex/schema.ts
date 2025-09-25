@@ -57,6 +57,24 @@ const applicationTables = {
     .index("by_user", ["userId"])
     .index("by_message_user", ["messageId", "userId"])
     .index("by_message_reaction", ["messageId", "reactionType"]),
+
+  announcements: defineTable({
+    title: v.string(),
+    content: v.string(),
+    createdBy: v.id("users"),
+    participants: v.optional(v.array(v.id("users"))),
+  })
+    .index("by_creator", ["createdBy"])
+    .index("by_participants", ["participants"]),
+
+  inboxes: defineTable({
+    targetUserId: v.id("users"),
+    announcementId: v.id("announcements"),
+    status: v.union(v.literal("delivered"), v.literal("read")),
+  })
+    .index("by_target_user", ["targetUserId"])
+    .index("by_announcement", ["announcementId"])
+    .index("by_target_status", ["targetUserId", "status"]),
 };
 
 export default defineSchema({
