@@ -30,6 +30,9 @@ export const getUserInbox = query({
           .withIndex("by_user", (q) => q.eq("userId", announcement.createdBy))
           .first();
 
+        // Get channel information
+        const channel = await ctx.db.get(announcement.channelId);
+
         return {
           _id: inboxEntry._id,
           _creationTime: inboxEntry._creationTime,
@@ -38,6 +41,14 @@ export const getUserInbox = query({
             ...announcement,
             creatorName: creatorProfile?.displayName || "Unknown User",
           },
+          channel: channel
+            ? {
+                _id: channel._id,
+                name: channel.name,
+                description: channel.description,
+                type: channel.type,
+              }
+            : null,
         };
       }),
     );

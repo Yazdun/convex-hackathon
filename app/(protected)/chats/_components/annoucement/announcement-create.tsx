@@ -87,12 +87,17 @@ export function AnnouncementCreate() {
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     const promise = async () => {
+      if (!channelId) {
+        toast.error("Missing channel id");
+        return;
+      }
       setLoading(true);
       try {
         await createAnnouncement({
           title: data.title,
           content: data.content,
           participants: data.participants as Id<"users">[],
+          channelId,
         });
         setMode(null);
         form.reset();

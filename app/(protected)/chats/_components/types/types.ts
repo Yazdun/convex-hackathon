@@ -89,4 +89,10 @@ export interface IInbox {
     content: string;
     title: string;
   };
+  channel: {
+    _id: Id<"channels">;
+    name: string;
+    description: string | undefined;
+    type: "channel" | "dm" | undefined;
+  } | null;
 }

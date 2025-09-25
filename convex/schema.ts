@@ -63,6 +63,7 @@ const applicationTables = {
     content: v.string(),
     createdBy: v.id("users"),
     participants: v.optional(v.array(v.id("users"))),
+    channelId: v.id("channels"),
   })
     .index("by_creator", ["createdBy"])
     .index("by_participants", ["participants"]),
