@@ -71,6 +71,7 @@ export function Inbox() {
               opacity: 0,
             }}
             animate={{ opacity: 1 }}
+            transition={{ type: "tween" }}
             exit={{ opacity: 0 }}
             className="flex justify-between items-center p-4 bg-muted/50 rounded-lg"
           >
