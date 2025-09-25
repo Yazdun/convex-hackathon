@@ -5,7 +5,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { DeleteMessage } from "./delete-message";
@@ -30,7 +30,8 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
   const messages = useQuery(api.messages.list, { channelId });
   const [showLoading, setShowLoading] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const { scrollToBottom } = useChat();
+  const { scrollToBottom, scrollToBottomIfAtBottom } = useChat();
+  const prevMessageCountRef = useRef(0);
 
   useEffect(() => {
     if (messages === undefined) {
@@ -40,18 +41,37 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
 
       return () => clearTimeout(timer);
     } else {
-      const lastMsg = messages.pop();
-      if (lastMsg?.isOwner) {
-        scrollToBottom();
-      }
       setIsMounted(true);
       setShowLoading(false);
     }
   }, [messages]);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [isMounted]);
+    if (messages && isMounted) {
+      const currentMessageCount = messages.length;
+      const prevCount = prevMessageCountRef.current;
+
+      // If this is the first time loading messages, scroll to bottom
+      if (prevCount === 0) {
+        scrollToBottom();
+      }
+      // If new messages arrived, only scroll if user is at bottom
+      else if (currentMessageCount > prevCount) {
+        scrollToBottomIfAtBottom();
+      }
+
+      prevMessageCountRef.current = currentMessageCount;
+    }
+  }, [messages, isMounted, scrollToBottom, scrollToBottomIfAtBottom]);
+
+  useEffect(() => {
+    if (messages) {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage?.isOwner) {
+        scrollToBottom();
+      }
+    }
+  }, [messages]);
 
   if (messages === undefined && showLoading) {
     return (

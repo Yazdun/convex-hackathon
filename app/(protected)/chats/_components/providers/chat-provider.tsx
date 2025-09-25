@@ -38,6 +38,8 @@ interface ContextProps {
   inputValue: string;
   setInputValue: Dispatch<SetStateAction<string>>;
   scrollToBottom: () => void;
+  scrollToBottomIfAtBottom: () => void;
+  isAtBottom: () => boolean;
   highlightedMessage: string | null;
   setHighlightedMessage: Dispatch<SetStateAction<string | null>>;
   scrollToMessage: (messageId: string) => void;
@@ -110,6 +112,23 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
     }
   }, [inputValue]);
 
+  const isAtBottom = () => {
+    const scrollArea = scrollAreaRef.current;
+    if (scrollArea) {
+      const viewport = scrollArea.querySelector(
+        '[data-slot="scroll-area-viewport"]',
+      );
+      if (viewport) {
+        const scrollTop = viewport.scrollTop;
+        const scrollHeight = viewport.scrollHeight;
+        const clientHeight = viewport.clientHeight;
+        // Consider "at bottom" if within 100px of the bottom
+        return scrollTop + clientHeight >= scrollHeight - 100;
+      }
+    }
+    return false;
+  };
+
   const scrollToBottom = () => {
     const scrollArea = scrollAreaRef.current;
     if (scrollArea) {
@@ -122,6 +141,12 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
           behavior: "smooth",
         });
       }
+    }
+  };
+
+  const scrollToBottomIfAtBottom = () => {
+    if (isAtBottom()) {
+      scrollToBottom();
     }
   };
 
@@ -170,6 +195,8 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
     textareaHeight,
     setTextareaHeight,
     scrollToBottom,
+    scrollToBottomIfAtBottom,
+    isAtBottom,
     scrollToMessage,
     highlightedMessage,
     scrollToTop,

@@ -17,7 +17,7 @@ export function SendMessage() {
     inputValue,
     setInputValue,
     textareaRef,
-    scrollToBottom,
+    scrollToBottomIfAtBottom,
     replyingTo,
     toEdit,
     setToEdit,
@@ -61,7 +61,7 @@ export function SendMessage() {
         parentMessageId: replyingTo?._id,
       });
       setInputValue("");
-      scrollToBottom();
+      scrollToBottomIfAtBottom();
       setReplyingTo(undefined);
     } catch (error) {
       console.error("Failed to send message:", error);

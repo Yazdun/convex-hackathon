@@ -8,8 +8,14 @@ import { cn } from "@/lib/utils";
 import { useChat } from "../providers/chat-provider";
 
 export function MediaUpload({ channelId }: { channelId: Id<"channels"> }) {
-  const { replyingTo, setReplyingTo, inputValue, setInputValue, toEdit } =
-    useChat();
+  const {
+    replyingTo,
+    setReplyingTo,
+    inputValue,
+    setInputValue,
+    toEdit,
+    scrollToBottomIfAtBottom,
+  } = useChat();
   const [isRecording, setIsRecording] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
   const [isVoiceUploading, setIsVoiceUploading] = useState(false);
@@ -71,6 +77,7 @@ export function MediaUpload({ channelId }: { channelId: Id<"channels"> }) {
 
       setInputValue("");
       if (replyingTo) setReplyingTo(undefined);
+      scrollToBottomIfAtBottom();
     } catch (error) {
       console.error("Failed to upload file:", error);
     } finally {
