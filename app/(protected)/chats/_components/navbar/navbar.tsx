@@ -117,20 +117,22 @@ export function Navbar() {
   };
 
   return (
-    <div className="sticky top-0 z-50 bg-background">
-      <div className="py-1.5 px-2.5 flex items-center justify-between w-full max-w-2xl m-auto">
-        <div>
-          <AnimatePresence initial={false} mode="wait">
-            {renderName()}
-          </AnimatePresence>
-        </div>
-        <div className="flex items-center gap-1">
-          <div className="flex gap-0.5">
-            <CreateChannel />
-            <Inbox />
-            <ModeToggle />
-            <div className="ml-0.5 flex justify-center items-center">
-              <Profile />
+    <div className="sticky top-0 z-50 pb-[1px] bg-gradient-to-r from-background via-muted to-background">
+      <div className="bg-background">
+        <div className="py-1.5 px-2.5 flex items-center justify-between w-full max-w-2xl m-auto">
+          <div>
+            <AnimatePresence initial={false} mode="wait">
+              {renderName()}
+            </AnimatePresence>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="flex gap-0.5">
+              <CreateChannel />
+              <Inbox />
+              <ModeToggle />
+              <div className="ml-0.5 flex justify-center items-center">
+                <Profile />
+              </div>
             </div>
           </div>
         </div>

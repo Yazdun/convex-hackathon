@@ -74,7 +74,7 @@ export function Chats() {
 
     return (
       <motion.div key="chatsList">
-        <ScrollArea className="h-[calc(100vh-50px)]">
+        <ScrollArea className="h-[calc(100vh-55px)]">
           <div className="w-full max-w-2xl m-auto">
             <ChatsList />
           </div>

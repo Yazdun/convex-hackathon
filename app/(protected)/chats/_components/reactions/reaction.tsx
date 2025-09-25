@@ -13,6 +13,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Laugh } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ReactionProps {
   messageId: Id<"messages">;
@@ -58,7 +63,7 @@ export function Reactions({ messageId, reactions, className }: ReactionProps) {
           className={cn(
             "h-7 rounded-full hover:cursor-pointer px-3 py-1 text-xs font-medium transition-all duration-200",
             reaction.hasCurrentUser
-              ? "bg-blue-100 dark:bg-blue-900 border-blue-300 dark:border-blue-700 text-blue-500 dark:text-blue-300"
+              ? "bg-blue-100 dark:bg-blue-900 border-blue-300 dark:border-blue-700 text-blue-500 dark:text-blue-300 hover:opacity-80"
               : "hover:bg-secondary/80 dark:bg-secondary bg-muted",
           )}
         >
@@ -92,28 +97,39 @@ export function ReactionPicker({
   };
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="outline" size="icon" className="h-8 rounded-full w-8">
-          <Laugh />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent side="top" align="center" className="p-1 w-auto">
-        <div className={cn("flex gap-0.5", className)}>
-          {reactions.map((reaction) => (
+    <Tooltip>
+      <Popover>
+        <TooltipTrigger asChild>
+          <PopoverTrigger asChild>
             <Button
-              key={reaction.reactionType}
-              variant={reaction.hasCurrentUser ? "secondary" : "ghost"}
+              variant="outline"
               size="icon"
-              onClick={() => handleReactionClick(reaction.reactionType)}
-              className={cn("h-9 w-8 p-1 transition-all duration-200")}
-              title={`${reaction.reactionType} (${reaction.count})`}
+              className="h-8 rounded-full w-8"
             >
-              {REACTION_EMOJIS[reaction.reactionType] || "❓"}
+              <Laugh />
             </Button>
-          ))}
-        </div>
-      </PopoverContent>
-    </Popover>
+          </PopoverTrigger>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">
+          <p>Reactions</p>
+        </TooltipContent>
+        <PopoverContent side="top" align="center" className="p-1 w-auto">
+          <div className={cn("flex gap-0.5", className)}>
+            {reactions.map((reaction) => (
+              <Button
+                key={reaction.reactionType}
+                variant={reaction.hasCurrentUser ? "secondary" : "ghost"}
+                size="icon"
+                onClick={() => handleReactionClick(reaction.reactionType)}
+                className={cn("h-9 w-8 p-1 transition-all duration-200")}
+                title={`${reaction.reactionType} (${reaction.count})`}
+              >
+                {REACTION_EMOJIS[reaction.reactionType] || "❓"}
+              </Button>
+            ))}
+          </div>
+        </PopoverContent>
+      </Popover>
+    </Tooltip>
   );
 }
