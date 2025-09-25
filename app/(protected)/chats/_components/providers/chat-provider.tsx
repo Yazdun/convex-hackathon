@@ -123,7 +123,7 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
         const scrollHeight = viewport.scrollHeight;
         const clientHeight = viewport.clientHeight;
         // Consider "at bottom" if within 100px of the bottom
-        return scrollTop + clientHeight >= scrollHeight - 100;
+        return scrollTop + clientHeight >= scrollHeight - 200;
       }
     }
     return false;
