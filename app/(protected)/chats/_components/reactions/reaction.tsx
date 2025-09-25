@@ -50,23 +50,23 @@ export function Reactions({ messageId, reactions, className }: ReactionProps) {
     <div className={cn("flex items-center gap-1", className)}>
       <ReactionPicker messageId={messageId} reactions={reactions} />
       {activeReactions.map((reaction) => (
-        <Button
+        <button
           key={reaction.reactionType}
-          variant="secondary"
-          size="sm"
+          // variant="secondary"
+          // size="sm"
           onClick={() => handleReactionClick(reaction.reactionType)}
           className={cn(
-            "h-7 px-2 py-1 text-xs font-medium transition-all duration-200",
+            "h-7 rounded-full hover:cursor-pointer px-3 py-1 text-xs font-medium transition-all duration-200",
             reaction.hasCurrentUser
-              ? "bg-blue-100 dark:bg-blue-900 border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300"
-              : "hover:bg-secondary/80",
+              ? "bg-blue-100 dark:bg-blue-900 border-blue-300 dark:border-blue-700 text-blue-500 dark:text-blue-300"
+              : "hover:bg-secondary/80 dark:bg-secondary bg-muted",
           )}
         >
           <span className="mr-1">
             {REACTION_EMOJIS[reaction.reactionType] || "❓"}
           </span>
           <span>{reaction.count}</span>
-        </Button>
+        </button>
       ))}
     </div>
   );
@@ -99,19 +99,14 @@ export function ReactionPicker({
         </Button>
       </PopoverTrigger>
       <PopoverContent side="top" align="center" className="p-1 w-auto">
-        <div className={cn("flex gap-1", className)}>
+        <div className={cn("flex gap-0.5", className)}>
           {reactions.map((reaction) => (
             <Button
               key={reaction.reactionType}
-              variant="ghost"
+              variant={reaction.hasCurrentUser ? "secondary" : "ghost"}
               size="icon"
               onClick={() => handleReactionClick(reaction.reactionType)}
-              className={cn(
-                "h-9 w-8 p-1 transition-all duration-200",
-                reaction.hasCurrentUser
-                  ? "bg-blue-100 dark:bg-blue-900 border border-blue-300 dark:border-blue-700"
-                  : "hover:bg-secondary",
-              )}
+              className={cn("h-9 w-8 p-1 transition-all duration-200")}
               title={`${reaction.reactionType} (${reaction.count})`}
             >
               {REACTION_EMOJIS[reaction.reactionType] || "❓"}
