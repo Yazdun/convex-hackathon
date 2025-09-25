@@ -75,3 +75,18 @@ export interface IReaction {
   hasCurrentUser: boolean;
   count: number;
 }
+
+export interface IInbox {
+  _id: Id<"inboxes">;
+  _creationTime: number;
+  status: "delivered" | "read";
+  announcement: {
+    creatorName: string;
+    _id: Id<"announcements">;
+    _creationTime: number;
+    participants?: Id<"users">[] | undefined;
+    createdBy: Id<"users">;
+    content: string;
+    title: string;
+  };
+}

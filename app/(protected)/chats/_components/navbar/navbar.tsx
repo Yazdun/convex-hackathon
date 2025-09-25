@@ -35,7 +35,13 @@ export function Navbar() {
           key="Channel"
         >
           <Button
-            onClick={() => setChannelId(null)}
+            onClick={() => {
+              if (mode) {
+                setMode(null);
+                return;
+              }
+              setChannelId(null);
+            }}
             variant="outline"
             size="icon"
           >
