@@ -7,6 +7,12 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { IReaction, TReactionType } from "../types/types";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Laugh } from "lucide-react";
 
 interface ReactionProps {
   messageId: Id<"messages">;
@@ -40,12 +46,9 @@ export function Reactions({ messageId, reactions, className }: ReactionProps) {
 
   const activeReactions = reactions.filter((reaction) => reaction.count > 0);
 
-  if (activeReactions.length === 0) {
-    return null;
-  }
-
   return (
-    <div className={cn("flex flex-wrap gap-1", className)}>
+    <div className={cn("flex items-center gap-1", className)}>
+      <ReactionPicker messageId={messageId} reactions={reactions} />
       {activeReactions.map((reaction) => (
         <Button
           key={reaction.reactionType}
@@ -89,24 +92,33 @@ export function ReactionPicker({
   };
 
   return (
-    <div className={cn("flex flex-col gap-1", className)}>
-      {reactions.map((reaction) => (
-        <Button
-          key={reaction.reactionType}
-          variant="ghost"
-          size="icon"
-          onClick={() => handleReactionClick(reaction.reactionType)}
-          className={cn(
-            "h-8 w-8 p-1 text-lg hover:scale-110 transition-all duration-200",
-            reaction.hasCurrentUser
-              ? "bg-blue-100 dark:bg-blue-900 border border-blue-300 dark:border-blue-700"
-              : "hover:bg-secondary",
-          )}
-          title={`${reaction.reactionType} (${reaction.count})`}
-        >
-          {REACTION_EMOJIS[reaction.reactionType] || "❓"}
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline" size="icon" className="h-8 rounded-full w-8">
+          <Laugh />
         </Button>
-      ))}
-    </div>
+      </PopoverTrigger>
+      <PopoverContent side="top" align="center" className="p-1 w-auto">
+        <div className={cn("flex gap-1", className)}>
+          {reactions.map((reaction) => (
+            <Button
+              key={reaction.reactionType}
+              variant="ghost"
+              size="icon"
+              onClick={() => handleReactionClick(reaction.reactionType)}
+              className={cn(
+                "h-9 w-8 p-1 transition-all duration-200",
+                reaction.hasCurrentUser
+                  ? "bg-blue-100 dark:bg-blue-900 border border-blue-300 dark:border-blue-700"
+                  : "hover:bg-secondary",
+              )}
+              title={`${reaction.reactionType} (${reaction.count})`}
+            >
+              {REACTION_EMOJIS[reaction.reactionType] || "❓"}
+            </Button>
+          ))}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }

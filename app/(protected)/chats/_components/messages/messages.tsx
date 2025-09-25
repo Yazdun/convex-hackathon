@@ -16,12 +16,7 @@ import { useChat } from "../providers/chat-provider";
 import { MarkdownFormatter } from "../markdown/mdx";
 import { motion } from "framer-motion";
 import { MessageCircleDashed } from "lucide-react";
-import { ReactionPicker, Reactions } from "../reactions/reaction";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
+import { Reactions } from "../reactions/reaction";
 
 dayjs.extend(relativeTime);
 
@@ -145,7 +140,6 @@ function Message({ message }: { message: IMessage }) {
   const { setReplyingTo, scrollToMessage, highlightedMessage, setInputValue } =
     useChat();
   const { messageRefs, replyingTo, setToEdit } = useChat();
-  const [open, setOpen] = useState(false);
 
   const renderMessage = () => {
     if (message.type === "audio" && message.fileUrl) {
@@ -174,119 +168,100 @@ function Message({ message }: { message: IMessage }) {
   };
 
   return (
-    <HoverCard
-      openDelay={200}
-      closeDelay={200}
-      open={open}
-      onOpenChange={setOpen}
+    <div
+      ref={(el) => {
+        messageRefs.current[message._id] = el;
+      }}
+      className={cn(
+        replyingTo?._id === message._id && "bg-secondary/50",
+        highlightedMessage === message._id && "bg-secondary",
+        "p-2.5 rounded-lg hover:bg-secondary/50 group transition-colors",
+      )}
     >
-      <HoverCardTrigger>
-        <div
-          ref={(el) => {
-            messageRefs.current[message._id] = el;
-          }}
-          className={cn(
-            replyingTo?._id === message._id && "bg-secondary/50",
-            highlightedMessage === message._id && "bg-secondary",
-            open && "bg-secondary/50",
-            "p-2.5 rounded-lg hover:bg-secondary/50 group transition-colors",
-          )}
-        >
-          {message.parentMessage ? (
-            <div className="flex pl-10 relative items-end hover:cursor-pointer text-xs">
-              <div
-                className="w-full overflow-hidden pl-2.5 pb-2.5"
-                onClick={() =>
-                  scrollToMessage(message.parentMessage?._id as string)
-                }
-              >
-                <div className="absolute border-l-2 rounded-tl-lg border-t-2 w-[30px] h-10 left-5 -bottom-1" />
-                <div className="w-full bg-inherit border rounded-lg border-border overflow-hidden max-h-[200px] p-2.5">
-                  <div className="mb-1.5 flex items-center gap-1.5">
-                    <Avatar className="w-5 h-5">
-                      <AvatarImage
-                        src={message.parentMessage.avatarUrl ?? undefined}
-                      />
-                      <AvatarFallback>
-                        {message.parentMessage.authorDisplayName.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                    {message.parentMessage.authorDisplayName}
-                  </div>
-                  <MarkdownFormatter text={message.parentMessage.content} />
-                </div>
+      {message.parentMessage ? (
+        <div className="flex pl-10 relative items-end hover:cursor-pointer text-xs">
+          <div
+            className="w-full overflow-hidden pl-2.5 pb-2.5"
+            onClick={() =>
+              scrollToMessage(message.parentMessage?._id as string)
+            }
+          >
+            <div className="absolute border-l-2 rounded-tl-lg border-t-2 w-[30px] h-10 left-5 -bottom-1" />
+            <div className="w-full bg-inherit border rounded-lg border-border overflow-hidden max-h-[200px] p-2.5">
+              <div className="mb-1.5 flex items-center gap-1.5">
+                <Avatar className="w-5 h-5">
+                  <AvatarImage
+                    src={message.parentMessage.avatarUrl ?? undefined}
+                  />
+                  <AvatarFallback>
+                    {message.parentMessage.authorDisplayName.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                {message.parentMessage.authorDisplayName}
               </div>
-            </div>
-          ) : null}
-          <div className={cn("flex gap-3  w-full")}>
-            <Avatar className="w-10 h-10">
-              <AvatarImage src={message.avatarUrl ?? undefined} />
-              <AvatarFallback>{message.displayName.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-sm">
-                    {message.displayName}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    {dayjs(message._creationTime).fromNow()}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    {message.editedAt ? "(edited)" : null}
-                  </span>
-                </div>
-                <div className="opacity-0 ml-2 flex items-center gap-2 group-hover:opacity-100 transition-opacity">
-                  <button
-                    onClick={() => {
-                      setReplyingTo(message);
-                    }}
-                    className="text-sm hover:underline"
-                  >
-                    Reply
-                  </button>
-                  {message.isOwner ? (
-                    <>
-                      <button
-                        onClick={() => {
-                          setToEdit(message);
-                          setInputValue(message.content);
-                        }}
-                        className="text-sm hover:underline"
-                      >
-                        Edit
-                      </button>
-
-                      <DeleteMessage
-                        messageId={message._id}
-                        triggerComponent={
-                          <button className="text-sm hover:underline text-destructive">
-                            Delete
-                          </button>
-                        }
-                      />
-                    </>
-                  ) : null}
-                </div>
-              </div>
-              {renderMessage()}
-              <div className="mt-3">
-                <Reactions
-                  messageId={message._id}
-                  reactions={message.reactions}
-                />
-              </div>
+              <MarkdownFormatter text={message.parentMessage.content} />
             </div>
           </div>
         </div>
-      </HoverCardTrigger>
-      <HoverCardContent
-        align="center"
-        className="p-1 w-auto bg-background border-none"
-        side="right"
-      >
-        <ReactionPicker messageId={message._id} reactions={message.reactions} />
-      </HoverCardContent>
-    </HoverCard>
+      ) : null}
+      <div className={cn("flex gap-3  w-full")}>
+        <Avatar className="w-10 h-10">
+          <AvatarImage src={message.avatarUrl ?? undefined} />
+          <AvatarFallback>{message.displayName.charAt(0)}</AvatarFallback>
+        </Avatar>
+        <div className="flex-1">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-sm">
+                {message.displayName}
+              </span>
+              <span className="text-sm text-muted-foreground">
+                {dayjs(message._creationTime).fromNow()}
+              </span>
+              <span className="text-sm text-muted-foreground">
+                {message.editedAt ? "(edited)" : null}
+              </span>
+            </div>
+            <div className="opacity-0 ml-2 flex items-center gap-2 group-hover:opacity-100 transition-opacity">
+              <button
+                onClick={() => {
+                  setReplyingTo(message);
+                }}
+                className="text-sm hover:underline"
+              >
+                Reply
+              </button>
+
+              {message.isOwner ? (
+                <>
+                  <button
+                    onClick={() => {
+                      setToEdit(message);
+                      setInputValue(message.content);
+                    }}
+                    className="text-sm hover:underline"
+                  >
+                    Edit
+                  </button>
+
+                  <DeleteMessage
+                    messageId={message._id}
+                    triggerComponent={
+                      <button className="text-sm hover:underline text-destructive">
+                        Delete
+                      </button>
+                    }
+                  />
+                </>
+              ) : null}
+            </div>
+          </div>
+          {renderMessage()}
+          <div className="mt-2">
+            <Reactions messageId={message._id} reactions={message.reactions} />
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
