@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { CheckCheck } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 dayjs.extend(relativeTime);
 
@@ -60,31 +61,53 @@ export function Inbox() {
   ).length;
 
   return (
-    <div className="space-y-4">
-      {unreadCount > 0 && (
-        <div className="flex justify-between items-center p-4 bg-muted/50 rounded-lg">
-          <span className="text-sm text-muted-foreground">
-            {unreadCount} unread message{unreadCount !== 1 ? "s" : ""}
-          </span>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={handleMarkAllAsRead}
-            disabled={isMarkingAllAsRead}
-            className="gap-2"
+    <AnimatePresence mode="sync">
+      <div className="flex flex-col gap-2.5">
+        {unreadCount > 0 && (
+          <motion.div
+            layout
+            key="inbox-unread-messages"
+            initial={{
+              opacity: 0,
+            }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex justify-between items-center p-4 bg-muted/50 rounded-lg"
           >
-            <CheckCheck className="h-4 w-4" />
-            {isMarkingAllAsRead ? "Marking..." : "Mark all as read"}
-          </Button>
-        </div>
-      )}
+            <span className="text-sm text-muted-foreground">
+              {unreadCount} unread message{unreadCount !== 1 ? "s" : ""}
+            </span>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={handleMarkAllAsRead}
+              disabled={isMarkingAllAsRead}
+              className="gap-2"
+            >
+              <CheckCheck className="h-4 w-4" />
+              {isMarkingAllAsRead ? "Marking..." : "Mark all as read"}
+            </Button>
+          </motion.div>
+        )}
 
-      <div className="space-y-3">
         {inbox.map((item) => {
-          return <InboxItem key={item._id} data={item} />;
+          return (
+            <motion.div
+              layout
+              transition={{ type: "tween" }}
+              initial={{
+                opacity: 0,
+              }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              key={item._id}
+            >
+              <InboxItem data={item} />
+            </motion.div>
+          );
         })}
       </div>
-    </div>
+    </AnimatePresence>
   );
 }
 
@@ -147,7 +170,7 @@ function InboxItem({ data }: { data: IInbox }) {
       </div>
 
       <div className="mt-2">
-        <h4 className="font-semibold text-sm mb-1">
+        <h4 className="font-semibold text-lg mb-1">
           {data.announcement.title}
         </h4>
         <MarkdownFormatter text={data.announcement.content} />
