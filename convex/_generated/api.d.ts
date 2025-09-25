@@ -17,6 +17,7 @@ import type * as announcements from "../announcements.js";
 import type * as auth from "../auth.js";
 import type * as channels from "../channels.js";
 import type * as http from "../http.js";
+import type * as inbox from "../inbox.js";
 import type * as messages from "../messages.js";
 import type * as profiles from "../profiles.js";
 import type * as reactions from "../reactions.js";
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   channels: typeof channels;
   http: typeof http;
+  inbox: typeof inbox;
   messages: typeof messages;
   profiles: typeof profiles;
   reactions: typeof reactions;
