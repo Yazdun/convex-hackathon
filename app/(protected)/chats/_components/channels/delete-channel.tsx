@@ -63,7 +63,9 @@ export function DeleteChannel({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="destructive">Delete Channel</Button>
+        <Button type="button" variant="ghost">
+          Delete Channel
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

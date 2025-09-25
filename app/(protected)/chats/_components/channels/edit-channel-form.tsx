@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { useChat } from "../providers/chat-provider";
 import { tagsList } from "./tags";
 import { IChannelMin } from "../types/types";
+import { DeleteChannel } from "./delete-channel";
 
 // edit channel comps
 const FormSchema = z.object({
@@ -55,7 +56,7 @@ export function EditChannelContainer() {
   );
 
   if (!channelId) {
-    return <div>No channel selected</div>;
+    return null;
   }
 
   if (!channel) {
@@ -75,7 +76,7 @@ export function EditChannelForm({ channel }: { channel: IChannelMin }) {
     },
   });
 
-  const { setMode } = useChat();
+  const { setMode, setChannelId } = useChat();
   const updateChannel = useMutation(api.channels.update);
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -158,7 +159,14 @@ export function EditChannelForm({ channel }: { channel: IChannelMin }) {
           )}
         />
 
-        <div className="flex justify-end">
+        <div className="flex gap-2 justify-end">
+          <DeleteChannel
+            channel={channel}
+            onClose={() => {
+              setChannelId(null);
+              setMode(null);
+            }}
+          />
           <Button type="submit">Save Changes</Button>
         </div>
       </form>

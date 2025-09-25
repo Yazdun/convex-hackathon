@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { MultiSelect } from "@/components/multi-select";
-import { Plus } from "lucide-react";
+import { Plus, Loader2 } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
@@ -47,6 +48,7 @@ const FormSchema = z.object({
 });
 
 export function CreateChannelForm() {
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -60,6 +62,7 @@ export function CreateChannelForm() {
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     const promise = async () => {
+      setLoading(true);
       try {
         const channelId = await createChannel({
           name: data.name,
@@ -70,6 +73,9 @@ export function CreateChannelForm() {
         setChannelId(channelId);
       } catch (error) {
         console.error("Failed to create channel:", error);
+        throw error;
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -90,7 +96,11 @@ export function CreateChannelForm() {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Start typing..." {...field} />
+                <Input
+                  placeholder="Start typing..."
+                  disabled={loading}
+                  {...field}
+                />
               </FormControl>
               <FormDescription>
                 This is your channel&apos;s public display name.
@@ -109,6 +119,7 @@ export function CreateChannelForm() {
                 <Textarea
                   className="max-h-[100px]"
                   placeholder="Start typing..."
+                  disabled={loading}
                   {...field}
                 />
               </FormControl>
@@ -129,6 +140,7 @@ export function CreateChannelForm() {
                   value={field.value}
                   onValueChange={field.onChange}
                   placeholder="Choose tags..."
+                  disabled={loading}
                 />
               </FormControl>
               <FormMessage />
@@ -137,9 +149,13 @@ export function CreateChannelForm() {
         />
 
         <div className="flex justify-end">
-          <Button type="submit">
-            <Plus size={18} />
-            Create New Channel
+          <Button type="submit" disabled={loading}>
+            {loading ? (
+              <Loader2 size={18} className="animate-spin" />
+            ) : (
+              <Plus size={18} />
+            )}
+            {loading ? "Creating..." : "Create New Channel"}
           </Button>
         </div>
       </form>
