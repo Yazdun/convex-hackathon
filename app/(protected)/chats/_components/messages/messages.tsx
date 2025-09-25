@@ -33,6 +33,7 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
   const [isMounted, setIsMounted] = useState(false);
   const { scrollToBottom, scrollToBottomIfAtBottom } = useChat();
   const prevMessageCountRef = useRef(0);
+  const lastMessage = messages ? messages[messages.length - 1] : null;
 
   useEffect(() => {
     if (messages === undefined) {
@@ -66,13 +67,10 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
   }, [messages, isMounted, scrollToBottom, scrollToBottomIfAtBottom]);
 
   useEffect(() => {
-    if (messages) {
-      const lastMessage = messages[messages.length - 1];
-      if (lastMessage?.isOwner) {
-        scrollToBottom();
-      }
+    if (messages && lastMessage?.isOwner) {
+      scrollToBottom();
     }
-  }, [messages]);
+  }, [lastMessage?._id]);
 
   if (messages === undefined && showLoading) {
     return (
@@ -258,10 +256,10 @@ function Message({ message }: { message: IMessage }) {
           </div>
           {renderMessage()}
           <Reactions messageId={message._id} reactions={message.reactions} />
-          <ReactionPicker
+          {/*<ReactionPicker
             messageId={message._id}
             reactions={message.reactions}
-          />
+          />*/}
         </div>
       </div>
     </div>
