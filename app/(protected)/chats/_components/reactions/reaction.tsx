@@ -45,7 +45,7 @@ export function Reactions({ messageId, reactions, className }: ReactionProps) {
   }
 
   return (
-    <div className={cn("flex flex-wrap gap-1 mt-1", className)}>
+    <div className={cn("flex flex-wrap gap-1", className)}>
       {activeReactions.map((reaction) => (
         <Button
           key={reaction.reactionType}
@@ -53,7 +53,7 @@ export function Reactions({ messageId, reactions, className }: ReactionProps) {
           size="sm"
           onClick={() => handleReactionClick(reaction.reactionType)}
           className={cn(
-            "h-7 px-2 py-1 text-xs font-medium transition-all duration-200 hover:scale-105",
+            "h-7 px-2 py-1 text-xs font-medium transition-all duration-200",
             reaction.hasCurrentUser
               ? "bg-blue-100 dark:bg-blue-900 border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300"
               : "hover:bg-secondary/80",
@@ -89,12 +89,12 @@ export function ReactionPicker({
   };
 
   return (
-    <div className={cn("flex flex-wrap gap-1", className)}>
+    <div className={cn("flex flex-col gap-1", className)}>
       {reactions.map((reaction) => (
         <Button
           key={reaction.reactionType}
           variant="ghost"
-          size="sm"
+          size="icon"
           onClick={() => handleReactionClick(reaction.reactionType)}
           className={cn(
             "h-8 w-8 p-1 text-lg hover:scale-110 transition-all duration-200",
