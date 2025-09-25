@@ -1,4 +1,4 @@
-import { Inbox } from "lucide-react";
+import { Inbox as InboxIcon } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -11,19 +11,19 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-export function Directs() {
+export function Inbox() {
   return (
     <Popover>
       <Tooltip>
         <TooltipTrigger asChild>
           <PopoverTrigger asChild>
             <Button variant="ghost" size="icon">
-              <Inbox size={19} />
+              <InboxIcon size={19} />
             </Button>
           </PopoverTrigger>
         </TooltipTrigger>
         <TooltipContent>
-          <p>Direct messages</p>
+          <p>Inbox</p>
         </TooltipContent>
       </Tooltip>
       <PopoverContent>Place content for the popover here.</PopoverContent>

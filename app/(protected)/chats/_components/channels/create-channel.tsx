@@ -23,7 +23,7 @@ export function CreateChannel() {
         </Button>
       </TooltipTrigger>
       <TooltipContent>
-        <p>Create new channel</p>
+        <p>New channel</p>
       </TooltipContent>
     </Tooltip>
   );

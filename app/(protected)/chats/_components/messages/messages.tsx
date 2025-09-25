@@ -92,7 +92,7 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
   if (!messages.length) {
     return (
       <motion.div className="p-2.5" {...motionConfig} key="empty-chat">
-        <div className="p-5 border-dashed rounded-lg text-lg flex-col text-muted-foreground gap-2 border-2 flex items-center text-center justify-center border py-10">
+        <div className="p-5 border-dashed rounded-lg text-lg flex-col text-muted-foreground gap-2 bg-gradient-to-b from-muted to-transparent flex items-center text-center justify-center  py-20">
           <MessageCircleDashed size={30} strokeWidth={2} />
           Start the conversation
         </div>

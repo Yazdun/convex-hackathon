@@ -9,8 +9,7 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { CreateChannel } from "../channels/create-channel";
 import { useChat } from "../providers/chat-provider";
-import { Directs } from "../alerts/directs";
-import { Alerts } from "../alerts/alerts";
+import { Inbox } from "../inbox/inbox";
 import { Profile } from "../profiles/profile";
 import { ChannelPopover } from "../channels/channel-popover";
 
@@ -128,8 +127,7 @@ export function Navbar() {
         <div className="flex items-center gap-1">
           <div className="flex gap-0.5">
             <CreateChannel />
-            <Directs />
-            <Alerts />
+            <Inbox />
             <ModeToggle />
             <div className="ml-0.5 flex justify-center items-center">
               <Profile />
