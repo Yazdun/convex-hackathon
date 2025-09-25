@@ -18,6 +18,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface ReactionProps {
   messageId: Id<"messages">;
@@ -49,30 +50,40 @@ export function Reactions({ messageId, reactions, className }: ReactionProps) {
     }
   };
 
-  const activeReactions = reactions.filter((reaction) => reaction.count > 0);
+  const activeReactions = reactions
+    .filter((reaction) => reaction.count > 0)
+    .sort((a, b) => b.count - a.count);
 
   return (
     <div className={cn("flex items-center gap-1", className)}>
       <ReactionPicker messageId={messageId} reactions={reactions} />
-      {activeReactions.map((reaction) => (
-        <button
-          key={reaction.reactionType}
-          // variant="secondary"
-          // size="sm"
-          onClick={() => handleReactionClick(reaction.reactionType)}
-          className={cn(
-            "h-7 rounded-full hover:cursor-pointer px-3 py-1 text-xs font-medium transition-all duration-200",
-            reaction.hasCurrentUser
-              ? "bg-blue-100 dark:bg-blue-900 border-blue-300 dark:border-blue-700 text-blue-500 dark:text-blue-300 hover:opacity-80"
-              : "hover:bg-secondary/80 dark:bg-secondary bg-muted",
-          )}
-        >
-          <span className="mr-1">
-            {REACTION_EMOJIS[reaction.reactionType] || "❓"}
-          </span>
-          <span>{reaction.count}</span>
-        </button>
-      ))}
+      <AnimatePresence mode="sync">
+        {activeReactions.map((reaction) => (
+          <motion.div
+            key={reaction.reactionType}
+            layout
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            transition={{ type: "tween" }}
+          >
+            <button
+              onClick={() => handleReactionClick(reaction.reactionType)}
+              className={cn(
+                "h-7 rounded-full hover:cursor-pointer px-3 py-1 text-xs font-medium transition-all duration-200",
+                reaction.hasCurrentUser
+                  ? "bg-blue-100 dark:bg-blue-900 border-blue-300 dark:border-blue-700 text-blue-500 dark:text-blue-300 hover:opacity-80"
+                  : "hover:bg-secondary/80 dark:bg-secondary bg-muted",
+              )}
+            >
+              <span className="mr-1">
+                {REACTION_EMOJIS[reaction.reactionType] || "❓"}
+              </span>
+              <span>{reaction.count}</span>
+            </button>
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   );
 }
