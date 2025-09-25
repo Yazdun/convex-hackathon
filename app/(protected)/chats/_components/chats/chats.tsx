@@ -9,6 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { EditChannelContainer } from "../channels/edit-channel-form";
 import { AnimatePresence, motion } from "framer-motion";
 import { AnnouncementCreate } from "../annoucement/announcement-create";
+import { Inbox } from "../inbox/inbox";
 
 const motionConfig = {
   createChannel: {
@@ -41,6 +42,18 @@ export function Chats() {
   const { channelId, mode } = useChat();
 
   const renderChildren = () => {
+    if (mode === "inbox") {
+      return (
+        <motion.div
+          key="createChannel"
+          {...motionConfig.createChannel}
+          className="w-full max-w-2xl p-2.5 m-auto"
+        >
+          <Inbox />
+        </motion.div>
+      );
+    }
+
     if (mode === "createChannel") {
       return (
         <motion.div

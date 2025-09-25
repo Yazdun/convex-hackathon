@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { CreateChannel } from "../channels/create-channel";
 import { useChat } from "../providers/chat-provider";
-import { Inbox } from "../inbox/inbox";
+import { InboxButton } from "../inbox/inbox-button";
 import { Profile } from "../profiles/profile";
 import { ChannelPopover } from "../channels/channel-popover";
 
@@ -24,24 +24,6 @@ export function Navbar() {
   const { setChannelId, mode, setMode } = useChat();
 
   const renderName = () => {
-    if (mode === "createChannel") {
-      return (
-        <motion.div
-          initial={{ opacity: 0, x: 0 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: channelId ? 10 : -10 }}
-          transition={{ duration: 0.2 }}
-          className="flex items-center gap-1.5"
-          key="Create"
-        >
-          <Button onClick={() => setMode(null)} variant="outline" size="icon">
-            <ArrowLeft size={14} />
-          </Button>
-          Create New Channel
-        </motion.div>
-      );
-    }
-
     if (channel) {
       return (
         <motion.div
@@ -60,6 +42,42 @@ export function Navbar() {
             <ArrowLeft size={14} />
           </Button>
           <ChannelPopover channel={channel} />
+        </motion.div>
+      );
+    }
+
+    if (mode) {
+      const renderLabel = () => {
+        if (mode === "inbox") {
+          return "Inbox";
+        }
+
+        if (mode === "createAnnouncement") {
+          return "Create Announcement";
+        }
+
+        if (mode === "createChannel") {
+          return "Create Channel";
+        }
+
+        if (mode === "editChannel") {
+          return "Edit Channel";
+        }
+      };
+
+      return (
+        <motion.div
+          initial={{ opacity: 0, x: 0 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: channelId ? 10 : -10 }}
+          transition={{ duration: 0.2 }}
+          className="flex items-center gap-1.5"
+          key="chat-mode"
+        >
+          <Button onClick={() => setMode(null)} variant="outline" size="icon">
+            <ArrowLeft size={14} />
+          </Button>
+          {renderLabel()}
         </motion.div>
       );
     }
@@ -110,7 +128,7 @@ export function Navbar() {
           <div className="flex items-center gap-1">
             <div className="flex gap-0.5">
               <CreateChannel />
-              <Inbox />
+              <InboxButton />
               <ModeToggle />
               <div className="ml-0.5 flex justify-center items-center">
                 <Profile />
