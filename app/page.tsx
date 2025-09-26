@@ -1,11 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "next-view-transitions";
-import * as FadeIn from "@/components/motion/staggers/fade";
 import React from "react";
+import Link from "next/link";
 
 export default function Page() {
   return (
-    <FadeIn.Container>
+    <div>
       <div className="h-screen flex justify-center p-5 items-center">
         <div className="w-full text-center max-w-xl flex flex-col gap-4">
           <h1 className="text-5xl">Campfires</h1>
@@ -20,6 +19,6 @@ export default function Page() {
           </div>
         </div>
       </div>
-    </FadeIn.Container>
+    </div>
   );
 }
