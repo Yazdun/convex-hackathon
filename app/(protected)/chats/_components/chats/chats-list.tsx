@@ -1,5 +1,5 @@
 import { api } from "@/convex/_generated/api";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import React, { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,8 @@ import { MarkdownFormatter } from "../markdown/mdx";
 import { motionConfig } from "./motion";
 import { ChannelSkeletonCard } from "./skeleton";
 import { Subscribe } from "./subscribe";
+import { AssistantContainer } from "../assistant/assistant";
+import { useAssistant } from "../assistant/assistant-provider";
 
 export function ChatsList() {
   const channels = useQuery(api.channels.list);
@@ -51,6 +53,7 @@ export function ChatsList() {
           </motion.div>
         );
       })}
+      <AssistantContainer />
     </div>
   );
 }
@@ -111,6 +114,9 @@ export function ChannelPreviewCard({ channel }: { channel: IChannel }) {
 
 function ChatSummary() {
   const [open] = useState(false);
+  const createThread = useMutation(api.chats.createThread);
+  const { setThreadId } = useAssistant();
+
   return (
     <div
       className={cn(
@@ -118,7 +124,13 @@ function ChatSummary() {
         open && "opacity-100",
       )}
     >
-      <Button variant={open ? "secondary" : "ghost"} size="icon">
+      <Button
+        onClick={async () => {
+          createThread().then(setThreadId);
+        }}
+        variant={open ? "secondary" : "ghost"}
+        size="icon"
+      >
         <Brain />
       </Button>
     </div>
