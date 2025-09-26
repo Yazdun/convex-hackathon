@@ -12,6 +12,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@convex-dev/agent": "^0.2.10",
     "@convex-dev/auth": "^0.0.81",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-avatar": "^1.1.10",

@@ -45,7 +45,7 @@ export function Chats() {
     if (mode === "inbox") {
       return (
         <motion.div
-          key="createChannel"
+          key="inbox"
           {...motionConfig.createChannel}
           className="w-full max-w-2xl p-2.5 m-auto"
         >

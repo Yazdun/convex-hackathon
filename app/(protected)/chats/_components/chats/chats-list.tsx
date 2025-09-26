@@ -1,30 +1,16 @@
 import { api } from "@/convex/_generated/api";
-import { useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import React, { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { toast } from "sonner";
-import {
-  Brain,
-  CornerDownRight,
-  Loader2,
-  UserMinus2,
-  UserPlus2,
-} from "lucide-react";
+import { Brain } from "lucide-react";
 import { motion } from "framer-motion";
-
 import { cn } from "@/lib/utils";
 import { IChannel } from "../types/types";
 import { MarkdownFormatter } from "../markdown/mdx";
-import { useChat } from "../providers/chat-provider";
-
-const motionConfig = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
-  transition: { duration: 0.3 },
-};
+import { motionConfig } from "./motion";
+import { ChannelSkeletonCard } from "./skeleton";
+import { Subscribe } from "./subscribe";
 
 export function ChatsList() {
   const channels = useQuery(api.channels.list);
@@ -66,43 +52,6 @@ export function ChatsList() {
         );
       })}
     </div>
-  );
-}
-
-function ChannelSkeletonCard({ idx }: { idx: number }) {
-  return (
-    <motion.div {...motionConfig}>
-      <div
-        className="p-5 relative border w-full grid gap-2 rounded-lg"
-        style={{
-          opacity: 1 - idx * 0.19,
-        }}
-      >
-        {/* Chat Summary Button Skeleton */}
-        <div className="absolute right-3 top-3">
-          <Skeleton className="h-10 w-10 rounded-md" />
-        </div>
-
-        {/* Channel Info Skeleton */}
-        <div className="text-left grid gap-2">
-          <div className="flex items-center justify-between">
-            <Skeleton className="h-7 w-32" />
-          </div>
-          <Skeleton className="h-2 w-full" />
-          <Skeleton className="h-2 w-full" />
-          <Skeleton className="h-2 w-3/4" />
-        </div>
-
-        {/* Bottom Section Skeleton */}
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-5 w-24" />
-          <div className="flex items-center gap-3">
-            {/* Button Skeleton */}
-            <Skeleton className="h-10 w-24" />
-          </div>
-        </div>
-      </div>
-    </motion.div>
   );
 }
 
@@ -174,66 +123,4 @@ function ChatSummary() {
       </Button>
     </div>
   );
-}
-
-export function Subscribe({ channel }: { channel: IChannel }) {
-  const subscribe = useMutation(api.channels.subscribe);
-  const [loading, setLoading] = React.useState(false);
-  const { setChannelId } = useChat();
-
-  function handleClick() {
-    const promise = async () => {
-      try {
-        setLoading(true);
-        await subscribe({
-          channelId: channel._id,
-        });
-        setLoading(false);
-        if (!channel.isSubscribed) {
-          setChannelId(channel._id);
-        }
-      } catch (error) {
-        setLoading(false);
-        console.error("Failed to create channel:", error);
-      }
-    };
-
-    toast.promise(promise, {
-      loading: "Loading...",
-      success: channel.isSubscribed ? "Unsubscribed!" : `Subscribed!`,
-      error: "Failed to subscribe!",
-    });
-  }
-
-  const renderIcon = () => {
-    if (loading) {
-      return <Loader2 className="animate-spin" />;
-    }
-
-    if (channel.isSubscribed) {
-      return <UserMinus2 />;
-    }
-
-    return <UserPlus2 />;
-  };
-
-  const renderComp = () => {
-    if (channel.isSubscribed) {
-      return (
-        <Button variant="outline" onClick={() => setChannelId(channel._id)}>
-          <CornerDownRight />
-          View Channel
-        </Button>
-      );
-    }
-
-    return (
-      <Button disabled={loading} onClick={handleClick} variant="outline">
-        {renderIcon()}
-        Subscribe
-      </Button>
-    );
-  };
-
-  return <div>{renderComp()}</div>;
 }
