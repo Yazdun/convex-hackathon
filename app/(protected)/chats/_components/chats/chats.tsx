@@ -44,13 +44,15 @@ export function Chats() {
   const renderChildren = () => {
     if (mode === "inbox") {
       return (
-        <motion.div
-          key="inbox"
-          {...motionConfig.createChannel}
-          className="w-full max-w-2xl p-2.5 m-auto"
-        >
-          <Inbox />
-        </motion.div>
+        <ScrollArea className="h-[calc(100vh-50px)]">
+          <motion.div
+            key="inbox"
+            {...motionConfig.createChannel}
+            className="w-full max-w-2xl p-2.5 m-auto"
+          >
+            <Inbox />
+          </motion.div>
+        </ScrollArea>
       );
     }
 
@@ -80,13 +82,15 @@ export function Chats() {
 
     if (mode === "createAnnouncement") {
       return (
-        <motion.div
-          key="editChannel"
-          {...motionConfig.editChannel}
-          className="w-full max-w-2xl p-2.5 m-auto"
-        >
-          <AnnouncementCreate />
-        </motion.div>
+        <ScrollArea className="h-[calc(100vh-50px)]">
+          <motion.div
+            key="editChannel"
+            {...motionConfig.editChannel}
+            className="w-full max-w-2xl p-2.5 m-auto"
+          >
+            <AnnouncementCreate />
+          </motion.div>
+        </ScrollArea>
       );
     }
 

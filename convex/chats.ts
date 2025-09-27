@@ -75,24 +75,24 @@ export const generateAnnouncement = action({
 
     const enhancedPrompt: string = `Based on this request: "${args.prompt}"
 
-Channel Context:
-- Channel Name: "${channel.name}"
-- Channel Description: "${channel.description || "No description provided"}"
+      Channel Context:
+      - Channel Name: "${channel.name}"
+      - Channel Description: "${channel.description || "No description provided"}"
 
-Generate an announcement with both a title and description that fits the context and purpose of this channel. Return your response in this exact JSON format:
+      Generate a minimal announcement for this channel. Return your response in this exact JSON format:
 
-{
-  "title": "Your announcement title here",
-  "description": "Your announcement description here"
-}
+      {
+        "title": "Your announcement title here",
+        "description": "Your announcement description here"
+      }
 
-Requirements:
-- Title should be concise, engaging, and under 60 characters
-- Description should be informative, welcoming, and 1-2 sentences
-- Both should match the tone and purpose of the original request
-- Return only the JSON object, no additional text
+      Requirements:
+      - Title: concise and under 60 characters
+      - Description: use markdown format when appropriate, add 3 bullet points if it enhances clarity
+      - Keep content straightforward and minimal
+      - Match the channel's context and purpose
 
-IMPORTANT: Respond with valid JSON only.`;
+      IMPORTANT: Respond with valid JSON only.`;
 
     const result = await thread.generateText({ prompt: enhancedPrompt });
 

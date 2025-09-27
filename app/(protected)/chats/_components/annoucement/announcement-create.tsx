@@ -67,24 +67,18 @@ export function AnnouncementCreate() {
     },
   });
 
-  if (!channelId || !channel) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <div className="text-center">
-          <p className="text-muted-foreground">
-            Please select a channel to create an announcement.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   // Convert channel participants to MultiSelect options
   const participantOptions =
-    channel.users?.map((user) => ({
+    channel?.users?.map((user) => ({
       label: user.displayName,
       value: user.userId,
     })) || [];
+
+  // Function to programmatically update form values
+  const updateFormValues = (props: { title: string; content: string }) => {
+    form.setValue("title", props.title);
+    form.setValue("content", props.content);
+  };
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     const promise = async () => {
@@ -125,11 +119,12 @@ export function AnnouncementCreate() {
             Create Announcement
           </h2>
           <p className="text-sm text-muted-foreground">
-            Send an announcement to participants in {channel.name}
+            Send welcome messages for new participants, announcements about
+            channel status, updates, and more to keep everyone informed.
           </p>
         </div>
         <div className="flex items-center">
-          <PromptPopover />
+          <PromptPopover callback={updateFormValues} />
         </div>
       </div>
 

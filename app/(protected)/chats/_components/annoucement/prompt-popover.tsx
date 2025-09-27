@@ -14,10 +14,19 @@ import {
 } from "@/components/ui/tooltip";
 import { useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useChat } from "../providers/chat-provider";
+import { toast } from "sonner";
 
-export function PromptPopover() {
+export function PromptPopover({
+  callback,
+}: {
+  callback: (props: { title: string; content: string }) => void;
+}) {
   const [prompt, setPrompt] = useState("");
+  const { channelId } = useChat();
   const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = React.useState(false);
+
   const generateAnnouncement = useAction(api.chats.generateAnnouncement);
 
   const presetPrompts = [
@@ -35,12 +44,26 @@ export function PromptPopover() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!prompt.trim()) return;
+    if (!prompt.trim()) {
+      return;
+    }
+
+    if (!channelId) {
+      toast.error("Failed to retrieve channel id");
+      return;
+    }
 
     setIsLoading(true);
     try {
-      const result = await generateAnnouncement({ prompt });
+      const result = await generateAnnouncement({ prompt, channelId });
       console.log("Generated announcement:", result);
+      const values = {
+        title: result.title as string,
+        content: result.description as string,
+      };
+      callback(values);
+      setOpen(false);
+      toast.success("Success!");
     } catch (error) {
       console.error("Error generating announcement:", error);
     } finally {
@@ -50,7 +73,7 @@ export function PromptPopover() {
 
   return (
     <Tooltip>
-      <Popover>
+      <Popover open={open} onOpenChange={setOpen}>
         <TooltipTrigger asChild>
           <PopoverTrigger asChild>
             <Button variant="outline" size="icon" type="button">
@@ -61,7 +84,7 @@ export function PromptPopover() {
         <TooltipContent side="bottom">
           <p>Generate from prompt</p>
         </TooltipContent>
-        <PopoverContent className="w-[400px]">
+        <PopoverContent className="w-[480px]">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label
@@ -97,13 +120,14 @@ export function PromptPopover() {
                 placeholder="Describe the type of announcement you want to create..."
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                className="min-h-[100px]"
+                className="h-[200px]"
               />
             </div>
             <Button
               type="submit"
               disabled={!prompt.trim() || isLoading}
               className="w-full"
+              variant="secondary"
             >
               {isLoading ? (
                 <>Generating...</>

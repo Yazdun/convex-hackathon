@@ -55,8 +55,10 @@ export function MarkdownFormatter({
           // Bullet points
           ul: ({ children }) => <ul className="my-2 list-disc">{children}</ul>,
           li: ({ children }) => (
-            <li className="flex items-center my-1">
-              <Dot />
+            <li className="flex items-start my-1">
+              <div>
+                <Dot />
+              </div>
               <span>{children}</span>
             </li>
           ),
