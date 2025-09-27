@@ -23,6 +23,7 @@ import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { useChat } from "../providers/chat-provider";
 import { Id } from "@/convex/_generated/dataModel";
+import { PromptPopover } from "./prompt-popover";
 
 const FormSchema = z.object({
   title: z
@@ -118,13 +119,18 @@ export function AnnouncementCreate() {
 
   return (
     <div className="w-full max-w-2xl mx-auto p-2.5">
-      <div className="mb-6">
-        <h2 className="text-2xl font-semibold tracking-tight">
-          Create Announcement
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          Send an announcement to participants in {channel.name}
-        </p>
+      <div className="flex items-start w-full justify-between">
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            Create Announcement
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Send an announcement to participants in {channel.name}
+          </p>
+        </div>
+        <div className="flex items-center">
+          <PromptPopover />
+        </div>
       </div>
 
       <Form {...form}>

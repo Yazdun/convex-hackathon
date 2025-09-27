@@ -46,6 +46,73 @@ export const createThread = mutation({
   },
 });
 
+export const generateAnnouncement = action({
+  args: {
+    prompt: v.string(),
+    channelId: v.id("channels"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    // Get channel data using internal query
+    const channel: Doc<"channels"> | null = await ctx.runQuery(
+      internal.channels.getById,
+      {
+        channelId: args.channelId,
+      },
+    );
+
+    if (!channel) throw new Error("Channel not found");
+
+    const { threadId } = await agent.createThread(ctx, {
+      userId,
+    });
+
+    const { thread } = await agent.continueThread(ctx, {
+      threadId: threadId,
+    });
+
+    const enhancedPrompt: string = `Based on this request: "${args.prompt}"
+
+Channel Context:
+- Channel Name: "${channel.name}"
+- Channel Description: "${channel.description || "No description provided"}"
+
+Generate an announcement with both a title and description that fits the context and purpose of this channel. Return your response in this exact JSON format:
+
+{
+  "title": "Your announcement title here",
+  "description": "Your announcement description here"
+}
+
+Requirements:
+- Title should be concise, engaging, and under 60 characters
+- Description should be informative, welcoming, and 1-2 sentences
+- Both should match the tone and purpose of the original request
+- Return only the JSON object, no additional text
+
+IMPORTANT: Respond with valid JSON only.`;
+
+    const result = await thread.generateText({ prompt: enhancedPrompt });
+
+    try {
+      const parsedResult = JSON.parse(result.text);
+      return {
+        title: parsedResult.title || "Welcome!",
+        description:
+          parsedResult.description || "Join our community and start engaging!",
+      };
+    } catch (error) {
+      console.log(error);
+      return {
+        title: "Failed to generate the title!",
+        description: result.text || "Failed to generate the description",
+      };
+    }
+  },
+});
+
 export const sendMessageToAgent = action({
   args: {
     threadId: v.string(),
