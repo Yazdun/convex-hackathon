@@ -8,6 +8,7 @@ export const create = mutation({
     content: v.string(),
     participants: v.array(v.id("users")),
     channelId: v.id("channels"),
+    isWelcomeMessage: v.boolean(),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -22,6 +23,7 @@ export const create = mutation({
       createdBy: userId,
       participants: args.participants,
       channelId: args.channelId,
+      isWelcomeMessage: args.isWelcomeMessage,
     });
 
     // Create inbox entries for each participant

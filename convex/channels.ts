@@ -180,11 +180,16 @@ export const subscribe = mutation({
     } else {
       // User is not subscribed, so subscribe them
 
-      // Get the latest announcement for this channel
-      const [latestAnnouncement] = await Promise.all([
+      // Get the latest welcome message announcement for this channel
+      const [latestWelcomeMessage] = await Promise.all([
         ctx.db
           .query("announcements")
-          .filter((q) => q.eq(q.field("channelId"), args.channelId))
+          .filter((q) =>
+            q.and(
+              q.eq(q.field("channelId"), args.channelId),
+              q.eq(q.field("isWelcomeMessage"), true),
+            ),
+          )
           .order("desc")
           .first(),
       ]);
@@ -194,21 +199,21 @@ export const subscribe = mutation({
         participants: [...(channel.participants || []), userId],
       });
 
-      if (latestAnnouncement) {
-        // Check if user already has this announcement in their inbox
+      if (latestWelcomeMessage) {
+        // Check if user already has this welcome message in their inbox
         const existingInboxEntry = await ctx.db
           .query("inboxes")
           .withIndex("by_target_user", (q) => q.eq("targetUserId", userId))
           .filter((q) =>
-            q.eq(q.field("announcementId"), latestAnnouncement._id),
+            q.eq(q.field("announcementId"), latestWelcomeMessage._id),
           )
           .first();
 
         if (!existingInboxEntry) {
-          // Add latest announcement to user's inbox
+          // Add latest welcome message to user's inbox
           const addToInboxPromise = ctx.db.insert("inboxes", {
             targetUserId: userId,
-            announcementId: latestAnnouncement._id,
+            announcementId: latestWelcomeMessage._id,
             status: "delivered",
           });
 

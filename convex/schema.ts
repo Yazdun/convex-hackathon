@@ -64,6 +64,7 @@ const applicationTables = {
     createdBy: v.id("users"),
     participants: v.optional(v.array(v.id("users"))),
     channelId: v.id("channels"),
+    isWelcomeMessage: v.optional(v.boolean()),
   })
     .index("by_creator", ["createdBy"])
     .index("by_participants", ["participants"]),

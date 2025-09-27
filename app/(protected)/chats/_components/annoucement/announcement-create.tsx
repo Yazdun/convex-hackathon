@@ -24,6 +24,7 @@ import { toast } from "sonner";
 import { useChat } from "../providers/chat-provider";
 import { Id } from "@/convex/_generated/dataModel";
 import { PromptPopover } from "./prompt-popover";
+import { Switch } from "@/components/ui/switch";
 
 const FormSchema = z.object({
   title: z
@@ -45,6 +46,7 @@ const FormSchema = z.object({
   participants: z
     .array(z.string())
     .min(1, { message: "Please select at least one participant." }),
+  isWelcomeMessage: z.boolean(),
 });
 
 export function AnnouncementCreate() {
@@ -64,6 +66,7 @@ export function AnnouncementCreate() {
       title: "",
       content: "",
       participants: [],
+      isWelcomeMessage: false,
     },
   });
 
@@ -93,6 +96,7 @@ export function AnnouncementCreate() {
           content: data.content,
           participants: data.participants as Id<"users">[],
           channelId,
+          isWelcomeMessage: data.isWelcomeMessage,
         });
         setMode(null);
         form.reset();
@@ -195,6 +199,28 @@ export function AnnouncementCreate() {
                   announcement.
                 </FormDescription>
                 <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="isWelcomeMessage"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base">Welcome Message</FormLabel>
+                  <FormDescription>
+                    Mark this as a welcome message for new participants.
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    disabled={loading}
+                  />
+                </FormControl>
               </FormItem>
             )}
           />
