@@ -161,7 +161,7 @@ function ChatSummary({ channelId }: { channelId: string }) {
           </Button>
         </TooltipTrigger>
         <TooltipContent side="bottom">
-          <p>Summarize activities</p>
+          <p>Summarize Activities</p>
         </TooltipContent>
       </Tooltip>
     </div>

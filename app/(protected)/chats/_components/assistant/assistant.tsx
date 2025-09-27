@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useAssistant } from "./assistant-provider";
 import { useThreadMessages } from "@convex-dev/agent/react";
 import { api } from "@/convex/_generated/api";
@@ -50,11 +50,27 @@ export function Assistant({ threadId }: { threadId: string }) {
   const { setThreadId, setCurrentChannelId } = useAssistant();
   const ref = useRef(null);
 
-  // @ts-expect-error weird error
-  useOnClickOutside(ref, () => {
+  const handleClose = () => {
     setThreadId(undefined);
     setCurrentChannelId(undefined);
-  });
+  };
+
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        handleClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscapeKey);
+
+    return () => {
+      document.removeEventListener("keydown", handleEscapeKey);
+    };
+  }, []);
+
+  // @ts-expect-error weird error
+  useOnClickOutside(ref, handleClose);
 
   const systemResponse = messages.results[1];
 
@@ -103,14 +119,7 @@ export function Assistant({ threadId }: { threadId: string }) {
     >
       <div className="px-4 flex items-center justify-between py-2 border-b">
         <h2 className="">Channel Overview</h2>
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={() => {
-            setCurrentChannelId(undefined);
-            setThreadId(undefined);
-          }}
-        >
+        <Button size="icon" variant="ghost" onClick={handleClose}>
           <X />
         </Button>
       </div>
