@@ -36,7 +36,7 @@ export function InboxButton() {
                 animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
                 key={`${unread.length}-inbox-key`}
-                className="absolute bg-red-500 font-bold font-mono flex items-center justify-center text-[10px] rounded-full w-4 h-4 right-0 mt-3"
+                className="absolute dark:bg-red-600 dark:text-white bg-red-400 text-black font-bold font-mono flex items-center justify-center text-[10px] rounded-full w-4 h-4 right-0 mt-3"
               >
                 {unread?.length}
               </motion.div>

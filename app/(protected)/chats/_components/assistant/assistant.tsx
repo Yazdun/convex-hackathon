@@ -20,14 +20,18 @@ export function AssistantContainer() {
             key={threadId}
             initial={{
               opacity: 0,
-              y: 10,
+              scale: 0.5,
+              y: 20,
             }}
             animate={{
               opacity: 1,
+              scale: 1,
               y: 0,
             }}
             exit={{
               opacity: 0,
+              scale: 0.8,
+              y: 40,
             }}
           >
             <Assistant threadId={threadId} />
@@ -118,12 +122,12 @@ export function Assistant({ threadId }: { threadId: string }) {
       className="border transition-all rounded-lg bg-popover w-[400px]"
     >
       <div className="px-4 flex items-center justify-between py-2 border-b">
-        <h2 className="">Channel Overview</h2>
+        <h2 className="font-mono">Channel Overview</h2>
         <Button size="icon" variant="ghost" onClick={handleClose}>
           <X />
         </Button>
       </div>
-      <div className="p-4 leading-6 min-h-[30px] text-sm">
+      <div className="p-4 font-mono leading-6 min-h-[30px] text-sm">
         <AnimatePresence mode="wait">{generateText()}</AnimatePresence>
       </div>
     </motion.div>

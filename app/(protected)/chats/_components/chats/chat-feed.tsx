@@ -12,7 +12,7 @@ export default function ChatFeed({ channelId }: { channelId: Id<"channels"> }) {
   const { textareaHeight, scrollAreaRef } = useChat();
 
   return (
-    <div className="flex flex-col h-[calc(100vh-55px)]  bg-background">
+    <div className="flex flex-col h-[calc(100vh-52px)] bg-background">
       <div
         className="flex-1 overflow-hidden"
         style={{

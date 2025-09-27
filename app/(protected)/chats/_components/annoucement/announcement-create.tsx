@@ -163,7 +163,7 @@ export function AnnouncementCreate() {
                 <FormLabel>Content</FormLabel>
                 <FormControl>
                   <Textarea
-                    className="min-h-[120px]"
+                    className="min-h-[120px] max-h-[200px]"
                     placeholder="Write your announcement content..."
                     disabled={loading}
                     {...field}

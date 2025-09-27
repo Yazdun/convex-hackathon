@@ -83,7 +83,7 @@ export function VoiceMessage({ fileUrl, className }: VoiceMessageProps) {
 
   return (
     <div className={cn("max-w-xs", className)}>
-      <div className="flex items-center gap-2 bg-gray-500 dark:bg-accent text-white rounded-2xl px-3 py-2">
+      <div className="flex items-center gap-2 bg-accent dark:bg-muted dark:border text-white px-3 py-2">
         {/* Play/Pause Button - Telegram style circular button */}
         <button
           onClick={togglePlayPause}

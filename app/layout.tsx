@@ -45,7 +45,7 @@ export default function RootLayout({
             >
               <NuqsAdapter>{children}</NuqsAdapter>
             </ThemeProvider>
-            <Toaster />
+            <Toaster position="top-right" />
           </ConvexClientProvider>
         </body>
       </html>

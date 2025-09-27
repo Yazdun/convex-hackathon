@@ -82,7 +82,7 @@ export function Chats() {
 
     if (mode === "createAnnouncement") {
       return (
-        <ScrollArea className="h-[calc(100vh-50px)]">
+        <ScrollArea className="h-[calc(100vh-55px)]">
           <motion.div
             key="editChannel"
             {...motionConfig.editChannel}

@@ -31,7 +31,8 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
   const messages = useQuery(api.messages.list, { channelId });
   const [showLoading, setShowLoading] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const { scrollToBottom, scrollToBottomIfAtBottom } = useChat();
+  const { scrollToBottom, scrollToBottomIfAtBottom, toEdit, replyingTo } =
+    useChat();
   const prevMessageCountRef = useRef(0);
 
   const lastMessage = messages ? messages[messages.length - 1] : null;
@@ -134,7 +135,13 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
     }
 
     return (
-      <ul className="w-full grid gap-0.5 pb-2.5">
+      <ul
+        className={cn(
+          "w-full grid gap-0.5 py-2.5",
+          toEdit?._id && "pb-20",
+          replyingTo && "pb-20",
+        )}
+      >
         {messages.map((msg) => {
           return (
             <motion.li {...motionConfig} key={msg._id} className="w-full">
@@ -213,9 +220,11 @@ function Message({ message }: { message: IMessage }) {
         messageRefs.current[message._id] = el;
       }}
       className={cn(
-        replyingTo?._id === message._id && "bg-secondary/50",
-        highlightedMessage === message._id && "bg-secondary",
-        "p-2.5 rounded-lg hover:bg-secondary/50 group transition-colors",
+        "p-2.5 rounded-lg hover:bg-card group transition-colors",
+        replyingTo?._id === message._id &&
+          "bg-secondary/20 hover:bg-secondary/30",
+        highlightedMessage === message._id &&
+          "bg-secondary/20 hover:bg-secondary/30",
       )}
     >
       {message.parentMessage ? (
@@ -226,8 +235,8 @@ function Message({ message }: { message: IMessage }) {
               scrollToMessage(message.parentMessage?._id as string)
             }
           >
-            <div className="absolute border-l-2 rounded-tl-lg border-t-2 w-[30px] h-10 left-5 -bottom-1" />
-            <div className="w-full bg-inherit border rounded-lg border-border overflow-hidden max-h-[200px] p-2.5">
+            <div className="absolute border-l-2 rounded-tl-lg border-border border-t-2 w-[30px] h-10 left-5 -bottom-1" />
+            <div className="w-full bg-inherit border-2 rounded-lg border-border overflow-hidden max-h-[200px] p-2.5">
               <div className="mb-1.5 flex items-center gap-1.5">
                 <Avatar className="w-5 h-5">
                   <AvatarImage

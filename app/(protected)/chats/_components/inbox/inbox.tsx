@@ -71,9 +71,8 @@ export function Inbox() {
               opacity: 0,
             }}
             animate={{ opacity: 1 }}
-            transition={{ type: "tween" }}
             exit={{ opacity: 0 }}
-            className="flex justify-between items-center p-4 bg-muted/50 rounded-lg"
+            className="flex justify-between items-center p-4 bg-muted/50 border border-border rounded-lg"
           >
             <span className="text-sm text-muted-foreground">
               {unreadCount} unread message{unreadCount !== 1 ? "s" : ""}
@@ -155,7 +154,7 @@ function InboxItem({ data }: { data: IInbox }) {
         <span className="font-medium">{data.announcement.creatorName}</span>
         <span className="text-muted-foreground">from</span>
         <button
-          className="text-left flex underline hover:opacity-80 underline-offset-4"
+          className="text-left flex underline cursor-pointer hover:opacity-80 font-bold font-mono underline-offset-4"
           onClick={() => {
             setMode(null);
             if (data.channel?._id) {

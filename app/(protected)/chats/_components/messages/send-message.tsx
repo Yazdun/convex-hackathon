@@ -177,7 +177,7 @@ const PreviewWidget = ({
       initial={{ opacity: 0, scale: 0.9, y: 10 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0 }}
-      className="absolute left-0 right-0 -top-16 z-50 text-sm"
+      className="absolute left-0 right-0 -top-[70px] z-50 text-sm"
     >
       <div className="p-2.5 bg-popover w-full border flex items-center justify-between z-50 rounded-md">
         <button
