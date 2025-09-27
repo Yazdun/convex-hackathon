@@ -14,8 +14,8 @@ import { VoiceMessage } from "./voice-message";
 import { IMessage } from "../types/types";
 import { useChat } from "../providers/chat-provider";
 import { MarkdownFormatter } from "../markdown/mdx";
-import { motion } from "framer-motion";
-import { MessageCircleDashed } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { MessageSquare } from "lucide-react";
 import { Reactions } from "../reactions/reaction";
 
 dayjs.extend(relativeTime);
@@ -73,43 +73,83 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
     }
   }, [lastMessage?._id]);
 
-  if (messages === undefined && showLoading) {
+  const renderContent = () => {
+    if (messages === undefined && showLoading) {
+      return (
+        <ul className="w-full grid gap-0.5">
+          {Array.from({ length: 10 }).map((_, index) => (
+            <motion.li {...motionConfig} key={index} className="w-full">
+              <MessageSkeleton idx={index} />
+            </motion.li>
+          ))}
+        </ul>
+      );
+    }
+
+    if (!messages) {
+      return null;
+    }
+
+    if (!messages.length) {
+      return (
+        <motion.div
+          {...motionConfig}
+          key="empty-chat"
+          className="p-2.5 font-mono"
+        >
+          <div className="p-[1px] bg-gradient-to-b from-input to-transparent">
+            <div className="p-5 border-dashed rounded-lg text-lg flex-col text-muted-foreground gap-2  bg-background flex items-center text-center justify-center  py-20">
+              <motion.div
+                initial={{
+                  y: 20,
+                  scale: 0,
+                  opacity: 0,
+                }}
+                animate={{
+                  scale: 1,
+                  opacity: 1,
+                  y: 0,
+                }}
+                exit={{
+                  opacity: 0,
+                }}
+                className="relative"
+              >
+                <div className="absolute left-0 right-0 bottom-0 h-[100px] bg-gradient-to-t from-background to-transparent" />
+                <MessageSquare size={90} strokeWidth={1} />
+              </motion.div>
+              <motion.h2
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 40 }}
+                transition={{ delay: 0.3 }}
+                className="text-xl font-bold"
+              >
+                Start the Conversation
+              </motion.h2>
+            </div>
+          </div>
+        </motion.div>
+      );
+    }
+
     return (
-      <ul className="w-full grid gap-0.5">
-        {Array.from({ length: 10 }).map((_, index) => (
-          <motion.li {...motionConfig} key={index} className="w-full">
-            <MessageSkeleton idx={index} />
-          </motion.li>
-        ))}
+      <ul className="w-full grid gap-0.5 pb-2.5">
+        {messages.map((msg) => {
+          return (
+            <motion.li {...motionConfig} key={msg._id} className="w-full">
+              <Message message={msg} />
+            </motion.li>
+          );
+        })}
       </ul>
     );
-  }
-
-  if (!messages) {
-    return null;
-  }
-
-  if (!messages.length) {
-    return (
-      <motion.div className="p-2.5" {...motionConfig} key="empty-chat">
-        <div className="p-5 border-dashed rounded-lg text-lg flex-col text-muted-foreground gap-2 bg-gradient-to-b from-muted to-transparent flex items-center text-center justify-center  py-20">
-          <MessageCircleDashed size={30} strokeWidth={2} />
-          Start the conversation
-        </div>
-      </motion.div>
-    );
-  }
+  };
 
   return (
-    <ul className="w-full grid gap-0.5 pb-2.5">
-      {messages.map((msg) => {
-        return (
-          <motion.li {...motionConfig} key={msg._id} className="w-full">
-            <Message message={msg} />
-          </motion.li>
-        );
-      })}
-    </ul>
+    <AnimatePresence mode="wait" initial={false}>
+      {renderContent()}
+    </AnimatePresence>
   );
 }
 

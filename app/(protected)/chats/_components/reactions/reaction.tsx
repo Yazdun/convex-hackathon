@@ -70,10 +70,10 @@ export function Reactions({ messageId, reactions, className }: ReactionProps) {
             <button
               onClick={() => handleReactionClick(reaction.reactionType)}
               className={cn(
-                "h-7 rounded-full hover:cursor-pointer px-3 py-1 text-xs font-medium transition-all duration-200",
+                "h-7 hover:cursor-pointer px-3 py-1 text-xs font-medium transition-all duration-200",
                 reaction.hasCurrentUser
-                  ? "bg-blue-100 dark:bg-blue-900 border-blue-300 dark:border-blue-700 text-blue-500 dark:text-blue-300 hover:opacity-80"
-                  : "hover:bg-secondary/80 dark:bg-secondary bg-muted",
+                  ? "bg-blue-100 dark:bg-orange-900 border-blue-300 dark:border-blue-700 text-blue-500 dark:text-blue-300 hover:opacity-80"
+                  : "hover:bg-secondary/80 bg-muted",
               )}
             >
               <span className="mr-1">
