@@ -13,7 +13,7 @@ export function AssistantContainer() {
   const { threadId } = useAssistant();
 
   return (
-    <div className="fixed bottom-2.5 bg-background z-40 right-2.5 p-2.5">
+    <div className="fixed bottom-2.5 z-40 right-2.5 p-2.5">
       <AnimatePresence mode="wait">
         {threadId ? (
           <motion.div

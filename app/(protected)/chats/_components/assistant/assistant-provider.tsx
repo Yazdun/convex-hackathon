@@ -22,7 +22,7 @@ interface ContextProps {
         channelId: Id<"channels">;
         threadId: string;
       },
-      "No messages found in this channel to summarize." | null,
+      null,
       string | undefined
     >
   >;
