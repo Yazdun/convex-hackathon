@@ -94,11 +94,21 @@ export const summarizeChannelMessages = action({
       .join("\n");
 
     // Create summarization prompt
-    const prompt = `Please summarize the following chat conversation in one paragraph. Focus on the main topics discussed, key decisions made, and important information shared. Here are the messages:
+    const prompt = `Please analyze the following chat conversation to provide newcomers with an overview of what they can expect from this community. Focus on:
+
+1. Main topics and themes typically discussed
+2. The overall tone and atmosphere (professional, casual, supportive, technical, etc.)
+3. Types of discussions and conversations that occur
+4. Level of community engagement and activity
+5. Whether this appears to be a welcoming environment for new members
+
+IMPORTANT: Do not mention any usernames, personal identifiers, or specific details about what was said. Instead, provide a high-level overview of the community's character, discussion patterns, and what kind of experience someone might expect if they join.
+
+Here are the messages:
 
 ${formattedMessages}
 
-Please provide a concise summary in one paragraph that captures the essence of this conversation.`;
+Please provide a concise overview in one paragraph that captures what newcomers can expect from this community without referencing specific conversations or users.`;
 
     // Get AI summary
     const { thread } = await agent.continueThread(ctx, {
