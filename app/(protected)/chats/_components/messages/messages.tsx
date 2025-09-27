@@ -135,21 +135,29 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
     }
 
     return (
-      <ul
-        className={cn(
-          "w-full grid gap-0.5 py-2.5",
-          toEdit?._id && "pb-20",
-          replyingTo && "pb-20",
-        )}
-      >
-        {messages.map((msg) => {
-          return (
-            <motion.li {...motionConfig} key={msg._id} className="w-full">
-              <Message message={msg} />
-            </motion.li>
-          );
-        })}
-      </ul>
+      <AnimatePresence mode="sync">
+        <ul
+          className={cn(
+            "w-full grid gap-0.5 py-2.5",
+            toEdit?._id && "pb-20",
+            replyingTo && "pb-20",
+          )}
+        >
+          {messages.map((msg) => {
+            return (
+              <motion.li
+                layout
+                {...motionConfig}
+                transition={{ type: "tween" }}
+                key={msg._id}
+                className="w-full"
+              >
+                <Message message={msg} />
+              </motion.li>
+            );
+          })}
+        </ul>
+      </AnimatePresence>
     );
   };
 
