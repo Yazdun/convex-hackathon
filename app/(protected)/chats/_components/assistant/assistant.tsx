@@ -2,13 +2,38 @@ import React from "react";
 import { useAssistant } from "./assistant-provider";
 import { useThreadMessages } from "@convex-dev/agent/react";
 import { api } from "@/convex/_generated/api";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 export function AssistantContainer() {
   const { threadId } = useAssistant();
 
   return (
     <div className="fixed bottom-2.5 bg-background z-40 right-2.5 p-2.5">
-      {threadId ? <Assistant threadId={threadId} /> : null}
+      <AnimatePresence mode="wait">
+        {threadId ? (
+          <motion.div
+            key={threadId}
+            initial={{
+              opacity: 0,
+              scale: 0.9,
+              y: 10,
+            }}
+            animate={{
+              scale: 1,
+              opacity: 1,
+              y: 0,
+            }}
+            exit={{
+              opacity: 0,
+              y: 10,
+            }}
+          >
+            <Assistant threadId={threadId} />
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }
@@ -22,16 +47,63 @@ export function Assistant({ threadId }: { threadId: string }) {
       stream: true,
     },
   );
-
-  if (messages.isLoading) {
-    return <div>Thinking...</div>;
-  }
+  const { setThreadId } = useAssistant();
 
   const systemResponse = messages.results[1];
 
+  const generateText = () => {
+    if (messages.isLoading) {
+      return (
+        <motion.div
+          key="loading-ai-summary"
+          initial={{
+            opacity: 0,
+          }}
+          animate={{
+            opacity: 1,
+          }}
+          exit={{
+            opacity: 0,
+          }}
+        >
+          Thinking...
+        </motion.div>
+      );
+    }
+
+    return (
+      <motion.p
+        key="ai-summary-text"
+        initial={{
+          opacity: 0,
+        }}
+        animate={{
+          opacity: 1,
+        }}
+        exit={{
+          opacity: 0,
+        }}
+      >
+        {systemResponse?.text ?? <span className="opacity-0">Loading</span>}
+      </motion.p>
+    );
+  };
+
   return (
-    <div className="p-5 border rounded-lg w-[400px]">
-      {systemResponse?.text ?? "Loading"}
-    </div>
+    <motion.div className="border transition-all rounded-lg bg-popover w-[400px]">
+      <div className="px-4 flex items-center justify-between py-2 border-b">
+        <h2 className="">Channel Overview</h2>
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={() => setThreadId(undefined)}
+        >
+          <X />
+        </Button>
+      </div>
+      <div className="p-4 leading-6 min-h-[30px] text-sm">
+        <AnimatePresence mode="wait">{generateText()}</AnimatePresence>
+      </div>
+    </motion.div>
   );
 }
