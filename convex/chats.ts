@@ -6,12 +6,13 @@ import { Doc } from "./_generated/dataModel";
 import { agent } from "./agents/simple";
 import { paginationOptsValidator } from "convex/server";
 import { authorizeThreadAccess } from "./threads";
-import { listMessages } from "@convex-dev/agent";
+import { listMessages, vStreamArgs } from "@convex-dev/agent";
 
 export const listThreadMessages = query({
   args: {
     threadId: v.string(),
     paginationOpts: paginationOptsValidator,
+    streamArgs: vStreamArgs,
   },
   handler: async (ctx, args) => {
     const { threadId, paginationOpts } = args;
@@ -21,8 +22,13 @@ export const listThreadMessages = query({
       paginationOpts,
     });
 
+    const streams = await agent.syncStreams(ctx, {
+      threadId,
+      streamArgs: args.streamArgs,
+    });
+
     // You could add more fields here, join with other tables, etc.
-    return messages;
+    return { ...messages, streams };
   },
 });
 
@@ -111,7 +117,11 @@ Please provide a concise overview in one paragraph that captures what newcomers 
 
     const result = await thread.streamText(
       { prompt },
-      { saveStreamDeltas: true },
+      {
+        saveStreamDeltas: {
+          chunking: "word",
+        },
+      },
     );
 
     return result.consumeStream();
