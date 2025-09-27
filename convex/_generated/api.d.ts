@@ -8,15 +8,19 @@
  * @module
  */
 
+import type * as agents_config from "../agents/config.js";
+import type * as agents_simple from "../agents/simple.js";
 import type * as announcements from "../announcements.js";
 import type * as auth from "../auth.js";
 import type * as channels from "../channels.js";
 import type * as chats from "../chats.js";
+import type * as debugging_rawRequestResponseHandler from "../debugging/rawRequestResponseHandler.js";
 import type * as http from "../http.js";
 import type * as inbox from "../inbox.js";
 import type * as messages from "../messages.js";
 import type * as profiles from "../profiles.js";
 import type * as reactions from "../reactions.js";
+import type * as threads from "../threads.js";
 
 import type {
   ApiFromModules,
@@ -33,15 +37,19 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  "agents/config": typeof agents_config;
+  "agents/simple": typeof agents_simple;
   announcements: typeof announcements;
   auth: typeof auth;
   channels: typeof channels;
   chats: typeof chats;
+  "debugging/rawRequestResponseHandler": typeof debugging_rawRequestResponseHandler;
   http: typeof http;
   inbox: typeof inbox;
   messages: typeof messages;
   profiles: typeof profiles;
   reactions: typeof reactions;
+  threads: typeof threads;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

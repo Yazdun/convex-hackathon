@@ -142,14 +142,76 @@ export const subscribe = mutation({
 
     if (channel.participants?.includes(userId)) {
       // User is already subscribed, so unsubscribe them
-      await ctx.db.patch(args.channelId, {
-        participants: channel.participants?.filter((id) => id !== userId),
-      });
+
+      // Get all announcements for this channel and remove them from user's inbox
+      const [channelAnnouncements] = await Promise.all([
+        ctx.db
+          .query("announcements")
+          .filter((q) => q.eq(q.field("channelId"), args.channelId))
+          .collect(),
+      ]);
+
+      // Get all inbox entries for this user and these announcements
+      const inboxEntries = await ctx.db
+        .query("inboxes")
+        .withIndex("by_target_user", (q) => q.eq("targetUserId", userId))
+        .collect();
+
+      const inboxEntriesToDelete = inboxEntries.filter((entry) =>
+        channelAnnouncements.some(
+          (announcement) => announcement._id === entry.announcementId,
+        ),
+      );
+
+      // Remove announcements from inbox and unsubscribe user in parallel
+      await Promise.all([
+        ctx.db.patch(args.channelId, {
+          participants: channel.participants?.filter((id) => id !== userId),
+        }),
+        ...inboxEntriesToDelete.map((entry) => ctx.db.delete(entry._id)),
+      ]);
     } else {
       // User is not subscribed, so subscribe them
-      await ctx.db.patch(args.channelId, {
+
+      // Get the latest announcement for this channel
+      const [latestAnnouncement] = await Promise.all([
+        ctx.db
+          .query("announcements")
+          .filter((q) => q.eq(q.field("channelId"), args.channelId))
+          .order("desc")
+          .first(),
+      ]);
+
+      // Subscribe user and add latest announcement to inbox if it exists
+      const subscribePromise = ctx.db.patch(args.channelId, {
         participants: [...(channel.participants || []), userId],
       });
+
+      if (latestAnnouncement) {
+        // Check if user already has this announcement in their inbox
+        const existingInboxEntry = await ctx.db
+          .query("inboxes")
+          .withIndex("by_target_user", (q) => q.eq("targetUserId", userId))
+          .filter((q) =>
+            q.eq(q.field("announcementId"), latestAnnouncement._id),
+          )
+          .first();
+
+        if (!existingInboxEntry) {
+          // Add latest announcement to user's inbox
+          const addToInboxPromise = ctx.db.insert("inboxes", {
+            targetUserId: userId,
+            announcementId: latestAnnouncement._id,
+            status: "delivered",
+          });
+
+          await Promise.all([subscribePromise, addToInboxPromise]);
+        } else {
+          await subscribePromise;
+        }
+      } else {
+        await subscribePromise;
+      }
     }
   },
 });

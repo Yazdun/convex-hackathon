@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
+import { query, mutation, internalQuery } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
 // Define the reaction types
@@ -10,6 +10,34 @@ type ReactionType =
   | "thumbs_down"
   | "shit"
   | "gem";
+
+export const listInternal = internalQuery({
+  args: { channelId: v.id("channels") },
+  handler: async (ctx, args) => {
+    const messages = await ctx.db
+      .query("messages")
+      .withIndex("by_channel", (q) => q.eq("channelId", args.channelId))
+      .order("asc")
+      .collect();
+
+    return await Promise.all(
+      messages.map(async (message) => {
+        const author = await ctx.db.get(message.authorId);
+        const profile = await ctx.db
+          .query("userProfiles")
+          .withIndex("by_user", (q) => q.eq("userId", message.authorId))
+          .first();
+
+        return {
+          ...message,
+          author: author?.email || "Unknown",
+          displayName: profile?.displayName || author?.email || "Unknown",
+          _creationTime: message._creationTime,
+        };
+      }),
+    );
+  },
+});
 
 export const list = query({
   args: { channelId: v.id("channels") },

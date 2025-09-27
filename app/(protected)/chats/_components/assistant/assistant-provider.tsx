@@ -1,7 +1,8 @@
 "use client";
 
 import { api } from "@/convex/_generated/api";
-import { ReactAction, useAction } from "convex/react";
+import { Id } from "@/convex/_generated/dataModel";
+import { ReactAction, useAction, useMutation } from "convex/react";
 import { FunctionReference } from "convex/server";
 import {
   createContext,
@@ -10,31 +11,63 @@ import {
   useContext,
   useState,
 } from "react";
+import { toast } from "sonner";
 
 interface ContextProps {
-  sendMessageToAgent: ReactAction<
+  summarizeChat: ReactAction<
     FunctionReference<
       "action",
       "public",
       {
+        channelId: Id<"channels">;
         threadId: string;
-        prompt: string;
       },
-      string,
+      "No messages found in this channel to summarize." | null,
       string | undefined
     >
   >;
-  setThreadId: Dispatch<SetStateAction<string | null>>;
-  threadId: string | null;
+  threadId: string | undefined;
+  setThreadId: Dispatch<SetStateAction<string | undefined>>;
+  summarizeChannelHistory: ({
+    channelId,
+  }: {
+    channelId: string;
+  }) => Promise<true | undefined>;
 }
 
 export const Context = createContext<ContextProps | undefined>(undefined);
 
 export const AssistantProvider = (props: { children: React.ReactNode }) => {
-  const sendMessageToAgent = useAction(api.chats.sendMessageToAgent);
-  const [threadId, setThreadId] = useState<string | null>(null);
+  const summarizeChat = useAction(api.chats.summarizeChannelMessages);
+  const createThread = useMutation(api.chats.createThread);
+  const [threadId, setThreadId] = useState<string | undefined>(undefined);
 
-  const value: ContextProps = { sendMessageToAgent, threadId, setThreadId };
+  const summarizeChannelHistory = async ({
+    channelId,
+  }: {
+    channelId: string;
+  }) => {
+    if (!channelId) {
+      toast.error("Invalid channel id");
+      return;
+    }
+
+    const aiThreadId = await createThread();
+    setThreadId(aiThreadId);
+
+    const convexChannelId = channelId as Id<"channels">;
+
+    summarizeChat({ channelId: convexChannelId, threadId: aiThreadId });
+
+    return true;
+  };
+
+  const value: ContextProps = {
+    summarizeChat,
+    threadId,
+    setThreadId,
+    summarizeChannelHistory,
+  };
 
   return <Context.Provider value={value}>{props.children}</Context.Provider>;
 };

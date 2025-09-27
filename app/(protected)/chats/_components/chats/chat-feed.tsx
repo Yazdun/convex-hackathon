@@ -20,7 +20,7 @@ export default function ChatFeed({ channelId }: { channelId: Id<"channels"> }) {
         }}
       >
         <ScrollArea ref={scrollAreaRef} className="h-full">
-          <div className=" w-full max-w-2xl m-auto">
+          <div className="w-full max-w-2xl m-auto">
             <Messages channelId={channelId} />
           </div>
         </ScrollArea>

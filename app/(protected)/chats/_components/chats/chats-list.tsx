@@ -1,5 +1,5 @@
 import { api } from "@/convex/_generated/api";
-import { useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import React, { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -72,7 +72,7 @@ export function ChannelPreviewCard({ channel }: { channel: IChannel }) {
   };
   return (
     <div className="p-5 relative border w-full group grid gap-2 hover:bg-secondary/20 transition-all rounded-lg">
-      <ChatSummary />
+      <ChatSummary channelId={channel._id} />
 
       <div className="text-left grid gap-2">
         <div className="flex items-center justify-between">
@@ -112,10 +112,10 @@ export function ChannelPreviewCard({ channel }: { channel: IChannel }) {
   );
 }
 
-function ChatSummary() {
+function ChatSummary({ channelId }: { channelId: string }) {
   const [open] = useState(false);
-  const createThread = useMutation(api.chats.createThread);
-  const { setThreadId } = useAssistant();
+  const { summarizeChannelHistory } = useAssistant();
+  // const [loading, setLoading] = React.useState(false);
 
   return (
     <div
@@ -126,7 +126,7 @@ function ChatSummary() {
     >
       <Button
         onClick={async () => {
-          createThread().then(setThreadId);
+          summarizeChannelHistory({ channelId });
         }}
         variant={open ? "secondary" : "ghost"}
         size="icon"
