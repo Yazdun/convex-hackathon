@@ -26,8 +26,11 @@ interface ContextProps {
       string | undefined
     >
   >;
+  currentChannelId: string | undefined;
   threadId: string | undefined;
   setThreadId: Dispatch<SetStateAction<string | undefined>>;
+  setCurrentChannelId: Dispatch<SetStateAction<string | undefined>>;
+
   summarizeChannelHistory: ({
     channelId,
   }: {
@@ -41,6 +44,9 @@ export const AssistantProvider = (props: { children: React.ReactNode }) => {
   const summarizeChat = useAction(api.chats.summarizeChannelMessages);
   const createThread = useMutation(api.chats.createThread);
   const [threadId, setThreadId] = useState<string | undefined>(undefined);
+  const [currentChannelId, setCurrentChannelId] = useState<string | undefined>(
+    undefined,
+  );
 
   const summarizeChannelHistory = async ({
     channelId,
@@ -51,6 +57,8 @@ export const AssistantProvider = (props: { children: React.ReactNode }) => {
       toast.error("Invalid channel id");
       return;
     }
+
+    setCurrentChannelId(channelId);
 
     const aiThreadId = await createThread();
     setThreadId(aiThreadId);
@@ -67,6 +75,8 @@ export const AssistantProvider = (props: { children: React.ReactNode }) => {
     threadId,
     setThreadId,
     summarizeChannelHistory,
+    setCurrentChannelId,
+    currentChannelId,
   };
 
   return <Context.Provider value={value}>{props.children}</Context.Provider>;

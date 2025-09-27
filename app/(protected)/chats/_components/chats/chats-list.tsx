@@ -3,7 +3,7 @@ import { useQuery } from "convex/react";
 import React, { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Brain } from "lucide-react";
+import { Brain, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { IChannel } from "../types/types";
@@ -13,6 +13,11 @@ import { ChannelSkeletonCard } from "./skeleton";
 import { Subscribe } from "./subscribe";
 import { AssistantContainer } from "../assistant/assistant";
 import { useAssistant } from "../assistant/assistant-provider";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function ChatsList() {
   const channels = useQuery(api.channels.list);
@@ -59,6 +64,7 @@ export function ChatsList() {
 }
 
 export function ChannelPreviewCard({ channel }: { channel: IChannel }) {
+  const {} = useAssistant();
   const renderSubscribers = () => {
     if (!channel.users.length) {
       return "No Subscribers";
@@ -72,7 +78,7 @@ export function ChannelPreviewCard({ channel }: { channel: IChannel }) {
   };
   return (
     <div className="p-5 relative border w-full group grid gap-2 hover:bg-secondary/20 transition-all rounded-lg">
-      <ChatSummary channelId={channel._id} />
+      {!channel.isSubscribed ? <ChatSummary channelId={channel._id} /> : null}
 
       <div className="text-left grid gap-2">
         <div className="flex items-center justify-between">
@@ -114,25 +120,50 @@ export function ChannelPreviewCard({ channel }: { channel: IChannel }) {
 
 function ChatSummary({ channelId }: { channelId: string }) {
   const [open] = useState(false);
-  const { summarizeChannelHistory } = useAssistant();
-  // const [loading, setLoading] = React.useState(false);
+  const { summarizeChannelHistory, currentChannelId } = useAssistant();
+  const [loading, setLoading] = React.useState(false);
+
+  const handleClick = async () => {
+    try {
+      setLoading(true);
+      await summarizeChannelHistory({ channelId });
+    } catch (error) {
+      console.error("Failed to summarize channel history:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const isCurrentChannel = currentChannelId === channelId;
+  const isDisabled = loading || isCurrentChannel;
 
   return (
     <div
       className={cn(
         "absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition-all",
         open && "opacity-100",
+        isCurrentChannel && "opacity-100",
       )}
     >
-      <Button
-        onClick={async () => {
-          summarizeChannelHistory({ channelId });
-        }}
-        variant={open ? "secondary" : "ghost"}
-        size="icon"
-      >
-        <Brain />
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            onClick={handleClick}
+            variant={"ghost"}
+            size="icon"
+            disabled={isDisabled}
+          >
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Brain className={cn(isCurrentChannel && "opacity-50")} />
+            )}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">
+          <p>Summarize activities</p>
+        </TooltipContent>
+      </Tooltip>
     </div>
   );
 }

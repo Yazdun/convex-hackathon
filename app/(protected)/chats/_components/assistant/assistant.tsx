@@ -1,10 +1,13 @@
-import React from "react";
+"use client";
+
+import React, { useRef } from "react";
 import { useAssistant } from "./assistant-provider";
 import { useThreadMessages } from "@convex-dev/agent/react";
 import { api } from "@/convex/_generated/api";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { useOnClickOutside } from "usehooks-ts";
 
 export function AssistantContainer() {
   const { threadId } = useAssistant();
@@ -17,17 +20,14 @@ export function AssistantContainer() {
             key={threadId}
             initial={{
               opacity: 0,
-              scale: 0.9,
               y: 10,
             }}
             animate={{
-              scale: 1,
               opacity: 1,
               y: 0,
             }}
             exit={{
               opacity: 0,
-              y: 10,
             }}
           >
             <Assistant threadId={threadId} />
@@ -47,7 +47,14 @@ export function Assistant({ threadId }: { threadId: string }) {
       stream: true,
     },
   );
-  const { setThreadId } = useAssistant();
+  const { setThreadId, setCurrentChannelId } = useAssistant();
+  const ref = useRef(null);
+
+  // @ts-expect-error weird error
+  useOnClickOutside(ref, () => {
+    setThreadId(undefined);
+    setCurrentChannelId(undefined);
+  });
 
   const systemResponse = messages.results[1];
 
@@ -90,13 +97,19 @@ export function Assistant({ threadId }: { threadId: string }) {
   };
 
   return (
-    <motion.div className="border transition-all rounded-lg bg-popover w-[400px]">
+    <motion.div
+      ref={ref}
+      className="border transition-all rounded-lg bg-popover w-[400px]"
+    >
       <div className="px-4 flex items-center justify-between py-2 border-b">
         <h2 className="">Channel Overview</h2>
         <Button
           size="icon"
           variant="ghost"
-          onClick={() => setThreadId(undefined)}
+          onClick={() => {
+            setCurrentChannelId(undefined);
+            setThreadId(undefined);
+          }}
         >
           <X />
         </Button>
