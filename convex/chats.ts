@@ -92,7 +92,70 @@ export const generateAnnouncement = action({
       - Keep content straightforward and minimal
       - Match the channel's context and purpose
 
-      IMPORTANT: Respond with valid JSON only.`;
+      CRITICAL FORMATTING RULES:
+      - Return ONLY the raw JSON text
+      - Do NOT use code blocks or backticks
+      - Do NOT wrap response in \`\`\`json or any other formatting
+      - The description field MAY contain markdown formatting
+      - Your entire response must be valid JSON that can be parsed directly`;
+
+    const result = await thread.generateText({ prompt: enhancedPrompt });
+
+    try {
+      const parsedResult = JSON.parse(result.text);
+      return {
+        title: parsedResult.title || "Welcome!",
+        description:
+          parsedResult.description || "Join our community and start engaging!",
+      };
+    } catch (error) {
+      console.log(error);
+      return {
+        title: "Failed to generate the title!",
+        description: result.text || "Failed to generate the description",
+      };
+    }
+  },
+});
+
+export const createNewChannel = action({
+  args: {
+    prompt: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    const { threadId } = await agent.createThread(ctx, {
+      userId,
+    });
+
+    const { thread } = await agent.continueThread(ctx, {
+      threadId: threadId,
+    });
+
+    const enhancedPrompt = `Based on this request: "${args.prompt}"
+
+      Generate a new channel with appropriate title and description. Return your response in this exact JSON format:
+
+      {
+        "title": "Your channel title here",
+        "description": "Your channel description here"
+      }
+
+      Requirements:
+      - Title: concise and under 50 characters, descriptive of the channel purpose
+      - Description: brief explanation of what the channel is for, 1-2 sentences max
+      - Keep language simple and direct
+      - Avoid technical jargon and marketing terms
+      - Make it clear what kind of discussions belong in this channel
+
+      CRITICAL FORMATTING RULES:
+      - Return ONLY the raw JSON text
+      - Do NOT use code blocks or backticks
+      - Do NOT wrap response in \`\`\`json or any other formatting
+      - The description field MAY contain markdown formatting
+      - Your entire response must be valid JSON that can be parsed directly`;
 
     const result = await thread.generateText({ prompt: enhancedPrompt });
 

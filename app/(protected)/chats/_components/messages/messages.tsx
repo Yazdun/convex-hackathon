@@ -111,9 +111,7 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
                   opacity: 1,
                   y: 0,
                 }}
-                exit={{
-                  opacity: 0,
-                }}
+                exit={{ opacity: 0 }}
                 className="relative"
               >
                 <div className="absolute left-0 right-0 bottom-0 h-[100px] bg-gradient-to-t from-background to-transparent" />

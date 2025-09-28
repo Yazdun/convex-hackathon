@@ -90,7 +90,7 @@ export function DeleteChannel({
                   handleDelete();
                 }
               }}
-              placeholder={`#${channel.name}`}
+              placeholder={`${channel.name}`}
               disabled={loading}
             />
           </div>

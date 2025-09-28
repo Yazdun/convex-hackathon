@@ -64,7 +64,7 @@ export function ChatsList() {
 }
 
 export function ChannelPreviewCard({ channel }: { channel: IChannel }) {
-  const {} = useAssistant();
+  const { currentChannelId } = useAssistant();
   const renderSubscribers = () => {
     if (!channel.users.length) {
       return "No Subscribers";
@@ -77,12 +77,18 @@ export function ChannelPreviewCard({ channel }: { channel: IChannel }) {
     return `${channel.users.length} Subscribers`;
   };
   return (
-    <div className="p-5 relative border w-full group grid gap-2 hover:bg-secondary/20 transition-all rounded-lg">
+    <div
+      className={cn(
+        "p-5 relative bg-card/20 border w-full group grid gap-2 hover:bg-secondary/20 transition-all rounded-lg",
+        currentChannelId === channel._id &&
+          "border-destructive ring ring-destructive bg-destructive/10 hover:bg-destructive/20",
+      )}
+    >
       {!channel.isSubscribed ? <ChatSummary channelId={channel._id} /> : null}
 
       <div className="text-left grid gap-2">
         <div className="flex items-center justify-between">
-          <h2 className="font-mono text-lg">#{channel.name}</h2>
+          <h2 className="font-mono text-lg">{channel.name}</h2>
         </div>
         <MarkdownFormatter
           className="whitespace-pre-wrap text-muted-foreground"

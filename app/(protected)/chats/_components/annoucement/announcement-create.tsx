@@ -117,7 +117,7 @@ export function AnnouncementCreate() {
 
   return (
     <div className="w-full max-w-2xl mx-auto p-2.5">
-      <div className="flex items-start w-full justify-between">
+      <div className="flex items-start gap-5 w-full justify-between">
         <div className="mb-6">
           <h2 className="text-2xl font-semibold tracking-tight">
             Create Announcement

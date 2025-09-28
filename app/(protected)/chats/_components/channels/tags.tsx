@@ -5,8 +5,10 @@ import { RiJavaLine } from "react-icons/ri";
 import { TbBrandCSharp } from "react-icons/tb";
 import { FaRust } from "react-icons/fa";
 import { RiPhpLine } from "react-icons/ri";
+import { FiDatabase } from "react-icons/fi";
 
 export const tagsList = [
+  { value: "Convex", label: "Convex", icon: FiDatabase },
   { value: "TypeScript", label: "TypeScript", icon: SiTypescript },
   { value: "JavaScript", label: "JavaScript", icon: IoLogoJavascript },
   { value: "Python", label: "Python", icon: SiPython },

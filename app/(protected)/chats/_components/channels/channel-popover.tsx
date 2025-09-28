@@ -27,7 +27,7 @@ export function ChannelPopover({ channel }: { channel: IChannelMin }) {
       </PopoverTrigger>
       <PopoverContent className="w-[400px] flex flex-col gap-2" sideOffset={10}>
         <div className="flex items-center justify-between">
-          <h2>#{channel.name}</h2>
+          <h2>{channel.name}</h2>
           {channel.isOwner ? (
             <Button
               variant="outline"

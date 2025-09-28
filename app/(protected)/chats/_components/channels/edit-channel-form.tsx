@@ -26,15 +26,9 @@ import { DeleteChannel } from "./delete-channel";
 
 // edit channel comps
 const FormSchema = z.object({
-  name: z
-    .string()
-    .min(2, {
-      message: "Name must be at least 2 characters.",
-    })
-    .regex(/^[a-zA-Z0-9_-]+$/, {
-      message:
-        "Name can only contain letters, numbers, underscores, and dashes. Spaces and other special characters are not allowed.",
-    }),
+  name: z.string().min(2, {
+    message: "Name must be at least 2 characters.",
+  }),
   description: z
     .string()
     .min(2, {
@@ -43,9 +37,7 @@ const FormSchema = z.object({
     .max(250, {
       message: "Description must be less than 250 characters.",
     }),
-  tags: z
-    .array(z.string())
-    .min(1, { message: "Please select at least one framework." }),
+  tags: z.array(z.string()),
 });
 
 export function EditChannelContainer() {
@@ -104,7 +96,7 @@ export function EditChannelForm({ channel }: { channel: IChannelMin }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 py-2.5">
         <FormField
           control={form.control}
           name="name"

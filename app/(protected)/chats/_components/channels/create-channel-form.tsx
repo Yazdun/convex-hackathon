@@ -23,17 +23,12 @@ import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { useChat } from "../providers/chat-provider";
 import { tagsList } from "./tags";
+import { PromptPopover } from "./prompt-popover";
 
 const FormSchema = z.object({
-  name: z
-    .string()
-    .min(2, {
-      message: "Name must be at least 2 characters.",
-    })
-    .regex(/^[a-zA-Z0-9_-]+$/, {
-      message:
-        "Name can only contain letters, numbers, underscores, and dashes. Spaces and other special characters are not allowed.",
-    }),
+  name: z.string().min(2, {
+    message: "Name must be at least 2 characters.",
+  }),
   description: z
     .string()
     .min(2, {
@@ -42,9 +37,7 @@ const FormSchema = z.object({
     .max(250, {
       message: "Description must be less than 250 characters.",
     }),
-  tags: z
-    .array(z.string())
-    .min(1, { message: "Please select at least one framework." }),
+  tags: z.array(z.string()),
 });
 
 export function CreateChannelForm() {
@@ -59,6 +52,12 @@ export function CreateChannelForm() {
 
   const { setMode, setChannelId } = useChat();
   const createChannel = useMutation(api.channels.create);
+
+  // Function to programmatically update form values
+  const updateFormValues = (props: { title: string; content: string }) => {
+    form.setValue("name", props.title);
+    form.setValue("description", props.content);
+  };
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     const promise = async () => {
@@ -87,78 +86,95 @@ export function CreateChannelForm() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Start typing..."
-                  disabled={loading}
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                This is your channel&apos;s public display name.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  className="max-h-[100px]"
-                  placeholder="Start typing..."
-                  disabled={loading}
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>*Markdown supported.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="tags"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Select Tags</FormLabel>
-              <FormControl>
-                <MultiSelect
-                  options={tagsList}
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  placeholder="Choose tags..."
-                  disabled={loading}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="flex justify-end">
-          <Button type="submit" disabled={loading}>
-            {loading ? (
-              <Loader2 size={18} className="animate-spin" />
-            ) : (
-              <Plus size={18} />
-            )}
-            {loading ? "Creating..." : "Create New Channel"}
-          </Button>
+    <div className="py-2.5">
+      <div className="flex items-start gap-5 w-full justify-between">
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold tracking-tight flex items-center gap-1">
+            Create New Channel
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Create a new channel or community to organize discussions around
+            specific topics, projects, or interests and bring people together.
+          </p>
         </div>
-      </form>
-    </Form>
+        <div className="flex items-center">
+          <PromptPopover callback={updateFormValues} />
+        </div>
+      </div>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Start typing..."
+                    disabled={loading}
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>
+                  This is your channel&apos;s public display name.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <Textarea
+                    className="max-h-[100px]"
+                    placeholder="Start typing..."
+                    disabled={loading}
+                    {...field}
+                  />
+                </FormControl>
+                <FormDescription>*Markdown supported.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="tags"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Select Tags</FormLabel>
+                <FormControl>
+                  <MultiSelect
+                    options={tagsList}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    placeholder="Choose tags..."
+                    disabled={loading}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="flex justify-end">
+            <Button type="submit" disabled={loading}>
+              {loading ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : (
+                <Plus size={18} />
+              )}
+              {loading ? "Creating..." : "Create New Channel"}
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
   );
 }

@@ -119,11 +119,16 @@ export function Assistant({ threadId }: { threadId: string }) {
   return (
     <motion.div
       ref={ref}
-      className="border transition-all rounded-lg bg-popover w-[400px]"
+      className="border-2 transition-all border-destructive rounded-lg bg-background dark:bg-popover w-[400px]"
     >
-      <div className="px-4 flex items-center justify-between py-2 border-b">
-        <h2 className="font-mono">Channel Overview</h2>
-        <Button size="icon" variant="ghost" onClick={handleClose}>
+      <div className="px-4 flex items-center bg-destructive justify-between py-2 border-b-destructive">
+        <h2 className="font-mono font-bold text-black">Channel Overview</h2>
+        <Button
+          size="icon"
+          className="text-black"
+          variant="ghost"
+          onClick={handleClose}
+        >
           <X />
         </Button>
       </div>
