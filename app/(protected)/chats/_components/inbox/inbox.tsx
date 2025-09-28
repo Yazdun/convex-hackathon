@@ -54,98 +54,108 @@ export function Inbox() {
     return <div className="p-2.5 grid gap-2.5">loading</div>;
   }
 
-  if (!inbox || !inbox.length) {
-    return (
-      <motion.div
-        {...motionConfig}
-        key="empty-inbox"
-        className="p-2.5 font-mono"
-      >
-        <div className="p-[1px] bg-gradient-to-b from-input to-transparent">
-          <div className="p-5 border-dashed rounded-lg text-lg flex-col text-muted-foreground gap-2  bg-background flex items-center text-center justify-center  py-20">
-            <motion.div
-              initial={{
-                y: 20,
-                scale: 0,
-                opacity: 0,
-              }}
-              animate={{
-                scale: 1,
-                opacity: 1,
-                y: 0,
-              }}
-              exit={{ opacity: 0 }}
-              className="relative"
-            >
-              <div className="absolute left-0 right-0 bottom-0 h-[100px] bg-gradient-to-t from-background to-transparent" />
-              <InboxIcon size={90} strokeWidth={1} />
-            </motion.div>
-            <motion.h2
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 40 }}
-              transition={{ delay: 0.3 }}
-              className="text-xl font-bold"
-            >
-              Start the Conversation
-            </motion.h2>
+  const renderContent = () => {
+    if (!inbox || !inbox.length) {
+      return (
+        <motion.div
+          {...motionConfig}
+          key="empty-inbox"
+          className="p-2.5 font-mono"
+        >
+          <div className="p-[1px] bg-gradient-to-b from-input to-transparent">
+            <div className="p-5 border-dashed rounded-lg text-lg flex-col text-muted-foreground gap-2  bg-background flex items-center text-center justify-center  py-20">
+              <motion.div
+                initial={{
+                  y: 20,
+                  scale: 0,
+                  opacity: 0,
+                }}
+                animate={{
+                  scale: 1,
+                  opacity: 1,
+                  y: 0,
+                }}
+                exit={{ opacity: 0 }}
+                className="relative"
+              >
+                <div className="absolute left-0 right-0 bottom-0 h-[100px] bg-gradient-to-t from-background to-transparent" />
+                <InboxIcon size={90} strokeWidth={1} />
+              </motion.div>
+              <motion.h2
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 40 }}
+                transition={{ delay: 0.3 }}
+                className="text-xl font-bold"
+              >
+                Your Inbox is Empty!
+              </motion.h2>
+            </div>
           </div>
-        </div>
+        </motion.div>
+      );
+    }
+
+    const unreadCount = inbox.filter(
+      (item) => item.status === "delivered",
+    ).length;
+
+    return (
+      <motion.div {...motionConfig} key="inbox-full">
+        <AnimatePresence mode="sync">
+          <div className="flex flex-col gap-2.5">
+            {unreadCount > 0 && (
+              <motion.div
+                layout
+                key="inbox-unread-messages"
+                initial={{
+                  opacity: 0,
+                }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex justify-between items-center p-4 bg-muted/50 border border-border rounded-lg"
+              >
+                <span className="text-sm text-muted-foreground">
+                  {unreadCount} unread message{unreadCount !== 1 ? "s" : ""}
+                </span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleMarkAllAsRead}
+                  disabled={isMarkingAllAsRead}
+                  className="gap-2"
+                >
+                  <CheckCheck className="h-4 w-4" />
+                  {isMarkingAllAsRead ? "Marking..." : "Mark all as read"}
+                </Button>
+              </motion.div>
+            )}
+
+            {inbox.map((item) => {
+              return (
+                <motion.div
+                  layout
+                  transition={{ type: "tween" }}
+                  initial={{
+                    opacity: 0,
+                  }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  key={item._id}
+                >
+                  <InboxItem data={item} />
+                </motion.div>
+              );
+            })}
+          </div>
+        </AnimatePresence>
       </motion.div>
     );
-  }
-
-  const unreadCount = inbox.filter(
-    (item) => item.status === "delivered",
-  ).length;
+  };
 
   return (
-    <AnimatePresence mode="sync">
-      <div className="flex flex-col gap-2.5">
-        {unreadCount > 0 && (
-          <motion.div
-            layout
-            key="inbox-unread-messages"
-            initial={{
-              opacity: 0,
-            }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="flex justify-between items-center p-4 bg-muted/50 border border-border rounded-lg"
-          >
-            <span className="text-sm text-muted-foreground">
-              {unreadCount} unread message{unreadCount !== 1 ? "s" : ""}
-            </span>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleMarkAllAsRead}
-              disabled={isMarkingAllAsRead}
-              className="gap-2"
-            >
-              <CheckCheck className="h-4 w-4" />
-              {isMarkingAllAsRead ? "Marking..." : "Mark all as read"}
-            </Button>
-          </motion.div>
-        )}
-
-        {inbox.map((item) => {
-          return (
-            <motion.div
-              layout
-              transition={{ type: "tween" }}
-              initial={{
-                opacity: 0,
-              }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              key={item._id}
-            >
-              <InboxItem data={item} />
-            </motion.div>
-          );
-        })}
-      </div>
+    <AnimatePresence initial={false} mode="wait">
+      {renderContent()}
     </AnimatePresence>
   );
 }

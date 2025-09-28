@@ -287,8 +287,28 @@ export const deleteChannel = mutation({
       }
     }
 
-    // Delete the channel
-    await ctx.db.delete(args.channelId);
+    // Get all announcements for this channel
+    const channelAnnouncements = await ctx.db
+      .query("announcements")
+      .filter((q) => q.eq(q.field("channelId"), args.channelId))
+      .collect();
+
+    // Get all inbox entries that reference these announcements
+    const inboxEntries = await ctx.db.query("inboxes").collect();
+    const inboxEntriesToDelete = inboxEntries.filter((entry) =>
+      channelAnnouncements.some(
+        (announcement) => announcement._id === entry.announcementId,
+      ),
+    );
+
+    // Delete inbox entries, announcements, and the channel
+    await Promise.all([
+      ...inboxEntriesToDelete.map((entry) => ctx.db.delete(entry._id)),
+      ...channelAnnouncements.map((announcement) =>
+        ctx.db.delete(announcement._id),
+      ),
+      ctx.db.delete(args.channelId),
+    ]);
   },
 });
 
