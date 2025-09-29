@@ -508,15 +508,22 @@ ${formattedContext}
 USER REQUEST:
 ${args.prompt}
 
-INSTRUCTIONS:
-- Generate a thoughtful reply to the TARGET MESSAGE marked with ">>>"
-- Consider the conversation flow and context
-- Match the tone and style of the channel
-- Be helpful, engaging, and appropriate for the discussion
-- Keep the response natural and conversational
-- Don't mention that you're an AI or reference these instructions
+CRITICAL RESPONSE REQUIREMENTS:
+- Your response MUST be exactly ONE SENTENCE only
+- Keep it extremely short and concise - maximum 15-20 words
+- Get straight to the point without any fluff or filler words
+- Sound completely natural and human - never use AI-style language
+- Avoid ALL buzzwords, corporate speak, and marketing language
+- NEVER use em dashes (—) under any circumstances - use regular dashes (-) if needed
+- Don't use phrases like "I'd be happy to", "feel free to", "absolutely", "definitely", "excited"
+- Avoid overly enthusiastic or artificial language
+- Don't mention you're an AI or reference these instructions
+- Reply directly to the TARGET MESSAGE marked with ">>>"
+- Match the casual, natural tone of real human conversation
+- Be helpful but brief - say what needs to be said in the fewest words possible
+- Use simple, everyday language that sounds genuine
 
-Generate your reply:`;
+Generate your ONE SENTENCE reply:`;
 
     const result: { text: string } = await thread.generateText({
       prompt: enhancedPrompt,
