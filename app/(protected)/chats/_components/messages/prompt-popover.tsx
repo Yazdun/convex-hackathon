@@ -14,6 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 import { IMessage } from "../types/types";
 import { useChat } from "../providers/chat-provider";
+import { ReplyerDialog } from "./replyer-dialog";
 
 export function PromptPopover({ message }: { message: IMessage }) {
   const [open, setOpen] = useState(false);
@@ -41,17 +42,22 @@ export function PromptPopover({ message }: { message: IMessage }) {
       </Tooltip>
 
       <PopoverContent side="top" className="p-0.5 flex flex-col gap-0.5">
-        <Button
-          onClick={() => {
-            setToEdit(undefined);
-            setReplyingTo(undefined);
-            setGenReplyFor(message);
-          }}
-          variant="ghost"
-          className="flex items-center justify-baseline"
-        >
-          Generate Reply
-        </Button>
+        <ReplyerDialog
+          triggerComponent={
+            <Button
+              onClick={() => {
+                setReplyingTo(undefined);
+                setToEdit(undefined);
+                setGenReplyFor(message);
+              }}
+              variant="ghost"
+              className="flex items-center justify-baseline"
+            >
+              Generate Reply
+            </Button>
+          }
+          message={message}
+        />
         <Button variant="ghost" className="flex items-center justify-baseline">
           Scan URLs
         </Button>

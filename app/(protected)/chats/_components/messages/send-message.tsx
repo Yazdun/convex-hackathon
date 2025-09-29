@@ -194,61 +194,35 @@ const PreviewWidget = ({
     };
   }, [onClose]);
 
-  const renderChildren = () => {
-    if (type === "edit" || type === "reply") {
-      return (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 10 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0 }}
-          className="absolute left-0 right-0 -top-[70px] z-50 text-sm"
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9, y: 10 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      className="absolute left-0 right-0 -top-[70px] z-50 text-sm"
+    >
+      <div className="p-2.5 bg-popover w-full border flex items-center justify-between z-50 rounded-md">
+        <button
+          onClick={() => scrollToMessage(message._id)}
+          className="flex justify-start text-left hover:cursor-pointer w-full items-center gap-2"
         >
-          <div className="p-2.5 bg-popover w-full border flex items-center justify-between z-50 rounded-md">
-            <button
-              onClick={() => scrollToMessage(message._id)}
-              className="flex justify-start text-left hover:cursor-pointer w-full items-center gap-2"
-            >
-              {isEdit ? <PencilRuler /> : <Reply />}
-              <div>
-                {isEdit ? (
-                  <span>Edit message</span>
-                ) : (
-                  <span>Reply to {message.author}</span>
-                )}
-                <p className="text-muted-foreground">
-                  {message.content.slice(0, 50)}
-                  {message.content.length > 50 ? "..." : ""}
-                </p>
-              </div>
-            </button>
-            <Button onClick={() => onClose()} variant="ghost" size="icon">
-              <X />
-            </Button>
+          {isEdit ? <PencilRuler /> : <Reply />}
+          <div>
+            {isEdit ? (
+              <span>Edit message</span>
+            ) : (
+              <span>Reply to {message.author}</span>
+            )}
+            <p className="text-muted-foreground">
+              {message.content.slice(0, 50)}
+              {message.content.length > 50 ? "..." : ""}
+            </p>
           </div>
-        </motion.div>
-      );
-    }
-
-    if (type === "ai") {
-      return (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 10 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0 }}
-          className="absolute left-0 right-0 -top-[70px] z-50 text-sm"
-        >
-          <div className="p-2.5 bg-popover w-full border flex items-center justify-between z-50 rounded-md">
-            hello
-            <Button onClick={() => onClose()} variant="ghost" size="icon">
-              <X />
-            </Button>
-          </div>
-        </motion.div>
-      );
-    }
-
-    return null;
-  };
-
-  return renderChildren();
+        </button>
+        <Button onClick={() => onClose()} variant="ghost" size="icon">
+          <X />
+        </Button>
+      </div>
+    </motion.div>
+  );
 };

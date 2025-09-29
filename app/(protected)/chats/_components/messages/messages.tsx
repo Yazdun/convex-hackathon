@@ -191,9 +191,14 @@ function MessageSkeleton({ idx }: { idx: number }) {
 }
 
 function Message({ message }: { message: IMessage }) {
-  const { setReplyingTo, scrollToMessage, highlightedMessage, setInputValue } =
-    useChat();
-  const { messageRefs, replyingTo, setToEdit } = useChat();
+  const {
+    setReplyingTo,
+    scrollToMessage,
+    highlightedMessage,
+    setInputValue,
+    toEdit,
+  } = useChat();
+  const { messageRefs, genReplyFor, replyingTo, setToEdit } = useChat();
 
   const renderMessage = () => {
     if (message.type === "audio" && message.fileUrl) {
@@ -229,6 +234,9 @@ function Message({ message }: { message: IMessage }) {
       className={cn(
         "p-2.5 rounded-lg hover:bg-card group transition-colors",
         replyingTo?._id === message._id &&
+          "bg-secondary/20 hover:bg-secondary/30",
+        toEdit?._id === message._id && "bg-secondary/20 hover:bg-secondary/30",
+        genReplyFor?._id === message._id &&
           "bg-secondary/20 hover:bg-secondary/30",
         highlightedMessage === message._id &&
           "bg-secondary/20 hover:bg-secondary/30",
