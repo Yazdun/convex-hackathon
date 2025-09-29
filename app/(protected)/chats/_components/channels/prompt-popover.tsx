@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { WandSparkles, Send } from "lucide-react";
+import { WandSparkles, Send, Loader2 } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -15,6 +15,7 @@ import {
 import { useAction } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
+import { AnimatePresence, motion } from "framer-motion";
 
 export function PromptPopover({
   callback,
@@ -62,6 +63,34 @@ export function PromptPopover({
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const renderButtonContent = () => {
+    if (isLoading) {
+      return (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          key="channel-gen-button-loading"
+        >
+          <Loader2 className="animate-spin" />
+        </motion.div>
+      );
+    }
+
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        key={"gen-button-stale"}
+        className="flex items-center gap-1"
+      >
+        <Send className="w-4 h-4 mr-2" />
+        Generate Channel
+      </motion.div>
+    );
   };
 
   return (
@@ -122,14 +151,9 @@ export function PromptPopover({
               className="w-full"
               variant="secondary"
             >
-              {isLoading ? (
-                <>Generating...</>
-              ) : (
-                <>
-                  <Send className="w-4 h-4 mr-2" />
-                  Generate Channel
-                </>
-              )}
+              <AnimatePresence mode="wait" initial={false}>
+                {renderButtonContent()}
+              </AnimatePresence>
             </Button>
           </form>
         </PopoverContent>
