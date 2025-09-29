@@ -5,7 +5,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { WandSparkles } from "lucide-react";
+import { Scan, WandSparkles } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -45,6 +45,7 @@ export function PromptPopover({ message }: { message: IMessage }) {
           message={message}
         />
         <Button variant="ghost" className="flex items-center justify-baseline">
+          <Scan />
           Scan URLs
         </Button>
       </PopoverContent>

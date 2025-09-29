@@ -12,11 +12,10 @@ import {
 import { IMessage } from "../types/types";
 import { Replyer } from "./replyer-form";
 import { Button } from "@/components/ui/button";
-import { useChat } from "../providers/chat-provider";
+import { MessageCircle } from "lucide-react";
 
 export function ReplyerDialog({ message }: { message: IMessage }) {
   const [open, setOpen] = useState(false);
-  const { setToEdit } = useChat();
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
@@ -25,6 +24,7 @@ export function ReplyerDialog({ message }: { message: IMessage }) {
             variant="ghost"
             className="flex items-center justify-baseline"
           >
+            <MessageCircle />
             Generate Reply
           </Button>
         </DialogTrigger>
