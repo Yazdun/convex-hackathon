@@ -181,8 +181,8 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
     const timer = setTimeout(() => {
       setReplyingTo(undefined);
       setToEdit(undefined);
+      setInputValue("");
       const textarea = textareaRef.current;
-      console.log(textarea);
       if (textarea) {
         textarea.focus();
       }
