@@ -73,15 +73,22 @@ export function ScannerButton({ message }: { message: IMessage }) {
       ).length;
 
       if (errorCount === 0) {
-        toast.success(`Successfully scanned ${successCount} URLs`);
+        toast.success(`Successfully scanned ${successCount} URLs`, {
+          position: "bottom-right",
+        });
       } else {
         toast.warning(
           `Scanned ${successCount} URLs successfully, ${errorCount} failed`,
+          {
+            position: "bottom-right",
+          },
         );
       }
     } catch (error) {
       console.error("Scraping error:", error);
-      toast.error("Failed to scan URLs. Please try again.");
+      toast.error("Failed to scan URLs. Please try again.", {
+        position: "bottom-right",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -119,7 +126,7 @@ export function ScannerButton({ message }: { message: IMessage }) {
             </SheetDescription>
           </SheetHeader>
 
-          <ScrollArea className="h-[calc(100vh-120px)]">
+          <ScrollArea className="h-screen">
             <div>
               {results.map((result, index) => (
                 <div
@@ -148,18 +155,26 @@ export function ScannerButton({ message }: { message: IMessage }) {
 
                   {result.success && result.data ? (
                     <div>
-                      {result.data.summary}
                       {result.data.metadata && (
                         <div className="flex flex-col gap-2">
                           {result.data.metadata.title && (
-                            <h3 className="font-semibold text-lg">
-                              {result.data.metadata.title}
-                            </h3>
+                            <div>
+                              <h3 className="font-semibold text-lg">
+                                {result.data.metadata.title}
+                              </h3>
+                              {result.data.metadata.description && (
+                                <p className="">
+                                  {result.data.metadata.description}
+                                </p>
+                              )}
+                            </div>
                           )}
-                          {result.data.metadata.description && (
-                            <p className="text-sm text-muted-foreground">
-                              {result.data.metadata.description}
-                            </p>
+                          {result.data.summary && (
+                            <>
+                              <p className="text-sm text-muted-foreground">
+                                {result.data.summary}
+                              </p>
+                            </>
                           )}
                           <div className="flex gap-2 flex-wrap">
                             {result.data.metadata.author && (
