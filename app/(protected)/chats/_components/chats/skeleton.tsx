@@ -6,7 +6,7 @@ export function ChannelSkeletonCard({ idx }: { idx: number }) {
   return (
     <motion.div {...motionConfig}>
       <div
-        className="p-5 relative border w-full grid gap-2 rounded-lg"
+        className="p-5 relative border border-input w-full grid gap-2 rounded-lg"
         style={{
           opacity: 1 - idx * 0.19,
         }}
