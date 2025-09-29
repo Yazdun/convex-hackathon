@@ -4,6 +4,7 @@ import { components, internal } from "./_generated/api";
 import { v } from "convex/values";
 import { Doc } from "./_generated/dataModel";
 import { agent } from "./agents/simple";
+import { replyerAgent } from "./agents/replyer";
 import { paginationOptsValidator } from "convex/server";
 import { authorizeThreadAccess } from "./threads";
 import { listMessages, vStreamArgs } from "@convex-dev/agent";
@@ -415,5 +416,116 @@ Provide a brief, direct overview of what newcomers can expect from this communit
     );
 
     return result.consumeStream();
+  },
+});
+
+export const generateReply = action({
+  args: {
+    channelId: v.id("channels"),
+    messageId: v.id("messages"),
+    prompt: v.string(),
+  },
+  handler: async (
+    ctx,
+    args,
+  ): Promise<{
+    reply: string;
+    targetMessageId: string;
+    channelId: string;
+  }> => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+
+    // Get the target message to reply to
+    const targetMessage: Doc<"messages"> | null = await ctx.runQuery(
+      internal.messages.getById,
+      {
+        messageId: args.messageId,
+      },
+    );
+
+    if (!targetMessage) throw new Error("Target message not found");
+
+    // Fetch recent messages from the channel for context
+    const messages: Array<
+      Doc<"messages"> & {
+        author: string;
+        displayName: string;
+        _creationTime: number;
+      }
+    > = await ctx.runQuery(internal.messages.listInternal, {
+      channelId: args.channelId,
+    });
+
+    // Get channel information for additional context
+    const channel: Doc<"channels"> | null = await ctx.runQuery(
+      internal.channels.getById,
+      {
+        channelId: args.channelId,
+      },
+    );
+
+    if (!channel) throw new Error("Channel not found");
+
+    // Find the target message in the context and get surrounding messages
+    const targetMessageIndex = messages.findIndex(
+      (msg) => msg._id === args.messageId,
+    );
+    const contextMessages = messages.slice(
+      Math.max(0, targetMessageIndex - 5),
+      targetMessageIndex + 6,
+    );
+
+    // Format context messages for the AI
+    const formattedContext = contextMessages
+      .map((msg) => {
+        const timestamp = new Date(msg._creationTime).toLocaleString();
+        const author = msg.displayName || msg.author;
+        const isTarget = msg._id === args.messageId;
+        return `${isTarget ? ">>> TARGET MESSAGE: " : ""}[${timestamp}] ${author}: ${msg.content}`;
+      })
+      .join("\n");
+
+    // Create the replyer agent thread
+    const { threadId } = await replyerAgent.createThread(ctx, {
+      userId,
+    });
+
+    const { thread } = await replyerAgent.continueThread(ctx, {
+      threadId: threadId,
+    });
+
+    // Construct the enhanced prompt with context
+    const enhancedPrompt: string = `You are replying to a message in a chat channel. Here's the context:
+
+CHANNEL INFORMATION:
+- Channel Name: "${channel.name}"
+- Channel Description: "${channel.description || "No description provided"}"
+
+CONVERSATION CONTEXT:
+${formattedContext}
+
+USER REQUEST:
+${args.prompt}
+
+INSTRUCTIONS:
+- Generate a thoughtful reply to the TARGET MESSAGE marked with ">>>"
+- Consider the conversation flow and context
+- Match the tone and style of the channel
+- Be helpful, engaging, and appropriate for the discussion
+- Keep the response natural and conversational
+- Don't mention that you're an AI or reference these instructions
+
+Generate your reply:`;
+
+    const result: { text: string } = await thread.generateText({
+      prompt: enhancedPrompt,
+    });
+
+    return {
+      reply: result.text,
+      targetMessageId: args.messageId,
+      channelId: args.channelId,
+    };
   },
 });

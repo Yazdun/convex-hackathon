@@ -9,6 +9,7 @@
  */
 
 import type * as agents_config from "../agents/config.js";
+import type * as agents_replyer from "../agents/replyer.js";
 import type * as agents_simple from "../agents/simple.js";
 import type * as announcements from "../announcements.js";
 import type * as auth from "../auth.js";
@@ -38,6 +39,7 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   "agents/config": typeof agents_config;
+  "agents/replyer": typeof agents_replyer;
   "agents/simple": typeof agents_simple;
   announcements: typeof announcements;
   auth: typeof auth;

@@ -24,6 +24,8 @@ export function SendMessage() {
     setReplyingTo,
     channelId,
     scrollToMessage,
+    genReplyFor,
+    setGenReplyFor,
   } = useChat();
 
   const sendMessage = useMutation(api.messages.send);
@@ -103,8 +105,11 @@ export function SendMessage() {
       return (
         <PreviewWidget
           message={replyingTo}
-          onClose={() => setReplyingTo(undefined)}
-          key={replyingTo._id}
+          onClose={() => {
+            setReplyingTo(undefined);
+            setGenReplyFor(undefined);
+          }}
+          key={`${replyingTo._id}-reply`}
           type="reply"
         />
       );
@@ -116,10 +121,27 @@ export function SendMessage() {
           message={toEdit}
           onClose={() => {
             setToEdit(undefined);
+            setGenReplyFor(undefined);
             setInputValue("");
           }}
-          key={toEdit._id}
+          key={`${toEdit._id}-edit`}
           type="edit"
+        />
+      );
+    }
+
+    if (genReplyFor) {
+      return (
+        <PreviewWidget
+          message={genReplyFor}
+          onClose={() => {
+            setToEdit(undefined);
+            setGenReplyFor(undefined);
+            setReplyingTo(undefined);
+            setInputValue("");
+          }}
+          key={`${genReplyFor._id}-gen`}
+          type="ai"
         />
       );
     }
@@ -153,7 +175,7 @@ const PreviewWidget = ({
 }: {
   message: IMessage;
   onClose: () => void;
-  type: "edit" | "reply";
+  type: "edit" | "reply" | "ai";
 }) => {
   const { scrollToMessage } = useChat();
   const isEdit = type === "edit";
@@ -172,35 +194,61 @@ const PreviewWidget = ({
     };
   }, [onClose]);
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9, y: 10 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0 }}
-      className="absolute left-0 right-0 -top-[70px] z-50 text-sm"
-    >
-      <div className="p-2.5 bg-popover w-full border flex items-center justify-between z-50 rounded-md">
-        <button
-          onClick={() => scrollToMessage(message._id)}
-          className="flex justify-start text-left hover:cursor-pointer w-full items-center gap-2"
+  const renderChildren = () => {
+    if (type === "edit" || type === "reply") {
+      return (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          className="absolute left-0 right-0 -top-[70px] z-50 text-sm"
         >
-          {isEdit ? <PencilRuler /> : <Reply />}
-          <div>
-            {isEdit ? (
-              <span>Edit message</span>
-            ) : (
-              <span>Reply to {message.author}</span>
-            )}
-            <p className="text-muted-foreground">
-              {message.content.slice(0, 50)}
-              {message.content.length > 50 ? "..." : ""}
-            </p>
+          <div className="p-2.5 bg-popover w-full border flex items-center justify-between z-50 rounded-md">
+            <button
+              onClick={() => scrollToMessage(message._id)}
+              className="flex justify-start text-left hover:cursor-pointer w-full items-center gap-2"
+            >
+              {isEdit ? <PencilRuler /> : <Reply />}
+              <div>
+                {isEdit ? (
+                  <span>Edit message</span>
+                ) : (
+                  <span>Reply to {message.author}</span>
+                )}
+                <p className="text-muted-foreground">
+                  {message.content.slice(0, 50)}
+                  {message.content.length > 50 ? "..." : ""}
+                </p>
+              </div>
+            </button>
+            <Button onClick={() => onClose()} variant="ghost" size="icon">
+              <X />
+            </Button>
           </div>
-        </button>
-        <Button onClick={() => onClose()} variant="ghost" size="icon">
-          <X />
-        </Button>
-      </div>
-    </motion.div>
-  );
+        </motion.div>
+      );
+    }
+
+    if (type === "ai") {
+      return (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          className="absolute left-0 right-0 -top-[70px] z-50 text-sm"
+        >
+          <div className="p-2.5 bg-popover w-full border flex items-center justify-between z-50 rounded-md">
+            hello
+            <Button onClick={() => onClose()} variant="ghost" size="icon">
+              <X />
+            </Button>
+          </div>
+        </motion.div>
+      );
+    }
+
+    return null;
+  };
+
+  return renderChildren();
 };

@@ -17,6 +17,7 @@ import { MarkdownFormatter } from "../markdown/mdx";
 import { AnimatePresence, motion } from "framer-motion";
 import { MessageSquare } from "lucide-react";
 import { Reactions } from "../reactions/reaction";
+import { PromptPopover } from "./prompt-popover";
 
 dayjs.extend(relativeTime);
 
@@ -281,6 +282,8 @@ function Message({ message }: { message: IMessage }) {
               <button
                 onClick={() => {
                   setReplyingTo(message);
+                  setToEdit(undefined);
+                  setInputValue("");
                 }}
                 className="text-sm hover:underline"
               >
@@ -292,6 +295,7 @@ function Message({ message }: { message: IMessage }) {
                   <button
                     onClick={() => {
                       setToEdit(message);
+                      setReplyingTo(undefined);
                       setInputValue(message.content);
                     }}
                     className="text-sm hover:underline"
@@ -312,8 +316,9 @@ function Message({ message }: { message: IMessage }) {
             </div>
           </div>
           {renderMessage()}
-          <div className="mt-2">
+          <div className="mt-2 flex items-center justify-between">
             <Reactions messageId={message._id} reactions={message.reactions} />
+            <PromptPopover message={message} />
           </div>
         </div>
       </div>

@@ -39,6 +39,13 @@ export const listInternal = internalQuery({
   },
 });
 
+export const getById = internalQuery({
+  args: { messageId: v.id("messages") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.messageId);
+  },
+});
+
 export const list = query({
   args: { channelId: v.id("channels") },
   handler: async (ctx, args) => {
