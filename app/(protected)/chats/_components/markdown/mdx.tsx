@@ -10,10 +10,45 @@ interface MarkdownFormatterProps {
   className?: string;
 }
 
+// Function to automatically convert URLs to markdown links
+function autoLinkUrls(text: string): string {
+  // First, find all existing markdown links to exclude them from auto-linking
+  const markdownLinkRegex = /\[([^\]]*)\]\(([^)]+)\)/g;
+  const existingLinks: Array<{ start: number; end: number }> = [];
+  let match;
+
+  // Reset regex lastIndex to ensure we start from the beginning
+  markdownLinkRegex.lastIndex = 0;
+
+  while ((match = markdownLinkRegex.exec(text)) !== null) {
+    existingLinks.push({
+      start: match.index,
+      end: match.index + match[0].length,
+    });
+  }
+
+  // Now find all URLs and only convert those not already in markdown format
+  const urlRegex = /(https?:\/\/[^\s)]+)/g;
+  return text.replace(urlRegex, (fullMatch, capturedUrl, offset) => {
+    // Check if this URL position overlaps with any existing markdown link
+    const isInExistingLink = existingLinks.some(
+      (link) => offset >= link.start && offset < link.end,
+    );
+
+    if (isInExistingLink) {
+      return fullMatch; // Don't modify if already in a markdown link
+    }
+
+    return `[${fullMatch}](${fullMatch})`;
+  });
+}
+
 export function MarkdownFormatter({
   text,
   className = "",
 }: MarkdownFormatterProps) {
+  // Preprocess text to convert URLs to markdown links
+  const processedText = autoLinkUrls(text);
   return (
     <div className={cn(`text-foreground w-full max-w-full`, className)}>
       <ReactMarkdown
@@ -66,7 +101,7 @@ export function MarkdownFormatter({
           p: ({ children }) => <div className="my-1">{children}</div>,
         }}
       >
-        {text}
+        {processedText}
       </ReactMarkdown>
     </div>
   );
