@@ -16,6 +16,7 @@
     "@convex-dev/agent": "^0.2.10",
     "@convex-dev/auth": "^0.0.81",
     "@hookform/resolvers": "^5.2.2",
+    "@mendable/firecrawl-js": "^4.3.6",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-context-menu": "^2.2.16",
     "@radix-ui/react-dialog": "^1.1.15",

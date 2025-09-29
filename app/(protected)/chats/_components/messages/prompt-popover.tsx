@@ -5,7 +5,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { Scan, WandSparkles } from "lucide-react";
+import { WandSparkles } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -14,6 +14,7 @@ import {
 import { cn } from "@/lib/utils";
 import { IMessage } from "../types/types";
 import { ReplyerDialog } from "./replyer-dialog";
+import { ScannerButton } from "../scanner/scanner-button";
 
 export function PromptPopover({ message }: { message: IMessage }) {
   const [open, setOpen] = useState(false);
@@ -44,10 +45,7 @@ export function PromptPopover({ message }: { message: IMessage }) {
           key={message._id + "-replyer-dialog"}
           message={message}
         />
-        <Button variant="ghost" className="flex items-center justify-baseline">
-          <Scan />
-          Scan URLs
-        </Button>
+        <ScannerButton message={message} />
       </PopoverContent>
     </Popover>
   );
