@@ -94,8 +94,6 @@ export const scrapeAndSummarizeUrls = action({
           formats: ["markdown"],
         })) as FirecrawlData;
 
-        console.log("DATA IS:", scrapeResponse);
-
         if (!scrapeResponse.markdown || !scrapeResponse.metadata) {
           const errorResult: ScrapeErrorResult = {
             url,
@@ -139,6 +137,7 @@ Please provide a comprehensive summary that includes:
 Keep the summary concise but informative, focusing on the most important aspects that would help someone understand what this content is about and whether it's relevant to their interests.`;
 
           const result = await thread.generateText({ prompt });
+
           summary = result.text;
         } catch (summaryError) {
           console.error("Failed to generate summary:", summaryError);

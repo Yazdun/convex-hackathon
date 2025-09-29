@@ -148,6 +148,7 @@ export function ScannerButton({ message }: { message: IMessage }) {
 
                   {result.success && result.data ? (
                     <div>
+                      {result.data.summary}
                       {result.data.metadata && (
                         <div className="flex flex-col gap-2">
                           {result.data.metadata.title && (
