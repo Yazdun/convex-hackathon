@@ -24,8 +24,6 @@ export function SendMessage() {
     setReplyingTo,
     channelId,
     scrollToMessage,
-    genReplyFor,
-    setGenReplyFor,
   } = useChat();
 
   const sendMessage = useMutation(api.messages.send);
@@ -107,7 +105,6 @@ export function SendMessage() {
           message={replyingTo}
           onClose={() => {
             setReplyingTo(undefined);
-            setGenReplyFor(undefined);
           }}
           key={`${replyingTo._id}-reply`}
           type="reply"
@@ -121,27 +118,10 @@ export function SendMessage() {
           message={toEdit}
           onClose={() => {
             setToEdit(undefined);
-            setGenReplyFor(undefined);
             setInputValue("");
           }}
           key={`${toEdit._id}-edit`}
           type="edit"
-        />
-      );
-    }
-
-    if (genReplyFor) {
-      return (
-        <PreviewWidget
-          message={genReplyFor}
-          onClose={() => {
-            setToEdit(undefined);
-            setGenReplyFor(undefined);
-            setReplyingTo(undefined);
-            setInputValue("");
-          }}
-          key={`${genReplyFor._id}-gen`}
-          type="ai"
         />
       );
     }

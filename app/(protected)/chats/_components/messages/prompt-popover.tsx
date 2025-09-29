@@ -13,12 +13,10 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { IMessage } from "../types/types";
-import { useChat } from "../providers/chat-provider";
 import { ReplyerDialog } from "./replyer-dialog";
 
 export function PromptPopover({ message }: { message: IMessage }) {
   const [open, setOpen] = useState(false);
-  const { setGenReplyFor, setReplyingTo, setToEdit } = useChat();
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <Tooltip>
@@ -43,19 +41,7 @@ export function PromptPopover({ message }: { message: IMessage }) {
 
       <PopoverContent side="top" className="p-0.5 flex flex-col gap-0.5">
         <ReplyerDialog
-          triggerComponent={
-            <Button
-              onClick={() => {
-                setReplyingTo(undefined);
-                setToEdit(undefined);
-                setGenReplyFor(message);
-              }}
-              variant="ghost"
-              className="flex items-center justify-baseline"
-            >
-              Generate Reply
-            </Button>
-          }
+          key={message._id + "-replyer-dialog"}
           message={message}
         />
         <Button variant="ghost" className="flex items-center justify-baseline">

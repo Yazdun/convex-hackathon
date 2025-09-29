@@ -82,9 +82,14 @@ export function Replyer({
 }) {
   const [prompt, setPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { channelId, setInputValue } = useChat();
+  const { channelId, setInputValue, setReplyingTo, setToEdit } = useChat();
 
   const generateReply = useAction(api.chats.generateReply);
+
+  React.useEffect(() => {
+    setReplyingTo(message);
+    setToEdit(undefined);
+  }, []);
 
   const handleSubmit = async () => {
     if (!prompt.trim() || !channelId || isLoading) return;

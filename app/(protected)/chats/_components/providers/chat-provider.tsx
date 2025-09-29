@@ -22,8 +22,6 @@ import { IMessage } from "../types/types";
 interface ContextProps {
   replyingTo?: IMessage;
   setReplyingTo: Dispatch<SetStateAction<IMessage | undefined>>;
-  genReplyFor?: IMessage;
-  setGenReplyFor: Dispatch<SetStateAction<IMessage | undefined>>;
   toEdit?: IMessage;
   setToEdit: Dispatch<SetStateAction<IMessage | undefined>>;
   channelId: Id<"channels"> | null;
@@ -60,7 +58,6 @@ export const Context = createContext<ContextProps | undefined>(undefined);
 
 export const ChatProvider = (props: { children: React.ReactNode }) => {
   const [replyingTo, setReplyingTo] = useState<IMessage | undefined>();
-  const [genReplyFor, setGenReplyFor] = useState<IMessage | undefined>();
   const [toEdit, setToEdit] = useState<IMessage | undefined>();
   const [qchannel, qsetChannel] = useQueryState("channel", parseAsString);
   const [mode, setMode] = useQueryState(
@@ -197,8 +194,6 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
   const value: ContextProps = {
     replyingTo,
     setReplyingTo,
-    genReplyFor,
-    setGenReplyFor,
     channelId,
     setChannelId,
     mode,
