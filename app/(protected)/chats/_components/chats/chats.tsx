@@ -10,6 +10,7 @@ import { EditChannelContainer } from "../channels/edit-channel-form";
 import { AnimatePresence, motion } from "framer-motion";
 import { AnnouncementCreate } from "../annoucement/announcement-create";
 import { Inbox } from "../inbox/inbox";
+import { SearchForm } from "../search/search-form";
 
 const motionConfig = {
   createChannel: {
@@ -42,6 +43,20 @@ export function Chats() {
   const { channelId, mode } = useChat();
 
   const renderChildren = () => {
+    if (mode === "search") {
+      return (
+        <ScrollArea className="h-[calc(100vh-100px)]">
+          <motion.div
+            key="inbox"
+            {...motionConfig.createChannel}
+            className="w-full max-w-2xl px-2.5 py-4 m-auto"
+          >
+            <SearchForm />
+          </motion.div>
+        </ScrollArea>
+      );
+    }
+
     if (mode === "inbox") {
       return (
         <ScrollArea className="h-[calc(100vh-50px)]">

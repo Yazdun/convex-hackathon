@@ -32,10 +32,17 @@ interface ContextProps {
       | "editChannel"
       | "createAnnouncement"
       | "inbox"
+      | "search"
       | null,
     options?: Options,
   ) => Promise<URLSearchParams>;
-  mode: "createChannel" | "editChannel" | "createAnnouncement" | "inbox" | null;
+  mode:
+    | "createChannel"
+    | "editChannel"
+    | "createAnnouncement"
+    | "inbox"
+    | "search"
+    | null;
   scrollAreaRef: RefObject<HTMLDivElement | null>;
   textareaRef: RefObject<HTMLTextAreaElement | null>;
   setTextareaHeight: Dispatch<SetStateAction<number>>;
@@ -68,6 +75,7 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
       "editChannel",
       "createAnnouncement",
       "inbox",
+      "search",
     ]),
   );
 
