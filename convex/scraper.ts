@@ -7,7 +7,7 @@ import { agent } from "./agents/simple";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
 const firecrawl = new Firecrawl({
-  apiKey: "fc-dd2df99c4f374309bce7fc750dbc8d05",
+  apiKey: process.env.FIRECRAWL_API_KEY,
 });
 
 // Type definitions based on actual Firecrawl response

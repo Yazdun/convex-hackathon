@@ -131,7 +131,7 @@ export function ScannerButton({ message }: { message: IMessage }) {
               {results.map((result, index) => (
                 <div
                   key={index}
-                  className="border-t border-border rounded-lg p-4"
+                  className="border-t border-border rounded-lg p-4 flex flex-col gap-2"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex w-full items-center gap-2">
@@ -159,8 +159,8 @@ export function ScannerButton({ message }: { message: IMessage }) {
                       {result.data.metadata && (
                         <div className="flex flex-col gap-2">
                           {result.data.metadata.title && (
-                            <div>
-                              <h3 className="font-semibold text-lg">
+                            <div className="flex flex-col gap-2">
+                              <h3 className="font-semibold text-lg leading-5">
                                 {result.data.metadata.title}
                               </h3>
                               {result.data.metadata.description && (
