@@ -4,7 +4,7 @@ import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import React from "react";
 import { ModeToggle } from "@/components/mode-toggle";
-import { Loader2, Rss, MoveLeft } from "lucide-react";
+import { Loader2, Rss, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { CreateChannel } from "../channels/create-channel";
@@ -46,7 +46,7 @@ export function Navbar() {
             variant="outline"
             size="icon"
           >
-            <MoveLeft size={14} />
+            <X size={14} />
           </Button>
           <ChannelPopover channel={channel} />
         </motion.div>
@@ -86,7 +86,7 @@ export function Navbar() {
           key="chat-mode"
         >
           <Button onClick={() => setMode(null)} variant="outline" size="icon">
-            <MoveLeft size={14} />
+            <X size={14} />
           </Button>
           {renderLabel()}
         </motion.div>

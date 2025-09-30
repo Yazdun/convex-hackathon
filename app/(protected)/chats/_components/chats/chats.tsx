@@ -47,7 +47,7 @@ export function Chats() {
       return (
         <ScrollArea className="h-[calc(100vh-100px)]">
           <motion.div
-            key="inbox"
+            key="search"
             {...motionConfig.createChannel}
             className="w-full max-w-2xl px-2.5 py-4 m-auto"
           >
