@@ -243,7 +243,7 @@ Provide your response in 2-3 sentences without being overly promotional.
     }
 
     // Check minimum message count
-    const MIN_MESSAGES = 4;
+    const MIN_MESSAGES = 7;
     if (messages.length < MIN_MESSAGES) {
       const { thread } = await agent.continueThread(ctx, {
         threadId: args.threadId,
@@ -312,7 +312,7 @@ Provide your response in 2-3 sentences focusing on the need for more detailed co
 
     // Check author diversity
     const uniqueAuthors = new Set(messages.map((msg) => msg.authorId)).size;
-    console.log(uniqueAuthors);
+
     const MIN_UNIQUE_AUTHORS = 2;
     if (uniqueAuthors < MIN_UNIQUE_AUTHORS) {
       const { thread } = await agent.continueThread(ctx, {
@@ -333,37 +333,6 @@ Provide your response in 2-3 sentences focusing on the need for diverse particip
 
           IMPORTANT: avoid em dashes, never ever use em dashes
           `,
-        },
-        {
-          saveStreamDeltas: {
-            chunking: "word",
-          },
-        },
-      );
-
-      return result.consumeStream();
-    }
-
-    // Check time span
-    const oldestMessage = Math.min(...messages.map((msg) => msg._creationTime));
-    const newestMessage = Math.max(...messages.map((msg) => msg._creationTime));
-    const timeSpanHours = (newestMessage - oldestMessage) / (1000 * 60 * 60);
-    if (timeSpanHours < 1 && messages.length < 20) {
-      const { thread } = await agent.continueThread(ctx, {
-        threadId: args.threadId,
-      });
-
-      const result = await thread.streamText(
-        {
-          prompt: `This channel has ${messages.length} messages spanning only ${Math.round(timeSpanHours * 10) / 10} hours. Provide a direct response explaining that:
-
-1. The conversation timeframe is too brief to analyze community patterns
-2. Observing interactions over a longer period is necessary for insights
-3. This appears to be recent activity that needs more time to develop
-
-IMPORTANT: Be clear about why a longer observation period is needed.
-
-Provide your response in 2-3 sentences focusing on the need for extended conversation history.`,
         },
         {
           saveStreamDeltas: {
