@@ -47,6 +47,28 @@ export interface IChannel {
   isSubscribed: boolean;
 }
 
+export interface IChannelData {
+  isOwner: boolean;
+  isSubscribed: boolean;
+  users: {
+    userId: Id<"users">;
+    email: string | undefined;
+    displayName: string;
+    avatarUrl: string | null;
+    avatarId: Id<"_storage"> | undefined;
+    username: string | undefined;
+  }[];
+  _id: Id<"channels">;
+  _creationTime: number;
+  description?: string | undefined;
+  avatarId?: Id<"_storage"> | undefined;
+  type?: "channel" | "dm" | undefined;
+  participants?: Id<"users">[] | undefined;
+  tags?: string[] | undefined;
+  name: string;
+  createdBy: Id<"users">;
+}
+
 export interface IChannelMin {
   _id: Id<"channels">;
   _creationTime: number;

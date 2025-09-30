@@ -12,6 +12,7 @@ import { useChat } from "../providers/chat-provider";
 import { InboxButton } from "../inbox/inbox-button";
 import { Profile } from "../profiles/profile";
 import { ChannelPopover } from "../channels/channel-popover";
+import { SearchSheet } from "../search/search";
 
 export function Navbar() {
   const { channelId } = useChat();
@@ -135,6 +136,7 @@ export function Navbar() {
             <CreateChannel />
             <InboxButton />
             <ModeToggle />
+            <SearchSheet channel={channel} />
             <div className="ml-0.5 flex justify-center items-center">
               <Profile />
             </div>

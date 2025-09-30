@@ -7,7 +7,13 @@ import { toast } from "sonner";
 import { CornerDownRight, Loader2, UserMinus2, UserPlus2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function Subscribe({ channel }: { channel: IChannel }) {
+export function Subscribe({
+  channel,
+  variant = "outline",
+}: {
+  channel: IChannel;
+  variant?: "default" | "outline";
+}) {
   const subscribe = useMutation(api.channels.subscribe);
   const [loading, setLoading] = React.useState(false);
   const { setChannelId } = useChat();
@@ -59,7 +65,7 @@ export function Subscribe({ channel }: { channel: IChannel }) {
     }
 
     return (
-      <Button disabled={loading} onClick={handleClick} variant="outline">
+      <Button disabled={loading} onClick={handleClick} variant={variant}>
         {renderIcon()}
         Subscribe
       </Button>

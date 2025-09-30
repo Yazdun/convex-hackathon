@@ -49,6 +49,7 @@ interface ContextProps {
   setHighlightedMessage: Dispatch<SetStateAction<string | null>>;
   scrollToMessage: (messageId: string) => void;
   scrollToTop: () => void;
+  focusInput: () => void;
   messageRefs: RefObject<{
     [key: string]: HTMLDivElement | null;
   }>;
@@ -169,6 +170,15 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
     }
   };
 
+  const focusInput = () => {
+    setTimeout(() => {
+      const textarea = textareaRef.current;
+      if (textarea) {
+        textarea.focus();
+      }
+    }, 100);
+  };
+
   // Auto-focus textarea on component mount
   useEffect(() => {
     const textarea = textareaRef.current;
@@ -210,6 +220,7 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
     scrollToMessage,
     highlightedMessage,
     scrollToTop,
+    focusInput,
     setHighlightedMessage,
     messageRefs,
     toEdit,

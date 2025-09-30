@@ -82,7 +82,8 @@ export function Replyer({
 }) {
   const [prompt, setPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { channelId, setInputValue, setReplyingTo, setToEdit } = useChat();
+  const { channelId, setInputValue, setReplyingTo, setToEdit, focusInput } =
+    useChat();
 
   const generateReply = useAction(api.chats.generateReply);
 
@@ -107,6 +108,8 @@ export function Replyer({
       toast.success("Reply generated successfully!");
       setPrompt("");
       setInputValue(result.reply);
+      focusInput();
+
       if (onSuccess) {
         onSuccess();
       }

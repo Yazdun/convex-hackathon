@@ -277,10 +277,16 @@ export const search = query({
           .withIndex("by_user", (q) => q.eq("userId", message.authorId))
           .first();
 
+        let avatarUrl = null;
+        if (profile?.avatarId) {
+          avatarUrl = await ctx.storage.getUrl(profile.avatarId);
+        }
+
         return {
           ...message,
           author: author?.email || "Unknown",
           displayName: profile?.displayName || author?.email || "Unknown",
+          avatarUrl,
           channelName: channel?.name || "Unknown",
         };
       }),

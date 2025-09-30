@@ -148,7 +148,8 @@ export function ScannerButton({ message }: { message: IMessage }) {
                         className="text-sm underline underline-offset-2 hover:opacity-80 transition-all flex items-center gap-1"
                       >
                         <ExternalLink size={18} className="mt-0.5" />
-                        {result.url}
+                        {result.url.slice(0, 30)}
+                        {result.url.length > 30 ? "..." : ""}
                       </a>
                     </div>
                   </div>

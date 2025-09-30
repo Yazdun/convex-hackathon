@@ -13,6 +13,7 @@ import { api } from "@/convex/_generated/api";
 import { useChat } from "../providers/chat-provider";
 import { toast } from "sonner";
 import { CornerDownRight, Loader2, Megaphone, Settings2 } from "lucide-react";
+import { Subscribe } from "../chats/subscribe";
 
 export function ChannelPopover({ channel }: { channel: IChannelMin }) {
   const [open, setOpen] = useState(false);
@@ -76,8 +77,10 @@ export function ChannelPopover({ channel }: { channel: IChannelMin }) {
               <Megaphone />
               Announcement
             </Button>
-          ) : (
+          ) : channel.isSubscribed ? (
             <Unsubscribe channel={channel} onClose={handleOpenChange} />
+          ) : (
+            <Subscribe variant="default" channel={channel} />
           )}
         </div>
       </PopoverContent>
