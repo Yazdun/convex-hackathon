@@ -57,8 +57,8 @@ export function Inbox() {
   const renderContent = () => {
     if (!inbox || !inbox.length) {
       return (
-        <motion.div {...motionConfig} key="empty-inbox" className=" font-mono">
-          <div className="p-[1px] bg-gradient-to-b from-input to-transparent">
+        <motion.div {...motionConfig} key="empty-inbox" className="font-mono">
+          <div className="p-[2px] bg-gradient-to-b from-input to-transparent">
             <div className="p-5 border-dashed rounded-lg text-lg flex-col text-muted-foreground gap-2  bg-background flex items-center text-center justify-center  py-20">
               <motion.div
                 initial={{
@@ -84,7 +84,7 @@ export function Inbox() {
                 transition={{ delay: 0.3 }}
                 className="text-xl font-bold"
               >
-                Your Inbox is Empty!
+                Your Inbox is empty!
               </motion.h2>
             </div>
           </div>

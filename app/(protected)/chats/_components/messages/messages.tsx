@@ -116,7 +116,7 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
           key="empty-chat"
           className="p-2.5 font-mono"
         >
-          <div className="p-[1px] bg-gradient-to-b from-input to-transparent">
+          <div className="p-[2px] bg-gradient-to-b from-input to-transparent">
             <div className="p-5 border-dashed rounded-lg text-lg flex-col text-muted-foreground gap-2  bg-background flex items-center text-center justify-center  py-20">
               <motion.div
                 initial={{
