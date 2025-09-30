@@ -88,7 +88,7 @@ export function AuthForm({ flow }: { flow: "signIn" | "signUp" }) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-5 w-full md:p-10 md:border rounded-lg"
+        className="space-y-5 w-full md:p-10 md:border bg-white dark:bg-background rounded-lg"
       >
         <div className="text-center mb-10">
           <h2 className="text-2xl">
