@@ -16,7 +16,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { IMessage } from "../types/types";
 import { ScrapeResult } from "./types";
 
-// Function to extract URLs from message content
 const extractUrlsFromMessage = (message: IMessage): string[] => {
   const urlRegex = /(https?:\/\/[^\s)]+)/g;
   const matches = message.content.match(urlRegex);
