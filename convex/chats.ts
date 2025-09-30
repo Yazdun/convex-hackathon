@@ -243,7 +243,7 @@ Provide your response in 2-3 sentences without being overly promotional.
     }
 
     // Check minimum message count
-    const MIN_MESSAGES = 10;
+    const MIN_MESSAGES = 4;
     if (messages.length < MIN_MESSAGES) {
       const { thread } = await agent.continueThread(ctx, {
         threadId: args.threadId,
