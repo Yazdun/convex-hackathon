@@ -45,7 +45,7 @@ export function Chats() {
   const renderChildren = () => {
     if (mode === "search") {
       return (
-        <ScrollArea className="h-[calc(100vh-100px)]">
+        <ScrollArea className="h-[calc(100vh-53px)]">
           <motion.div
             key="search"
             {...motionConfig.createChannel}
