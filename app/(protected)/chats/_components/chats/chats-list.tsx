@@ -176,8 +176,12 @@ export function ChatsList() {
           <motion.div
             key="no-result-found"
             initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              transition: { delay: 0.4, duration: 0.3 },
+            }}
+            exit={{ opacity: 0, y: -15, transition: { delay: 0.2 } }}
             transition={{ duration: 0.3 }}
             className="text-center py-8 border font-mono px-4 text-sm text-muted-foreground"
           >
