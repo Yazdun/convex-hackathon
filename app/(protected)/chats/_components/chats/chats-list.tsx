@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Brain, Loader2, Search } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -98,6 +99,17 @@ export function ChatsList() {
   if (channels === undefined && showLoading) {
     return (
       <div className="p-2.5 grid gap-2.5">
+        {/* Search and Filter Controls Skeleton */}
+        <div className="flex items-center gap-2 py-2">
+          <div className="relative w-full">
+            <Skeleton className="h-10 w-full" />
+          </div>
+          <div className="flex gap-2">
+            <Skeleton className="h-10 w-[130px]" />
+            <Skeleton className="h-10 w-[170px]" />
+          </div>
+        </div>
+
         {Array.from({ length: 5 }).map((_, index) => (
           <ChannelSkeletonCard key={index} idx={index} />
         ))}

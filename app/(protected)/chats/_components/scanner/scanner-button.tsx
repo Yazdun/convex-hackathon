@@ -20,7 +20,10 @@ const extractUrlsFromMessage = (message: IMessage): string[] => {
   const urlRegex = /(https?:\/\/[^\s)]+)/g;
   const matches = message.content.match(urlRegex);
   return matches
-    ? matches.filter((url, index, self) => self.indexOf(url) === index)
+    ? matches.filter(
+        (url, index, self) =>
+          self.indexOf(url) === index && !url.includes("giphy"),
+      )
     : [];
 };
 
