@@ -45,9 +45,7 @@ const FormSchema = z.object({
     .max(1000, {
       message: "Content must be less than 1000 characters.",
     }),
-  participants: z
-    .array(z.string())
-    .min(1, { message: "Please select at least one participant." }),
+  participants: z.array(z.string()),
   isWelcomeMessage: z.boolean(),
 });
 
