@@ -129,7 +129,7 @@ export const Gifs: React.FC<GifsProps> = ({
       {/* Giphy Grid Component */}
       <div
         className="overflow-y-auto pr-2 scrollbar scrollbar-thumb-black dark:scrollbar-thumb-white  scrollbar-track-popover"
-        style={{ maxHeight: "60vh" }}
+        style={{ height: "60vh" }}
       >
         <Grid
           key={debouncedSearchTerm}

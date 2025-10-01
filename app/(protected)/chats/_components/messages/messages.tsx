@@ -252,7 +252,7 @@ function Message({ message }: { message: IMessage }) {
         <img
           src={parsed.url}
           alt={"gif"}
-          className="w-full max-w-[150px] h-auto object-cover"
+          className="w-full max-w-[150px] mt-1 h-auto object-cover"
           style={{
             aspectRatio: `${parsed.width} / ${parsed.height}`,
           }}
