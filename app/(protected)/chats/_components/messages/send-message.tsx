@@ -11,6 +11,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { MediaUpload } from "./file-upload";
 import { useChat } from "../providers/chat-provider";
 import { IMessage } from "../types/types";
+import { GifsPopover } from "../gifs/gifs-popover";
 
 export function SendMessage() {
   const {
@@ -143,7 +144,10 @@ export function SendMessage() {
         className="flex-1 resize-none min-h-[44px] max-h-[200px]"
         rows={1}
       />
-      {channelId ? <MediaUpload channelId={channelId} /> : null}
+      <div className="flex">
+        <GifsPopover />
+        {channelId ? <MediaUpload channelId={channelId} /> : null}
+      </div>
     </div>
   );
 }
