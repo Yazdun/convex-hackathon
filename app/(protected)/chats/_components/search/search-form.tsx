@@ -20,7 +20,7 @@ export function SearchForm() {
   const { queryMsgId, setQueryMsgId } = useChat();
   console.log(_, queryMsgId);
 
-  const searchResults =
+  const searchResults = (
     useQuery(
       api.messages.search,
       query?.trim()
@@ -30,7 +30,8 @@ export function SearchForm() {
               searchScope === "current" ? channelId || undefined : undefined,
           }
         : "skip",
-    ) || [];
+    ) || []
+  ).filter((result) => !result.content.toLowerCase().includes("giphy"));
 
   const renderContent = () => {
     if (!query?.trim()) {
