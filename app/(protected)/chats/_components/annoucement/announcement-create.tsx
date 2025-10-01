@@ -25,6 +25,8 @@ import { useChat } from "../providers/chat-provider";
 import { Id } from "@/convex/_generated/dataModel";
 import { PromptPopover } from "./prompt-popover";
 import { Switch } from "@/components/ui/switch";
+import Image from "next/image";
+import chikaGif from "./assets/chika.gif";
 
 const FormSchema = z.object({
   title: z
@@ -208,11 +210,25 @@ export function AnnouncementCreate() {
             name="isWelcomeMessage"
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">Welcome Message</FormLabel>
-                  <FormDescription>
-                    Mark this as a welcome message for new participants.
-                  </FormDescription>
+                <div className="flex items-center gap-2">
+                  <Image
+                    src={chikaGif}
+                    alt="Chika dancing"
+                    width={50}
+                    height={50}
+                    // className="rounded-full"
+                    unoptimized
+                  />
+                  <div className="space-y-0.5">
+                    <div className="flex items-center gap-2">
+                      <FormLabel className="text-base">
+                        Welcome Message
+                      </FormLabel>
+                    </div>
+                    <FormDescription>
+                      Mark this as a welcome message for new participants.
+                    </FormDescription>
+                  </div>
                 </div>
                 <FormControl>
                   <Switch

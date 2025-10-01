@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { useOnClickOutside } from "usehooks-ts";
+import Image from "next/image";
+import chikaGif from "./assets/chika.gif";
 
 export function AssistantContainer() {
   const { threadId } = useAssistant();
@@ -119,10 +121,22 @@ export function Assistant({ threadId }: { threadId: string }) {
   return (
     <motion.div
       ref={ref}
-      className="border-2 transition-all border-destructive rounded-lg bg-background dark:bg-popover w-[400px]"
+      className="border-2 relative transition-all border-destructive rounded-lg bg-background dark:bg-popover w-[400px]"
     >
+      <div className="absolute -left-8 p-1 bg-destructive rounded-full -top-7">
+        <Image
+          src={chikaGif}
+          alt="Chika dancing"
+          width={80}
+          height={80}
+          className="rounded-full scale-x-[-1]"
+          unoptimized
+        />
+      </div>
       <div className="px-4 flex items-center bg-destructive justify-between py-2 border-b-destructive">
-        <h2 className="font-mono font-bold text-black">Channel Overview</h2>
+        <div className="flex items-center gap-2 pl-10">
+          <h2 className="font-mono font-bold text-black">Channel Overview</h2>
+        </div>
         <Button
           size="icon"
           className="text-black"
