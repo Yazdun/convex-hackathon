@@ -8,6 +8,8 @@ import { useChat } from "../providers/chat-provider";
 import { AnimatePresence, motion } from "framer-motion";
 import { motionConfig } from "../chats/motion";
 import { Search } from "lucide-react";
+import Image from "next/image";
+import chikaGif from "./assets/chika.gif";
 
 export function SearchForm() {
   const { channelId, setMode } = useChat();
@@ -77,9 +79,17 @@ export function SearchForm() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <div className="p-10 border font-mono text-center py-10">
-            No messages found for{" "}
-            <span className="font-mono font-bold">{query}</span>
+          <div className="text-center flex flex-col items-center gap-2 py-8 border font-mono px-4 text-sm text-muted-foreground">
+            <Image
+              src={chikaGif}
+              alt="Chika dancing"
+              width={100}
+              height={100}
+              unoptimized
+            />
+            <p>
+              No messages found for <span>{query}</span>
+            </p>
           </div>
         </motion.div>
       );

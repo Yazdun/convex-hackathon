@@ -28,6 +28,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useQueryState } from "nuqs";
+import Image from "next/image";
+import chikaGif from "./assets/chika.gif";
 
 export function ChatsList() {
   const channels = useQuery(api.channels.list);
@@ -195,8 +197,16 @@ export function ChatsList() {
             }}
             exit={{ opacity: 0, y: -15, transition: { delay: 0.2 } }}
             transition={{ duration: 0.3 }}
-            className="text-center py-8 border font-mono px-4 text-sm text-muted-foreground"
+            className="text-center flex flex-col items-center gap-2 py-8 border font-mono px-4 text-sm text-muted-foreground"
           >
+            <Image
+              src={chikaGif}
+              alt="Chika dancing"
+              width={100}
+              height={100}
+              unoptimized
+            />
+
             {searchTerm ? (
               <p>No channels found matching &ldquo;{searchTerm}&rdquo;</p>
             ) : (
