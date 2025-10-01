@@ -123,7 +123,7 @@ export function Assistant({ threadId }: { threadId: string }) {
       ref={ref}
       className="border-2 relative transition-all border-destructive rounded-lg bg-background dark:bg-popover w-[400px]"
     >
-      <div className="absolute -left-8 p-1 bg-destructive rounded-full -top-7">
+      <div className="absolute -left-8 p-0.5 bg-destructive rounded-full -top-7">
         <Image
           src={chikaGif}
           alt="Chika dancing"
