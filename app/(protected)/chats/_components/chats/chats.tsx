@@ -13,30 +13,10 @@ import { Inbox } from "../inbox/inbox";
 import { SearchForm } from "../search/search-form";
 
 const motionConfig = {
-  createChannel: {
-    initial: { opacity: 0 },
-    animate: { opacity: 1 },
-    exit: { opacity: 0 },
-    transition: { duration: 0.3 },
-  },
-  editChannel: {
-    initial: { opacity: 0 },
-    animate: { opacity: 1 },
-    exit: { opacity: 0 },
-    transition: { duration: 0.3 },
-  },
-  chatFeed: {
-    initial: { opacity: 0 },
-    animate: { opacity: 1 },
-    exit: { opacity: 0 },
-    transition: { duration: 0.3 },
-  },
-  chatsList: {
-    initial: { opacity: 0, scale: 0.95 },
-    animate: { opacity: 1, scale: 1 },
-    exit: { opacity: 0, scale: 0.95 },
-    transition: { duration: 0.3 },
-  },
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.3 },
 };
 
 export function Chats() {
@@ -45,15 +25,13 @@ export function Chats() {
   const renderChildren = () => {
     if (mode === "search") {
       return (
-        <ScrollArea className="h-[calc(100vh-53px)]">
-          <motion.div
-            key="search"
-            {...motionConfig.createChannel}
-            className="w-full max-w-2xl px-2.5 py-4 m-auto"
-          >
-            <SearchForm />
-          </motion.div>
-        </ScrollArea>
+        <motion.div key="search" {...motionConfig}>
+          <ScrollArea className="h-[calc(100vh-53px)]">
+            <div className="w-full max-w-2xl px-2.5 py-4 m-auto">
+              <SearchForm />
+            </div>
+          </ScrollArea>
+        </motion.div>
       );
     }
 
@@ -62,7 +40,7 @@ export function Chats() {
         <ScrollArea className="h-[calc(100vh-50px)]">
           <motion.div
             key="inbox"
-            {...motionConfig.createChannel}
+            {...motionConfig}
             className="w-full max-w-2xl p-2.5 m-auto"
           >
             <Inbox />
@@ -75,7 +53,7 @@ export function Chats() {
       return (
         <motion.div
           key="createChannel"
-          {...motionConfig.createChannel}
+          {...motionConfig}
           className="w-full max-w-2xl p-2.5 m-auto"
         >
           <CreateChannelForm />
@@ -87,7 +65,7 @@ export function Chats() {
       return (
         <motion.div
           key="editChannel"
-          {...motionConfig.editChannel}
+          {...motionConfig}
           className="w-full max-w-2xl p-2.5 m-auto"
         >
           <EditChannelContainer />
@@ -100,7 +78,7 @@ export function Chats() {
         <ScrollArea className="h-[calc(100vh-55px)]">
           <motion.div
             key="editChannel"
-            {...motionConfig.editChannel}
+            {...motionConfig}
             className="w-full max-w-2xl p-2.5 m-auto"
           >
             <AnnouncementCreate />
@@ -111,14 +89,14 @@ export function Chats() {
 
     if (channelId) {
       return (
-        <motion.div key={`chat-${channelId}`} {...motionConfig.chatFeed}>
+        <motion.div key={`chat-${channelId}`} {...motionConfig}>
           <ChatFeed channelId={channelId} />
         </motion.div>
       );
     }
 
     return (
-      <motion.div key="chatsList">
+      <motion.div key="chatsList" {...motionConfig}>
         <ScrollArea className="h-[calc(100vh-55px)]">
           <div className="w-full max-w-2xl m-auto">
             <ChatsList />
