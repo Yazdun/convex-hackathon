@@ -1,10 +1,18 @@
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Brain, Loader2 } from "lucide-react";
-import { motion } from "framer-motion";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Brain, Loader2, Search } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { IChannel } from "../types/types";
 import { MarkdownFormatter } from "../markdown/mdx";
@@ -18,10 +26,62 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useQueryState } from "nuqs";
 
 export function ChatsList() {
   const channels = useQuery(api.channels.list);
   const [showLoading, setShowLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useQueryState("search", {
+    defaultValue: "",
+  });
+  const [sortBy, setSortBy] = useQueryState("sort", {
+    defaultValue: "newest" as const,
+    parse: (value) =>
+      value as "newest" | "oldest" | "most-subscribers" | "least-subscribers",
+    serialize: (value) => value,
+  });
+  const [subscriptionFilter, setSubscriptionFilter] = useQueryState("filter", {
+    defaultValue: "all" as const,
+    parse: (value) => value as "all" | "subscribed" | "not-subscribed",
+    serialize: (value) => value,
+  });
+
+  const filteredAndSortedChannels = useMemo(() => {
+    if (!channels) return [];
+
+    // Filter by search term
+    let filtered = channels.filter((channel) => {
+      const searchLower = searchTerm.toLowerCase();
+      const nameMatch = channel.name.toLowerCase().includes(searchLower);
+      const descriptionMatch =
+        channel.description?.toLowerCase().includes(searchLower) || false;
+      return nameMatch || descriptionMatch;
+    });
+
+    // Filter by subscription status
+    if (subscriptionFilter === "subscribed") {
+      filtered = filtered.filter((channel) => channel.isSubscribed);
+    } else if (subscriptionFilter === "not-subscribed") {
+      filtered = filtered.filter((channel) => !channel.isSubscribed);
+    }
+
+    // Sort channels
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "most-subscribers":
+          return b.users.length - a.users.length;
+        case "least-subscribers":
+          return a.users.length - b.users.length;
+        case "oldest":
+          return a._creationTime - b._creationTime;
+        case "newest":
+        default:
+          return b._creationTime - a._creationTime;
+      }
+    });
+
+    return filtered;
+  }, [channels, searchTerm, sortBy, subscriptionFilter]);
 
   useEffect(() => {
     if (channels === undefined) {
@@ -51,13 +111,91 @@ export function ChatsList() {
 
   return (
     <div className="p-2.5 grid gap-2.5">
-      {channels.map((channel) => {
-        return (
-          <motion.div key={channel._id} {...motionConfig}>
-            <ChannelPreviewCard key={channel._id} channel={channel} />
+      {/* Search and Filter Controls */}
+      <div className="flex items-center gap-1 py-2">
+        <div className="relative w-full">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input
+            placeholder="Search channels..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+
+        <div className="flex gap-2">
+          <Select
+            value={subscriptionFilter}
+            onValueChange={(value) =>
+              setSubscriptionFilter(
+                value as "all" | "subscribed" | "not-subscribed",
+              )
+            }
+          >
+            <SelectTrigger className="w-[130px]">
+              <SelectValue placeholder="Filter by subscription" />
+            </SelectTrigger>
+            <SelectContent align="center">
+              <SelectItem value="all">All Channels</SelectItem>
+              <SelectItem value="subscribed">Subscribed</SelectItem>
+              <SelectItem value="not-subscribed">Not Subscribed</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={sortBy}
+            onValueChange={(value) =>
+              setSortBy(
+                value as
+                  | "newest"
+                  | "oldest"
+                  | "most-subscribers"
+                  | "least-subscribers",
+              )
+            }
+          >
+            <SelectTrigger className="w-[170px]">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent align="center">
+              <SelectItem value="newest">Newest First</SelectItem>
+              <SelectItem value="oldest">Oldest First</SelectItem>
+              <SelectItem value="most-subscribers">Most Subscribers</SelectItem>
+              <SelectItem value="least-subscribers">
+                Least Subscribers
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      {/* Results */}
+
+      <AnimatePresence mode="sync">
+        {filteredAndSortedChannels.length === 0 ? (
+          <motion.div
+            key="no-result-found"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3 }}
+            className="text-center py-8 border font-mono px-4 text-sm text-muted-foreground"
+          >
+            {searchTerm ? (
+              <p>No channels found matching &ldquo;{searchTerm}&rdquo;</p>
+            ) : (
+              <p>No channel found matching current filters</p>
+            )}
           </motion.div>
-        );
-      })}
+        ) : null}
+        {filteredAndSortedChannels.map((channel) => {
+          return (
+            <motion.div layout key={channel._id} {...motionConfig}>
+              <ChannelPreviewCard key={channel._id} channel={channel} />
+            </motion.div>
+          );
+        })}
+      </AnimatePresence>
       <AssistantContainer />
     </div>
   );
