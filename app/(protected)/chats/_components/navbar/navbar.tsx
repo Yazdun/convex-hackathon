@@ -15,7 +15,7 @@ import { ChannelPopover } from "../channels/channel-popover";
 import { SearchButton } from "../search/search-button";
 
 export function Navbar() {
-  const { channelId } = useChat();
+  const { channelId, setQueryMsgId } = useChat();
 
   const channel = useQuery(
     api.channels.get,
@@ -42,6 +42,7 @@ export function Navbar() {
                 return;
               }
               setChannelId(null);
+              setQueryMsgId(null);
             }}
             variant="outline"
             size="icon"
@@ -85,7 +86,14 @@ export function Navbar() {
           className="flex items-center gap-1.5"
           key="chat-mode"
         >
-          <Button onClick={() => setMode(null)} variant="outline" size="icon">
+          <Button
+            onClick={() => {
+              setMode(null);
+              setQueryMsgId(null);
+            }}
+            variant="outline"
+            size="icon"
+          >
             <X size={14} />
           </Button>
           {renderLabel()}

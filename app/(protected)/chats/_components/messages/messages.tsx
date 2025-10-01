@@ -18,7 +18,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { MessageSquare } from "lucide-react";
 import { Reactions } from "../reactions/reaction";
 import { PromptPopover } from "./prompt-popover";
-import { useQueryState } from "nuqs";
 
 dayjs.extend(relativeTime);
 
@@ -31,7 +30,6 @@ const motionConfig = {
 
 export function Messages({ channelId }: { channelId: Id<"channels"> }) {
   const messages = useQuery(api.messages.list, { channelId });
-  const [messageId] = useQueryState("messageId");
   const [showLoading, setShowLoading] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const {
@@ -40,6 +38,7 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
     toEdit,
     replyingTo,
     scrollToMessage,
+    queryMsgId,
   } = useChat();
   const prevMessageCountRef = useRef(0);
 
@@ -65,8 +64,8 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
 
       // If this is the first time loading messages, scroll to bottom
       if (prevCount === 0) {
-        if (messageId && messages.find((m) => m._id === messageId)) {
-          scrollToMessage(messageId);
+        if (queryMsgId && messages.find((m) => m._id === queryMsgId)) {
+          scrollToMessage(queryMsgId);
         } else {
           scrollToBottom();
         }
@@ -87,10 +86,10 @@ export function Messages({ channelId }: { channelId: Id<"channels"> }) {
   }, [lastMessage?._id]);
 
   useEffect(() => {
-    if (messages && messageId && messages.find((m) => m._id === messageId)) {
-      scrollToMessage(messageId);
+    if (messages && queryMsgId && messages.find((m) => m._id === queryMsgId)) {
+      scrollToMessage(queryMsgId);
     }
-  }, [messageId]);
+  }, [queryMsgId]);
 
   const renderContent = () => {
     if (messages === undefined && showLoading) {

@@ -60,6 +60,8 @@ interface ContextProps {
   messageRefs: RefObject<{
     [key: string]: HTMLDivElement | null;
   }>;
+  queryMsgId: string | null;
+  setQueryMsgId: (val: string | null) => void;
 }
 
 export const Context = createContext<ContextProps | undefined>(undefined);
@@ -68,6 +70,7 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
   const [replyingTo, setReplyingTo] = useState<IMessage | undefined>();
   const [toEdit, setToEdit] = useState<IMessage | undefined>();
   const [qchannel, qsetChannel] = useQueryState("channel", parseAsString);
+  const [queryMsgId, setQueryMsgId] = useQueryState("messageId");
   const [mode, setMode] = useQueryState(
     "mode",
     parseAsStringLiteral([
@@ -209,6 +212,10 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
     return () => clearTimeout(timer);
   }, [channelId]);
 
+  const handleQueryMsgChange = (val: string | null) => {
+    setQueryMsgId(val);
+  };
+
   const value: ContextProps = {
     replyingTo,
     setReplyingTo,
@@ -233,6 +240,8 @@ export const ChatProvider = (props: { children: React.ReactNode }) => {
     messageRefs,
     toEdit,
     setToEdit,
+    queryMsgId,
+    setQueryMsgId: handleQueryMsgChange,
   };
 
   return <Context.Provider value={value}>{props.children}</Context.Provider>;

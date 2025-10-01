@@ -14,8 +14,9 @@ export function SearchForm() {
   const searchScope = channelId ? "current" : "all";
   const [query, setQuery] = useQueryState("query");
   const [_, setChannel] = useQueryState("channel");
-  const [messageId, setMessageId] = useQueryState("messageId");
-  console.log(_, messageId);
+
+  const { queryMsgId, setQueryMsgId } = useChat();
+  console.log(_, queryMsgId);
 
   const searchResults =
     useQuery(
@@ -98,7 +99,7 @@ export function SearchForm() {
             key={result._id}
             onClick={() => {
               setChannel(result.channelId);
-              setMessageId(result._id);
+              setQueryMsgId(result._id);
               setMode(null);
             }}
             className="p-4 w-full border text-left hover:bg-secondary/20 cursor-pointer"
