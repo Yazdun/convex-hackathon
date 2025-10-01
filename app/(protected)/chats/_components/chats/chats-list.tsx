@@ -36,7 +36,7 @@ export function ChatsList() {
     defaultValue: "",
   });
   const [sortBy, setSortBy] = useQueryState("sort", {
-    defaultValue: "newest" as const,
+    defaultValue: "oldest" as const,
     parse: (value) =>
       value as "newest" | "oldest" | "most-subscribers" | "least-subscribers",
     serialize: (value) => value,
