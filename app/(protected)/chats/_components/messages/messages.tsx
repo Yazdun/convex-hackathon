@@ -11,7 +11,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { DeleteMessage } from "./delete-message";
 import { cn } from "@/lib/utils";
 import { VoiceMessage } from "./voice-message";
-import { IMessage } from "../types/types";
+import { IMessage, IParentMessage } from "../types/types";
 import { useChat } from "../providers/chat-provider";
 import { MarkdownFormatter } from "../markdown/mdx";
 import { AnimatePresence, motion } from "framer-motion";
@@ -239,7 +239,77 @@ function Message({ message }: { message: IMessage }) {
         </div>
       );
     }
+
+    if (message.type === "image" && message.content.includes("giphy.com")) {
+      const parseGifContent = (
+        content: string,
+      ): { url: string; width: string; height: string } => {
+        const [url, width, height] = content.split("\n");
+        return { url, width, height };
+      };
+      const parsed = parseGifContent(message.content);
+      return (
+        <img
+          src={parsed.url}
+          alt={"gif"}
+          className="w-full max-w-[150px] h-auto object-cover"
+          style={{
+            aspectRatio: `${parsed.width} / ${parsed.height}`,
+          }}
+        />
+      );
+    }
+
     return <MarkdownFormatter text={message.content} />;
+  };
+
+  const renderParentMessage = ({ message }: { message: IParentMessage }) => {
+    const renderMsg = () => {
+      if (message.type === "image" && message.content.includes("giphy.com")) {
+        const parseGifContent = (
+          content: string,
+        ): { url: string; width: string; height: string } => {
+          const [url, width, height] = content.split("\n");
+          return { url, width, height };
+        };
+        const parsed = parseGifContent(message.content);
+        return (
+          <img
+            src={parsed.url}
+            alt={"gif"}
+            className="w-full max-w-[150px] h-auto object-cover"
+            style={{
+              aspectRatio: `${parsed.width} / ${parsed.height}`,
+            }}
+          />
+        );
+      }
+
+      return <MarkdownFormatter text={message.content} />;
+    };
+
+    return (
+      <div className="flex pl-10 relative items-end hover:cursor-pointer text-xs">
+        <div
+          className="w-full overflow-hidden pl-2.5 pb-2.5"
+          onClick={() => scrollToMessage(message?._id as string)}
+        >
+          <div className="absolute border-l-2 rounded-tl-lg border-border border-t-2 w-[30px] h-10 left-5 -bottom-1" />
+          <div className="w-full bg-inherit border-2 rounded-lg border-border overflow-hidden max-h-[200px] p-2.5">
+            <div className="mb-1.5 flex items-center gap-1.5">
+              <Avatar className="w-5 h-5">
+                <AvatarImage src={message.avatarUrl ?? undefined} />
+                <AvatarFallback>
+                  {message.authorDisplayName.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+              {message.authorDisplayName}
+            </div>
+            {renderMsg()}
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -256,32 +326,9 @@ function Message({ message }: { message: IMessage }) {
           "bg-secondary/20 hover:bg-secondary/30",
       )}
     >
-      {message.parentMessage ? (
-        <div className="flex pl-10 relative items-end hover:cursor-pointer text-xs">
-          <div
-            className="w-full overflow-hidden pl-2.5 pb-2.5"
-            onClick={() =>
-              scrollToMessage(message.parentMessage?._id as string)
-            }
-          >
-            <div className="absolute border-l-2 rounded-tl-lg border-border border-t-2 w-[30px] h-10 left-5 -bottom-1" />
-            <div className="w-full bg-inherit border-2 rounded-lg border-border overflow-hidden max-h-[200px] p-2.5">
-              <div className="mb-1.5 flex items-center gap-1.5">
-                <Avatar className="w-5 h-5">
-                  <AvatarImage
-                    src={message.parentMessage.avatarUrl ?? undefined}
-                  />
-                  <AvatarFallback>
-                    {message.parentMessage.authorDisplayName.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                {message.parentMessage.authorDisplayName}
-              </div>
-              <MarkdownFormatter text={message.parentMessage.content} />
-            </div>
-          </div>
-        </div>
-      ) : null}
+      {message.parentMessage
+        ? renderParentMessage({ message: message.parentMessage })
+        : null}
       <div className={cn("flex gap-3  w-full")}>
         <Avatar className="w-10 h-10">
           <AvatarImage src={message.avatarUrl ?? undefined} />

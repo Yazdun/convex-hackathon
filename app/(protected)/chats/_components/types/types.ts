@@ -10,18 +10,20 @@ export interface IMessage {
   avatarUrl: string | null;
   fileUrl: string | null;
   parentMessageId?: Id<"messages">;
-  parentMessage?: {
-    _id: Id<"messages">;
-    content: string;
-    type: "text" | "image" | "audio";
-    authorDisplayName: string;
-    _creationTime: number;
-    avatarUrl: string | null;
-  } | null;
+  parentMessage?: IParentMessage | null;
   editedAt?: number;
   isOwner: boolean;
   _creationTime: number;
   reactions: IReaction[];
+}
+
+export interface IParentMessage {
+  _id: Id<"messages">;
+  content: string;
+  type: "text" | "image" | "audio";
+  authorDisplayName: string;
+  _creationTime: number;
+  avatarUrl: string | null;
 }
 
 export interface IProfile {

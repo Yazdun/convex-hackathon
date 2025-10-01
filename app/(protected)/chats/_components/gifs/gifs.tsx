@@ -5,19 +5,26 @@ import { Grid } from "@giphy/react-components";
 import { GiphyFetch } from "@giphy/js-fetch-api";
 import { Input } from "@/components/ui/input";
 import type { IGif } from "@giphy/js-types";
+import { useChat } from "../providers/chat-provider";
+import { toast } from "sonner";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 interface GifsProps {
-  onGifSelect?: (gif: IGif) => void;
   width?: number;
   columns?: number;
+  onSuccess: () => void;
 }
 
 export const Gifs: React.FC<GifsProps> = ({
-  onGifSelect,
+  onSuccess,
   width = 800,
   columns = 4,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const { scrollToBottomIfAtBottom, replyingTo, setReplyingTo, channelId } =
+    useChat();
+  const sendMessage = useMutation(api.messages.send);
 
   // Initialize Giphy Fetch with API key
   const gf = useMemo(() => {
@@ -62,16 +69,37 @@ export const Gifs: React.FC<GifsProps> = ({
     ? fetchSearchGifs
     : fetchTrendingGifs;
 
+  const handleSendMessage = async (gif: IGif) => {
+    if (!gif) return;
+
+    if (!channelId) {
+      toast.error("Missing message id!");
+      return;
+    }
+
+    try {
+      await sendMessage({
+        channelId,
+        content: `${gif.images.fixed_width.url}\n${gif.images.fixed_width.width}\n${gif.images.fixed_width.height}`,
+        type: "image",
+        parentMessageId: replyingTo?._id,
+      });
+      scrollToBottomIfAtBottom();
+      setReplyingTo(undefined);
+      onSuccess();
+    } catch (error) {
+      console.error("Failed to send message:", error);
+    }
+  };
+
   // Handle GIF click
-  const onGifClick = useCallback(
-    (gif: IGif, e: React.SyntheticEvent<HTMLElement, Event>) => {
-      e.preventDefault();
-      if (onGifSelect) {
-        onGifSelect(gif);
-      }
-    },
-    [onGifSelect],
-  );
+  const onGifClick = (
+    gif: IGif,
+    e: React.SyntheticEvent<HTMLElement, Event>,
+  ) => {
+    e.preventDefault();
+    handleSendMessage(gif);
+  };
 
   return (
     <div className={`w-full grid gap-2`}>

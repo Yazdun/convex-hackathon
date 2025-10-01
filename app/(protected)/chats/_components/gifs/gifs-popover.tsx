@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -7,17 +7,29 @@ import {
 import { Button } from "@/components/ui/button";
 import { ImagePlay } from "lucide-react";
 import { Gifs } from "./gifs";
+import { useChat } from "../providers/chat-provider";
 
 export function GifsPopover() {
+  const { toEdit } = useChat();
+  const [open, setOpen] = useState(false);
+
+  React.useEffect(() => {
+    setOpen(false);
+  }, [toEdit?._id]);
+
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button className="shrink-0 size-11" variant="ghost">
+        <Button
+          disabled={toEdit?._id ? true : false}
+          className="shrink-0 size-11"
+          variant="ghost"
+        >
           <ImagePlay />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[600px]">
-        <Gifs width={550} columns={3} />
+        <Gifs onSuccess={() => setOpen(false)} width={550} columns={3} />
       </PopoverContent>
     </Popover>
   );
